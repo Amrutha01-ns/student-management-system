@@ -1,0 +1,224 @@
+:root {
+    --primary: #1e293b; /* Dark Navy */
+    --accent: #b551ce;  /* Bright Student Blue */
+    --bg-light: #f1f5f9;
+    --border-color: #e2e8f0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-light);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Header & Top Bar --- */
+.top-bar {
+    height: 80px;
+    background: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    border-bottom: 2px solid var(--border-color);
+    z-index: 100;
+}
+.logo-icon{
+    font-size: 2rem;
+      border-radius: 12px;
+}
+.logo-text {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1.9rem;
+    color: var(--primary);
+}
+.pro-tag {
+    font-size: 0.75rem;
+    background: var(--accent);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 6px;
+    vertical-align: middle;
+}
+
+.logout-pill {
+    background: linear-gradient(135deg, #ef4444, #991b1b);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 0px #7f1d1d;
+    transition: all 0.2s ease;
+}
+
+.logout-pill:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0px #7f1d1d;
+}
+
+/* --- Sidebar with Dynamic Hover --- */
+.main-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 300px;
+    background: var(--primary);
+    padding: 30px 15px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    color: #94a3b8;
+    border-radius: 15px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.nav-item .icon {
+    font-size: 1.8rem;
+    transition: transform 0.4s ease;
+}
+
+.nav-item .text {
+    font-weight: 500;
+    transition: color 0.4s ease, letter-spacing 0.4s ease;
+}
+
+/* --- ENHANCED HOVER EFFECTS --- */
+.nav-item:hover {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--accent);
+    color: white;
+}
+
+.nav-item:hover .icon {
+    transform: scale(1.4) rotate(5deg); /* Symbol increases and tilts */
+}
+
+.nav-item:hover .text {
+    color: var(--accent);
+    letter-spacing: 1px; /* Font enhancement */
+}
+
+.nav-item.active {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+}
+
+/* --- Time-Table Styling --- */
+.content {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.highlight { color: var(--accent); }
+
+.table-container {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color);
+}
+
+.timetable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.timetable th {
+    background: #9aacc0;
+    color: var(--primary);
+    padding: 15px;
+    text-align: center;
+    border-bottom: 2px solid var(--border-color);
+    font-family: 'Poppins';
+}
+
+.timetable td {
+    padding: 25px;
+    border: 1px solid #f1f5f9;
+    transition: background 0.2s;
+}
+
+.day-label {
+    font-weight: 700;
+    background: #a4b7ca;
+    color: var(--primary);
+    width: 200px;
+    border: #1e293b;
+    border-width: 2px;
+    border-radius:2px;
+    border-color: #1e293b;
+}
+
+.timetable tr:hover td:not(.day-label) {
+    background-color: #c6ced8; /* Highlight empty box on hover */
+}
+
+/* --- Bottom Bar Quote --- */
+.bottom-bar {
+    height: 60px;
+    background: #ffffff;
+    border-top: 2px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+}
+
+.quote-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-style: italic;
+    color: #475569;
+}
+
+.quote-icon { font-size: 1.2rem; }
+.card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.styled-table th,
+.styled-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.action-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    cursor: pointer;
+}

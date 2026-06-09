@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | AET School</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:     #0f0f12;
+  --ink2:    #2a2a35;
+  --ink3:    #5a5a72;
+  --silver:  #e8e8f0;
+  --blue:    #2563eb;
+  --blue2:   #1d4ed8;
+  --blue-lt: #eff6ff;
+  --red:     #ef4444;
+  --green:   #22c55e;
+  --card:    #ffffff;
+  --bg:      #f3f4f8;
+  --radius:  16px;
+  --shadow:  0 24px 64px rgba(15,15,18,0.10);
+}
+
+html, body {
+  height: 100%;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* ── ORBS ── */
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+.orb-1 { width:520px; height:520px; background:rgba(37,99,235,0.10); top:-140px; left:-120px; animation-delay:0s; }
+.orb-2 { width:380px; height:380px; background:rgba(99,102,241,0.08); bottom:-60px; right:-80px; animation-delay:-6s; }
+.orb-3 { width:260px; height:260px; background:rgba(34,197,94,0.06);  top:40%; left:55%; animation-delay:-12s; }
+@keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(30px,40px) scale(1.07); } }
+
+/* ── LAYOUT ── */
+.page {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--card);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 460px;
+  overflow: hidden;
+  animation: slideUp 0.55s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes slideUp {
+  from { opacity:0; transform:translateY(36px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── HEADER BAND ── */
+.card-head {
+  background: linear-gradient(135deg, #1e40af 0%, #2563eb 60%, #3b82f6 100%);
+  padding: 36px 40px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.card-head::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.logo-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 16px;
+}
+.logo-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.3);
+  animation: spin 12s linear infinite;
+}
+.logo-ring::before {
+  content: '';
+  position: absolute;
+  top: -4px; left: 50%;
+  transform: translateX(-50%);
+  width: 8px; height: 8px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 50%;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.logo-emoji {
+  font-size: 36px;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
+}
+.card-head h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  color: #fff;
+  margin-bottom: 6px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+.card-head p {
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+  letter-spacing: 0.02em;
+}
+.head-line {
+  width: 48px; height: 3px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 2px;
+  margin: 14px auto 0;
+}
+
+/* ── BODY ── */
+.card-body {
+  padding: 36px 40px 40px;
+}
+
+/* ── ROLE TABS ── */
+.role-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 10px;
+  display: block;
+}
+.role-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+.rtab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 12px 8px;
+  border-radius: 12px;
+  border: 1.5px solid var(--silver);
+  background: transparent;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink3);
+  transition: all 0.18s ease;
+}
+.rtab .icon { font-size: 22px; }
+.rtab:hover { border-color: #93c5fd; background: var(--blue-lt); color: var(--blue); }
+.rtab.active {
+  border-color: var(--blue);
+  background: var(--blue-lt);
+  color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
+}
+
+/* ── FIELDS ── */
+.field { margin-bottom: 18px; }
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 7px;
+}
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input-icon {
+  position: absolute;
+  left: 14px;
+  font-size: 17px;
+  pointer-events: none;
+  z-index: 1;
+}
+.input-wrap input {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px 0 44px;
+  border: 1.5px solid var(--silver);
+  border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: var(--ink);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input-wrap input::placeholder { color: #b4b4c8; }
+.input-wrap input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
+}
+.input-wrap input.error { border-color: var(--red); }
+.input-wrap input.valid { border-color: var(--green); }
+
+/* ── STATUS PILL ── */
+#statusPill {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
+#statusPill.found {
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+  color: #15803d;
+}
+#statusPill.notfound {
+  background: #fef9ee;
+  border: 1.5px solid #fcd34d;
+  color: #92400e;
+}
+
+/* ── CTA BUTTON ── */
+.btn-login {
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb, #3b82f6);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 20px rgba(37,99,235,0.30);
+  margin-bottom: 8px;
+}
+.btn-login::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.btn-login:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(37,99,235,0.38); }
+.btn-login:hover::before { opacity: 1; }
+.btn-login:active { transform: translateY(0); }
+.btn-login:disabled { opacity: 0.65; cursor: default; transform: none; }
+
+.btn-inner { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-loader { display: none; gap: 5px; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.8); animation: bounce 1.1s ease-in-out infinite; }
+.dot:nth-child(2) { animation-delay: .15s; }
+.dot:nth-child(3) { animation-delay: .3s; }
+@keyframes bounce { 0%,80%,100%{transform:scale(.75)} 40%{transform:scale(1)} }
+
+/* ── DIVIDER ── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 24px 0 20px;
+  color: var(--ink3);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--silver);
+}
+
+/* ── REGISTER LINK ── */
+.reg-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  background: var(--blue-lt);
+  border: 1.5px solid #bfdbfe;
+  border-radius: 12px;
+  font-size: 14px;
+  color: var(--ink2);
+  text-align: center;
+}
+.reg-strip a {
+  color: var(--blue);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.reg-strip a:hover { color: var(--blue2); text-decoration: underline; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  padding: 13px 22px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 9999;
+  opacity: 0;
+  transition: all 0.35s cubic-bezier(.22,1,.36,1);
+  white-space: nowrap;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast-error   { background: #fef2f2; color: #b91c1c; border: 1.5px solid #fca5a5; }
+.toast-success { background: #f0fdf4; color: #15803d; border: 1.5px solid #86efac; }
+
+/* ── FOUND BANNER (animated) ── */
+.found-banner {
+  display: none;
+  gap: 12px;
+  align-items: center;
+  background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+  border: 1.5px solid #86efac;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  animation: popIn 0.3s cubic-bezier(.22,1,.36,1);
+}
+.found-banner.visible { display: flex; }
+@keyframes popIn { from { opacity:0; transform:scale(0.93); } to { opacity:1; transform:scale(1); } }
+.found-avatar {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.found-info { flex: 1; }
+.found-name { font-size: 15px; font-weight: 600; color: var(--ink); }
+.found-role { font-size: 12px; color: #15803d; font-weight: 500; margin-top: 1px; }
+
+@media (max-width: 500px) {
+  .card-head, .card-body { padding-left: 24px; padding-right: 24px; }
+  .card-head { padding-top: 28px; padding-bottom: 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="page">
+<div class="card">
+
+  <!-- Header -->
+  <div class="card-head">
+    <div class="logo-wrap">
+      <div class="logo-ring"></div>
+      <span class="logo-emoji">🎓</span>
+    </div>
+    <h2>Welcome Back</h2>
+    <p>AET School of Excellence — Management System</p>
+    <div class="head-line"></div>
+  </div>
+
+  <!-- Body -->
+  <div class="card-body">
+
+    <span class="role-label">I am a</span>
+    <div class="role-tabs">
+      <button class="rtab active" data-role="student" onclick="pickRole('student')">
+        <span class="icon">🎒</span> Student
+      </button>
+      <button class="rtab" data-role="teacher" onclick="pickRole('teacher')">
+        <span class="icon">📖</span> Teacher
+      </button>
+      <button class="rtab" data-role="parent" onclick="pickRole('parent')">
+        <span class="icon">👨‍👩‍👦</span> Parent
+      </button>
+    </div>
+
+    <div class="field">
+      <label>Full Name</label>
+      <div class="input-wrap">
+        <span class="input-icon">👤</span>
+        <input type="text" id="name" placeholder="Enter your full name" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Phone Number</label>
+      <div class="input-wrap">
+        <span class="input-icon">📱</span>
+        <input type="tel" id="phone" placeholder="10-digit phone number" maxlength="10" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Email Address</label>
+      <div class="input-wrap">
+        <span class="input-icon">✉️</span>
+        <input type="email" id="email" placeholder="Enter your email" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Found banner (shown when account is detected) -->
+    <div class="found-banner" id="foundBanner">
+      <div class="found-avatar">😊</div>
+      <div class="found-info">
+        <div class="found-name" id="foundName">—</div>
+        <div class="found-role" id="foundRoleTag">✓ Account found</div>
+      </div>
+    </div>
+
+    <!-- Not found notice -->
+    <div id="statusPill">
+      <span id="statusIcon"></span>
+      <span id="statusText"></span>
+    </div>
+
+    <button class="btn-login" id="loginBtn" onclick="handleLogin()">
+      <span class="btn-inner" id="btnText">
+        <span>Go to My Dashboard</span>
+        <span>→</span>
+      </span>
+      <span class="btn-loader" id="btnLoader">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </span>
+    </button>
+
+    <div class="divider">OR</div>
+
+    <div class="reg-strip">
+      Don't have an account?&nbsp;
+      <a href="/register">Register here →</a>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────
+let currentRole   = 'student';
+let foundAccount  = null;   // { name, role } if server confirmed match
+let checkTimer    = null;
+
+// ── Role picker ────────────────────────────────────────────────
+function pickRole(role) {
+  currentRole = role;
+  document.querySelectorAll('.rtab').forEach(t => t.classList.toggle('active', t.dataset.role === role));
+  foundAccount = null;
+  hideBanner();
+  hidePill();
+  tryCheck();
+}
+
+// ── Live check — debounced 600 ms ──────────────────────────────
+['name','phone','email'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    clearTimeout(checkTimer);
+    checkTimer = setTimeout(tryCheck, 600);
+  });
+});
+
+function isReady() {
+  const n = v('name'), p = v('phone'), e = v('email');
+  return n.length >= 2 && p.length === 10 && /^\d+$/.test(p) && e.includes('@') && e.includes('.');
+}
+
+async function tryCheck() {
+  hideBanner(); hidePill();
+  foundAccount = null;
+  if (!isReady()) return;
+
+  const name = v('name'), phone = v('phone'), email = v('email');
+
+  try {
+    const res  = await fetch('/check_existing', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, phone, email, role: currentRole, child_roll_number: '' })
+    });
+    const data = await res.json();
+
+    if (data.exists) {
+      foundAccount = { name: data.name, role: currentRole };
+      showBanner(data.name, currentRole);
+    } else {
+      showPill('notfound',
+        '⚠️',
+        currentRole === 'parent'
+          ? 'No account found — fill roll number too or Register below.'
+          : 'No account found. Please register below.'
+      );
+    }
+  } catch (e) {
+    console.warn('check_existing error:', e);
+  }
+}
+
+// ── Banner ─────────────────────────────────────────────────────
+function showBanner(name, role) {
+  document.getElementById('foundName').textContent = name;
+  const roleLabel = { student: '🎒 Student account', teacher: '📖 Teacher account', parent: '👨‍👩‍👦 Parent account' };
+  document.getElementById('foundRoleTag').textContent = '✓ ' + (roleLabel[role] || 'Account found');
+  document.getElementById('foundBanner').classList.add('visible');
+}
+function hideBanner() { document.getElementById('foundBanner').classList.remove('visible'); }
+
+// ── Pill ───────────────────────────────────────────────────────
+function showPill(type, icon, msg) {
+  const p = document.getElementById('statusPill');
+  p.className = type;
+  document.getElementById('statusIcon').textContent = icon;
+  document.getElementById('statusText').textContent = msg;
+  p.style.display = 'flex';
+}
+function hidePill() { document.getElementById('statusPill').style.display = 'none'; }
+
+// ── Main action ────────────────────────────────────────────────
+async function handleLogin() {
+  if (!isReady()) { showToast('Please fill in all fields correctly.', 'error'); return; }
+
+  if (!foundAccount) {
+    // One last attempt before telling them
+    await tryCheck();
+    if (!foundAccount) {
+      showToast('No account found. Please register first.', 'error');
+      setTimeout(() => { window.location.href = '/register'; }, 1800);
+      return;
+    }
+  }
+
+  setLoading(true);
+  // Session was already set by check_existing on the server, just redirect
+  setTimeout(() => {
+    const role = foundAccount.role;
+    if      (role === 'student') window.location.href = '/student_dashboard';
+    else if (role === 'teacher') window.location.href = '/teacher_dashboard';
+    else if (role === 'parent')  window.location.href = '/parent_dashboard';
+    else                         window.location.href = '/admin_dashboard';
+  }, 400);
+}
+
+// ── Helpers ────────────────────────────────────────────────────
+function v(id) { return document.getElementById(id).value.trim(); }
+
+function setLoading(on) {
+  document.getElementById('btnText').style.display   = on ? 'none' : 'flex';
+  document.getElementById('btnLoader').style.display = on ? 'flex' : 'none';
+  document.getElementById('loginBtn').disabled = on;
+}
+
+function showToast(msg, type) {
+  const t = document.createElement('div');
+  t.className = 'toast toast-' + type;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(() => { requestAnimationFrame(() => t.classList.add('show')); });
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3500);
+}
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.activeElement.tagName === 'INPUT') handleLogin();
+});
+</script>
+</body>
+</html>

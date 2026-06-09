@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSmart | Enter Marks</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='teattenmarkdb.css') }}">
+    <style>
+        .marks-form { display: none; }
+        .marks-form.visible { display: block; }
+
+        .subject-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin: 18px 0;
+        }
+        .subject-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #374151;
+        }
+        .subject-field input {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: border 0.2s;
+            box-sizing: border-box;
+        }
+        .subject-field input:focus { border-color: #6366f1; }
+
+        .exam-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+        .exam-row select, .exam-row input[type="date"] {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .save-btn {
+            flex: 1;
+            padding: 12px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .save-btn:hover { background: #4f46e5; }
+        .save-btn:disabled { background: #a5b4fc; cursor: not-allowed; }
+
+        .broadcast-btn {
+            flex: 1;
+            padding: 12px;
+            background: #f59e0b;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+            transition: background 0.2s;
+        }
+        .broadcast-btn:hover { background: #d97706; }
+        .broadcast-btn.done { background: #16a34a; cursor: default; }
+
+        .total-preview {
+            background: #f3f4f6;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-top: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #111827;
+            display: none;
+        }
+
+        .student-select-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .student-select-label + select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 14px;
+            box-sizing: border-box;
+        }
+
+        .msg-box {
+            margin-top: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+        .msg-box.success { background: #dcfce7; color: #166534; display: block; }
+        .msg-box.error   { background: #fee2e2; color: #991b1b; display: block; }
+    </style>
+</head>
+<body>
+<div class="app-container">
+
+    <header class="dashboard-header">
+        <div class="brand-section">
+            <span class="logo-dot"></span>
+            <h1>EduSmart <span class="thin">Marks Entry</span></h1>
+        </div>
+        <div class="date-info" id="live-date"></div>
+    </header>
+
+    <!-- STEP 1: SELECT CLASS -->
+    <div id="setup-view" class="corporate-card">
+        <div class="card-intro">
+            <h2>Marks Entry Setup</h2>
+            <p>Select class and section to load students</p>
+        </div>
+        <div class="form-grid">
+            <div class="select-wrapper">
+                <label>Standard</label>
+                <select id="std-input">
+                    <option value="8th">8th Standard</option>
+                    <option value="9th">9th Standard</option>
+                    <option value="10th">10th Standard</option>
+                </select>
+            </div>
+            <div class="select-wrapper">
+                <label>Section</label>
+                <select id="sec-input">
+                    <option value="A">Section A</option>
+                    <option value="B">Section B</option>
+                    <option value="C">Section C</option>
+                    <option value="D">Section D</option>
+                </select>
+            </div>
+        </div>
+        <button class="primary-btn" onclick="loadStudentsForMarks()">
+            Load Students →
+        </button>
+    </div>
+
+    <!-- STEP 2: PICK STUDENT + ENTER MARKS -->
+    <div id="marks-view" class="corporate-card hidden">
+        <div class="card-intro">
+            <h2 id="marks-class-label"></h2>
+            <p>Select a student, fill marks, save then broadcast</p>
+        </div>
+
+        <!-- Student dropdown -->
+        <label class="student-select-label">Select Student</label>
+        <select id="student-select" onchange="onStudentChange()">
+            <option value="">-- Choose Student --</option>
+        </select>
+
+        <!-- Marks form (shown after student selected) -->
+        <div id="marks-form" class="marks-form">
+
+            <div class="exam-row">
+                <div>
+                    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:5px;">Exam Type</label>
+                    <select id="exam-type">
+                        <option value="Unit Test 1">Unit Test 1</option>
+                        <option value="Unit Test 2">Unit Test 2</option>
+                        <option value="Midterm">Midterm</option>
+                        <option value="Final Exam">Final Exam</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:5px;">Exam Date</label>
+                    <input type="date" id="exam-date">
+                </div>
+            </div>
+
+            <div class="subject-grid">
+                <div class="subject-field">
+                    <label>Kannada <span style="color:#9ca3af">/100</span></label>
+                    <input type="number" id="m-kannada" min="0" max="100" placeholder="0" oninput="updateTotal()">
+                </div>
+                <div class="subject-field">
+                    <label>English <span style="color:#9ca3af">/100</span></label>
+                    <input type="number" id="m-english" min="0" max="100" placeholder="0" oninput="updateTotal()">
+                </div>
+                <div class="subject-field">
+                    <label>Physics <span style="color:#9ca3af">/100</span></label>
+                    <input type="number" id="m-physics" min="0" max="100" placeholder="0" oninput="updateTotal()">
+                </div>
+                <div class="subject-field">
+                    <label>Chemistry <span style="color:#9ca3af">/100</span></label>
+                    <input type="number" id="m-chemistry" min="0" max="100" placeholder="0" oninput="updateTotal()">
+                </div>
+                <div class="subject-field">
+                    <label>Maths <span style="color:#9ca3af">/100</span></label>
+                    <input type="number" id="m-maths" min="0" max="100" placeholder="0" oninput="updateTotal()">
+                </div>
+                <div class="subject-field">
+                    <label>Biology <span style="color:#9ca3af">/100</span></label>
+                    <input type="number" id="m-biology" min="0" max="100" placeholder="0" oninput="updateTotal()">
+                </div>
+            </div>
+
+            <div class="total-preview" id="total-preview"></div>
+
+            <div class="action-row">
+                <button class="save-btn" id="save-btn" onclick="saveMarks()">
+                    💾 Save Marks
+                </button>
+                <button class="broadcast-btn" id="broadcast-btn" onclick="broadcastMarks()">
+                    📢 Broadcast to Student
+                </button>
+            </div>
+
+            <div class="msg-box" id="msg-box"></div>
+        </div>
+    </div>
+
+</div>
+<script>
+    document.getElementById('live-date').innerText = new Date().toDateString();
+    // Set today as default exam date
+    document.getElementById('exam-date').valueAsDate = new Date();
+
+    let currentTeacherId = null;
+    let savedMarkId      = null;
+    let selectedStudentId = null;
+
+    // Get teacher id from session on load
+    (async () => {
+        try {
+            const res  = await fetch("/me");
+            const data = await res.json();
+            currentTeacherId = data.user_id;
+        } catch(_) {}
+    })();
+
+    // STEP 1: Load students into dropdown
+    async function loadStudentsForMarks() {
+        const std = document.getElementById('std-input').value;
+        const sec = document.getElementById('sec-input').value;
+
+        document.getElementById('marks-class-label').innerText =
+            `${std} — Section ${sec}`;
+        document.getElementById('setup-view').classList.add('hidden');
+        document.getElementById('marks-view').classList.remove('hidden');
+
+        try {
+            const res      = await fetch(`/get_students/${std}/${sec}`);
+            const students = await res.json();
+            const sel      = document.getElementById('student-select');
+            sel.innerHTML  = '<option value="">-- Choose Student --</option>';
+
+            students.forEach(s => {
+                const opt   = document.createElement('option');
+                opt.value   = s.student_id;
+                opt.text    = `${s.roll_number} — ${s.name}`;
+                sel.appendChild(opt);
+            });
+        } catch(err) {
+            showMsg("Failed to load students", "error");
+        }
+    }
+
+    // STEP 2: Show marks form when student selected
+    function onStudentChange() {
+        selectedStudentId = document.getElementById('student-select').value;
+        savedMarkId       = null;
+
+        // Reset form state
+        ['m-kannada','m-english','m-physics','m-chemistry','m-maths','m-biology']
+            .forEach(id => document.getElementById(id).value = '');
+        document.getElementById('total-preview').style.display = 'none';
+        document.getElementById('broadcast-btn').style.display = 'none';
+        document.getElementById('broadcast-btn').className     = 'broadcast-btn';
+        document.getElementById('broadcast-btn').textContent   = '📢 Broadcast to Student';
+        document.getElementById('save-btn').disabled           = false;
+        document.getElementById('save-btn').textContent        = '💾 Save Marks';
+        hideMsg();
+
+        if (selectedStudentId) {
+            document.getElementById('marks-form').classList.add('visible');
+        } else {
+            document.getElementById('marks-form').classList.remove('visible');
+        }
+    }
+
+    // Live total preview
+    function updateTotal() {
+        const ids = ['m-kannada','m-english','m-physics','m-chemistry','m-maths','m-biology'];
+        const total = ids.reduce((sum, id) => {
+            const v = parseInt(document.getElementById(id).value) || 0;
+            return sum + v;
+        }, 0);
+        const pct   = ((total / 600) * 100).toFixed(1);
+        const prev  = document.getElementById('total-preview');
+        prev.style.display = 'block';
+        prev.innerHTML = `Total: <strong>${total} / 600</strong> &nbsp;|&nbsp; ${pct}% &nbsp;|&nbsp; ${total >= 210 ? '✅ PASS' : '❌ FAIL'}`;
+    }
+
+    // STEP 3: Save marks (is_published = FALSE)
+    async function saveMarks() {
+    if (!selectedStudentId) return;
+    
+    // Validate all marks are between 0 and 100
+    const fields = ['m-kannada','m-english','m-physics','m-chemistry','m-maths','m-biology'];
+    for (const id of fields) {
+        const val = parseInt(document.getElementById(id).value);
+        if (isNaN(val) || val < 0 || val > 100) {
+            showMsg("Each subject mark must be between 0 and 100.", "error");
+            return;
+        }
+    }
+
+    const btn = document.getElementById('save-btn');
+    btn.disabled     = true;
+    btn.textContent  = 'Saving...';
+        const payload = {
+            student_id:  parseInt(selectedStudentId),
+            teacher_id:  currentTeacherId,
+            exam_type:   document.getElementById('exam-type').value,
+            exam_date:   document.getElementById('exam-date').value,
+            kannada:     parseInt(document.getElementById('m-kannada').value)   || 0,
+            english:     parseInt(document.getElementById('m-english').value)   || 0,
+            physics:     parseInt(document.getElementById('m-physics').value)   || 0,
+            chemistry:   parseInt(document.getElementById('m-chemistry').value) || 0,
+            maths:       parseInt(document.getElementById('m-maths').value)     || 0,
+            biology:     parseInt(document.getElementById('m-biology').value)   || 0,
+        };
+
+        try {
+            const res  = await fetch("/add_marks", {
+                method:  "POST",
+                headers: {"Content-Type": "application/json"},
+                body:    JSON.stringify(payload)
+            });
+            const data = await res.json();
+
+            if (data.status === "success") {
+                savedMarkId = data.mark_id;           // store for broadcast
+                btn.textContent = '✅ Saved';
+                showMsg("Marks saved. Click Broadcast when ready to release to student.", "success");
+
+                // Show broadcast button
+                const bBtn = document.getElementById('broadcast-btn');
+                bBtn.style.display = 'block';
+            } else {
+                btn.disabled    = false;
+                btn.textContent = '💾 Save Marks';
+                showMsg(data.message || "Save failed", "error");
+            }
+        } catch(err) {
+            btn.disabled    = false;
+            btn.textContent = '💾 Save Marks';
+            showMsg("Network error. Try again.", "error");
+        }
+    }
+
+    // STEP 4: Broadcast (flip is_published = TRUE)
+    async function broadcastMarks() {
+        const bBtn = document.getElementById('broadcast-btn');
+        bBtn.disabled   = true;
+        bBtn.textContent = 'Broadcasting...';
+
+        try {
+            const res  = await fetch("/broadcast_marks", {
+                method:  "POST",
+                headers: {"Content-Type": "application/json"},
+                body:    JSON.stringify({
+                    mark_id:    savedMarkId,
+                    student_id: parseInt(selectedStudentId)
+                })
+            });
+            const data = await res.json();
+
+            if (data.status === "success") {
+                bBtn.className   = 'broadcast-btn done';
+                bBtn.textContent = '✅ Broadcasted!';
+                bBtn.disabled    = true;
+                showMsg("Marks are now visible to the student and parent.", "success");
+            } else {
+                bBtn.disabled    = false;
+                bBtn.textContent = '📢 Broadcast to Student';
+                showMsg(data.message || "Broadcast failed", "error");
+            }
+        } catch(err) {
+            bBtn.disabled    = false;
+            bBtn.textContent = '📢 Broadcast to Student';
+            showMsg("Network error. Try again.", "error");
+        }
+    }
+
+    function showMsg(text, type) {
+        const box     = document.getElementById('msg-box');
+        box.textContent = text;
+        box.className   = `msg-box ${type}`;
+    }
+    function hideMsg() {
+        const box   = document.getElementById('msg-box');
+        box.className = 'msg-box';
+    }
+</script>
+</body>
+</html>

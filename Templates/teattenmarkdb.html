@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSmart | Professional Attendance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='teattenmarkdb.css') }}">
+</head>
+<body>
+
+<div class="app-container">
+
+    <header class="dashboard-header">
+        <div class="brand-section">
+            <span class="logo-dot"></span>
+            <h1>EduSmart <span class="thin">Portal</span></h1>
+        </div>
+        <div class="date-info" id="live-date"></div>
+    </header>
+
+    <!-- SETUP -->
+    <div id="setup-view" class="corporate-card">
+        <div class="card-intro">
+            <h2>Attendance Setup</h2>
+            <p>Select class and section to load students</p>
+        </div>
+
+        <div class="form-grid">
+            <div class="select-wrapper">
+                <label>Standard</label>
+                <select id="std-input">
+                    <option value="8th">8th Standard</option>
+                    <option value="9th">9th Standard</option>
+                    <option value="10th">10th Standard</option>
+                </select>
+            </div>
+
+            <div class="select-wrapper">
+                <label>Section</label>
+                <select id="sec-input">
+                    <option value="A">Section A</option>
+                    <option value="B">Section B</option>
+                    <option value="C">Section C</option>
+                    <option value="D">Section D</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="primary-btn" onclick="initiateAttendance()">
+            Confirm & Open List
+        </button>
+    </div>
+
+    <!-- STUDENT LIST -->
+    <div id="registry-view" class="corporate-card hidden">
+
+        <div class="registry-header">
+            <h3 id="class-label"></h3>
+            <span class="status-indicator">Live Session</span>
+        </div>
+
+        <div class="table-container">
+            <table class="attendance-table">
+                <thead>
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Student Name</th>
+                        <th>Status</th>
+                        <th>Mark</th>
+                    </tr>
+                </thead>
+
+                <tbody id="student-rows"></tbody>
+
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+// 🔹 Live Date
+document.getElementById('live-date').innerText =
+    new Date().toDateString();
+
+
+// 🚀 LOAD STUDENTS FROM DB
+async function initiateAttendance() {
+
+    const std = document.getElementById('std-input').value;
+    const sec = document.getElementById('sec-input').value;
+
+    document.getElementById('class-label').innerText =
+        `${std} Standard - Section ${sec}`;
+
+    document.getElementById('setup-view').classList.add('hidden');
+    document.getElementById('registry-view').classList.remove('hidden');
+
+    try {
+
+        const res = await fetch(`/get_students/${std}/${sec}`);
+        const students = await res.json();
+
+        const container = document.getElementById('student-rows');
+        container.innerHTML = "";
+
+        students.forEach((s) => {
+
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${s.roll_number}</td>
+                <td>${s.name}</td>
+                <td>
+                    <span id="badge-${s.student_id}" class="badge present">
+                        Present
+                    </span>
+                </td>
+                <td>
+                    <input type="checkbox" checked 
+                        onchange="toggleStatus(${s.student_id}, this)">
+                </td>
+            `;
+
+            container.appendChild(row);
+        });
+
+    } catch (err) {
+        alert("Failed to load students");
+        console.error(err);
+    }
+}
+
+
+// 🚀 SAVE ATTENDANCE TO DB (REAL TIME)
+async function toggleStatus(studentId, checkbox) {
+
+    const badge = document.getElementById(`badge-${studentId}`);
+
+    let status = checkbox.checked ? "Present" : "Absent";
+
+    badge.innerText = status;
+    badge.className = status === "Present"
+        ? "badge present"
+        : "badge absent";
+
+    try {
+        await fetch("/mark_attendance", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                student_id: studentId,
+                date: new Date().toISOString().split('T')[0],
+                status: status
+            })
+        });
+    } catch (err) {
+        console.error("Failed to save attendance", err);
+    }
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+/* Base Styles & Variables */
+:root {
+    --bg-color: #f4f7f6;
+    --nav-color: #ffffff;
+    --primary-blue: #2563eb;
+    --text-dark: #1e293b;
+    --text-light: #64748b;
+    --accent-hover: #1d4ed8;
+    --border-soft: #e2e8f0;
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-dark);
+}
+
+/* Navigation Bar */
+.navbar {
+    background-color: var(--nav-color);
+    height: 70px;
+    display: flex;
+    align-items: center;
+    padding: 0 10%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-box {
+    background: var(--primary-blue);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.brand-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+/* Dashboard Layout */
+.dashboard-content {
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 0 20px;
+}
+
+/* Heading with Hover Effect */
+.announcement-title {
+    font-size: 2.8rem;
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--text-dark);
+    transition: all 0.4s ease;
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+.announcement-title:hover {
+    color: var(--primary-blue);
+    transform: translateY(-5px);
+    text-shadow: 0 10px 20px rgba(37, 99, 235, 0.15);
+}
+
+/* Announcement Card Section */
+.announcement-card {
+    background: white;
+    border: 1px solid var(--border-soft);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.message-body {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #334155;
+    margin-bottom: 30px;
+}
+
+/* Footer Section */
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px dashed var(--border-soft);
+}
+
+.info-badge {
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 2px solid var(--border-soft);
+    background: #f8fafc;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: default;
+}
+
+/* Date Hover Effect */
+.date-display:hover {
+    background: #e0e7ff;
+    border-color: var(--primary-blue);
+    transform: scale(1.05);
+}
+
+/* Person/Sender Hover Effect */
+.sender-display:hover {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+    transform: scale(1.05);
+    box-shadow: 0 8px 15px rgba(37, 99, 235, 0.2);
+}
+
+/* General Card Hover */
+.announcement-card:hover {
+    border-color: var(--primary-blue);
+    transform: translateY(-2px);
+}

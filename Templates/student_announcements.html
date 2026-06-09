@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements | AET Student Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='parent_ann.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Info Header -->
+    <header class="info-header">
+        <div class="info-group">
+            <p><strong>Student:</strong> <span id="student-name">Loading...</span></p>
+        </div>
+        <div class="info-group right">
+            <!-- No back button here — the dashboard already injects one -->
+        </div>
+    </header>
+
+    <!-- Nav Tabs -->
+    <nav class="navbar">
+        <a href="#current" class="active" onclick="showSection('current', this)">
+            🔔 Current Announcements
+        </a>
+        <a href="#history" onclick="showSection('history', this)">
+            📅 Search by Date
+        </a>
+    </nav>
+
+    <!-- Current Announcements -->
+    <div id="section-current">
+        <div id="announcementsList">
+            <div class="loading-msg">Loading announcements...</div>
+        </div>
+    </div>
+
+    <!-- History / Search by Date -->
+    <div id="section-history" style="display:none;">
+        <section class="history-section">
+            <h4>🔍 Check Previous Announcements</h4>
+            <div class="history-controls">
+                <label for="history-date">Select Date:</label>
+                <input type="date" id="history-date">
+                <button class="btn-fetch" onclick="searchByDate()">View Messages</button>
+            </div>
+            <div id="historyResults"></div>
+        </section>
+    </div>
+</div>
+<script>
+    // ── Student name from localStorage ────────────────────────────
+    document.getElementById("student-name").innerText =
+        localStorage.getItem("name") || "Student";
+    // ── Section toggle ────────────────────────────────────────────
+    function showSection(name, clickedLink) {
+        document.getElementById("section-current").style.display =
+            name === "current" ? "block" : "none";
+        document.getElementById("section-history").style.display =
+            name === "history" ? "block" : "none";
+        document.querySelectorAll(".navbar a").forEach(a => a.classList.remove("active"));
+        clickedLink.classList.add("active");
+    }
+    // ── Format date nicely ────────────────────────────────────────
+    function formatDate(dateStr) {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('en-IN', {
+            weekday: 'long', day: 'numeric',
+            month: 'long', year: 'numeric'
+        }) + " at " + d.toLocaleTimeString('en-IN', {
+            hour: '2-digit', minute: '2-digit'
+        });
+    }
+
+    // ── Build a single card ───────────────────────────────────────
+    function buildCard(ann) {
+        return `
+        <section class="announcement-card">
+            <div class="card-header">
+                <span class="date-time">🕐 ${formatDate(ann.date)}</span>
+            </div>
+            <div class="message-content">
+                <h3>${ann.title}</h3>
+                <p>${ann.content}</p>
+            </div>
+            <div class="card-footer">
+                <p class="sender-name">📌 Sent by: <strong>${ann.posted_by}</strong></p>
+            </div>
+        </section>`;
+    }
+    // ── Load all student announcements ────────────────────────────
+    // Uses the existing /get_announcements route with role="student"
+    fetch("/get_announcements/student/A")
+        .then(res => res.json())
+        .then(announcements => {
+            const container = document.getElementById("announcementsList");
+
+            if (announcements.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-msg">
+                        <p>📭 No announcements yet.</p>
+                        <small>Check back later for updates from teachers.</small>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = announcements.map(buildCard).join("");
+        })
+        .catch(() => {
+            document.getElementById("announcementsList").innerHTML =
+                `<div class="empty-msg"><p>❌ Failed to load announcements.</p></div>`;
+        });
+
+    // ── Search by date ────────────────────────────────────────────
+    function searchByDate() {
+        const dateVal = document.getElementById("history-date").value;
+        if (!dateVal) { alert("Please select a date."); return; }
+
+        const resultsDiv = document.getElementById("historyResults");
+        resultsDiv.innerHTML = "<p style='padding:16px; color:#888;'>Searching...</p>";
+
+        fetch("/get_announcements/student/A")
+            .then(res => res.json())
+            .then(announcements => {
+                const filtered = announcements.filter(a => a.date.startsWith(dateVal));
+
+                if (filtered.length === 0) {
+                    resultsDiv.innerHTML = `
+                        <div class="empty-msg">
+                            <p>📭 No announcements found for ${dateVal}</p>
+                        </div>`;
+                    return;
+                }
+
+                resultsDiv.innerHTML = filtered.map(buildCard).join("");
+            });
+    }
+
+    // ── Default date = today ──────────────────────────────────────
+    document.getElementById("history-date").value =
+        new Date().toISOString().split("T")[0];
+
+</script>
+
+</body>
+</html>

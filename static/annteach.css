@@ -1,0 +1,173 @@
+:root {
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --radius: 12px;
+    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
+
+body {
+    background-color: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.main-container { width: 100%; max-width: 800px; }
+
+.announcement-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 40px;
+    border: 1px solid var(--border-color);
+}
+
+.card-header {
+    margin-bottom: 32px;
+    border-left: 5px solid var(--primary-color);
+    padding-left: 20px;
+}
+
+.card-header h2 { font-size: 1.8rem; color: var(--text-main); font-weight: 700; }
+.card-header p { color: var(--text-muted); margin-top: 4px; }
+
+.layout-flex { display: flex; gap: 30px; }
+.form-section { flex: 1; }
+
+.input-group { margin-bottom: 20px; }
+
+.input-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+select, input, textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: #f1f5f9;
+    font-size: 1rem;
+    color: var(--text-main);
+    transition: all 0.3s ease;
+}
+
+select:focus, input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+textarea { min-height: 120px; resize: vertical; }
+
+.hidden-fields {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.4s ease;
+    opacity: 0;
+}
+
+.hidden-fields.visible {
+    max-height: 200px;
+    opacity: 1;
+    margin-bottom: 20px;
+}
+
+.grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+.btn-broadcast {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    transition: background 0.3s ease;
+}
+
+.btn-broadcast:hover { background: var(--primary-hover); }
+
+.emoji-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-left: 20px;
+    border-left: 1px solid var(--border-color);
+    justify-content: center;
+}
+
+.emoji-item {
+    background: #f1f5f9;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1.4rem;
+    cursor: default;
+    transition: transform 0.2s ease;
+}
+
+.emoji-item:hover { transform: scale(1.1); background: #e2e8f0; }
+
+/* From Teacher Box */
+.from-teacher-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f0f7ff;
+    border: 1.5px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.from-label { color: #1d4ed8; font-weight: 600; }
+.from-name { color: #1e293b; font-weight: 700; font-size: 15px; }
+
+/* Success Message */
+.success-msg {
+    background: #dcfce7;
+    color: #16a34a;
+    border: 1.5px solid #86efac;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 16px;
+    font-weight: 600;
+    text-align: center;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .layout-flex { flex-direction: column; }
+    .emoji-sidebar {
+        flex-direction: row;
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        padding-top: 20px;
+        padding-left: 0;
+    }
+}
+.emoji-item { cursor: pointer !important; }

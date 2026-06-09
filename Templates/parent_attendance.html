@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendance | Parent Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:       #0a0a0f;
+  --ink-soft:  #3a3a4a;
+  --ink-muted: #7a7a9a;
+  --surface:   #f4f3f8;
+  --card:      #ffffff;
+  --border:    rgba(10,10,15,0.08);
+  --present:   #00c896;
+  --absent:    #ff4d6d;
+  --neutral:   #b0aec8;
+  --grad-a:    #6c63ff;
+  --grad-b:    #3ecfcf;
+  --font-display: 'Syne', sans-serif;
+  --font-mono:    'DM Mono', monospace;
+  --radius:    16px;
+  --shadow:    0 8px 40px rgba(108,99,255,0.10);
+}
+
+body {
+  font-family: var(--font-display);
+  background: var(--surface);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── PAGE LAYOUT ── */
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+  display: grid;
+  gap: 20px;
+}
+
+/* ── SECTION EYEBROW ── */
+.section-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  animation: fadeUp 0.4s 0.05s both;
+}
+.section-eyebrow::before {
+  content: '';
+  width: 20px; height: 2px;
+  background: linear-gradient(90deg, var(--grad-a), var(--grad-b));
+  border-radius: 2px;
+}
+
+/* ── INFO STRIP (student + parent names) ── */
+.info-strip {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  animation: fadeUp 0.4s 0.08s both;
+}
+.info-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.info-pill .pill-label {
+  color: var(--ink-muted);
+  font-weight: 400;
+  font-size: 11px;
+}
+.info-pill.accent {
+  background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+  color: white;
+  border-color: transparent;
+}
+.info-pill.accent .pill-label { color: rgba(255,255,255,0.7); }
+
+/* ── TODAY HERO ── */
+.today-card {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  padding: 36px 36px 32px;
+  background: linear-gradient(135deg, #0a0a0f 0%, #1a1030 50%, #0d1a2e 100%);
+  color: white;
+  box-shadow: 0 16px 50px rgba(10,10,15,0.22);
+  animation: fadeUp 0.4s 0.12s both;
+}
+.today-card::after {
+  content: '';
+  position: absolute;
+  top: -50px; right: -50px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(108,99,255,0.22) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.today-top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.today-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 6px;
+}
+.today-date {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.65);
+}
+.today-status-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.status-orb {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--neutral);
+  transition: background 0.4s, box-shadow 0.4s;
+  flex-shrink: 0;
+}
+.status-orb.present {
+  background: var(--present);
+  box-shadow: 0 0 0 5px rgba(0,200,150,0.18), 0 0 18px rgba(0,200,150,0.4);
+  animation: pulse 2s ease-in-out infinite;
+}
+.status-orb.absent {
+  background: var(--absent);
+  box-shadow: 0 0 0 5px rgba(255,77,109,0.18), 0 0 18px rgba(255,77,109,0.4);
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 5px rgba(0,200,150,0.18), 0 0 18px rgba(0,200,150,0.4); }
+  50%       { box-shadow: 0 0 0 9px rgba(0,200,150,0.1),  0 0 28px rgba(0,200,150,0.6); }
+}
+.today-status-text {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: white;
+}
+
+/* ── STATS ROW ── */
+.stats-row {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.stat-cell {
+  padding: 16px 18px;
+  background: rgba(255,255,255,0.04);
+  transition: background 0.2s;
+}
+.stat-cell:hover { background: rgba(255,255,255,0.07); }
+.stat-cell-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.32);
+  margin-bottom: 6px;
+}
+.stat-cell-val {
+  font-size: 24px;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+.stat-cell-val.green  { color: var(--present); }
+.stat-cell-val.red    { color: var(--absent); }
+.stat-cell-val.purple {
+  background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── PROGRESS BAR ── */
+.progress-wrap {
+  position: relative;
+  z-index: 1;
+  margin-top: 20px;
+}
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(255,255,255,0.38);
+  margin-bottom: 7px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.progress-track {
+  height: 5px;
+  border-radius: 99px;
+  background: rgba(255,255,255,0.09);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--grad-a), var(--grad-b), var(--present));
+  background-size: 200%;
+  width: 0%;
+  transition: width 1.2s cubic-bezier(0.16,1,0.3,1);
+  animation: gradMove 3s linear infinite;
+}
+@keyframes gradMove {
+  0%   { background-position: 0%   50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* ── CALENDAR CARD ── */
+.calendar-card {
+  background: var(--card);
+  border-radius: 22px;
+  padding: 28px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.4s 0.2s both;
+}
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.calendar-title {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+}
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cal-btn {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  transition: all 0.18s;
+  color: var(--ink);
+}
+.cal-btn:hover {
+  background: var(--ink);
+  color: white;
+  border-color: var(--ink);
+}
+.cal-month {
+  font-size: 14px;
+  font-weight: 700;
+  min-width: 130px;
+  text-align: center;
+  letter-spacing: -0.2px;
+}
+.cal-dow-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 5px;
+}
+.cal-dow {
+  text-align: center;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  padding: 3px 0;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.cal-day {
+  aspect-ratio: 1;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  background: var(--surface);
+  color: var(--ink-soft);
+  transition: transform 0.15s, box-shadow 0.15s;
+  cursor: default;
+}
+.cal-day.empty { background: transparent; }
+.cal-day.present {
+  background: linear-gradient(135deg, #00c896, #00a878);
+  color: white;
+  box-shadow: 0 3px 10px rgba(0,200,150,0.28);
+}
+.cal-day.absent {
+  background: linear-gradient(135deg, #ff4d6d, #e0334f);
+  color: white;
+  box-shadow: 0 3px 10px rgba(255,77,109,0.22);
+}
+.cal-day.today-marker {
+  outline: 2px solid var(--grad-a);
+  outline-offset: -2px;
+}
+.cal-day:not(.empty):hover {
+  transform: scale(1.1);
+  z-index: 2;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.13);
+}
+.cal-legend {
+  display: flex;
+  gap: 20px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 3px;
+}
+.legend-dot.present { background: linear-gradient(135deg, #00c896, #00a878); }
+.legend-dot.absent  { background: linear-gradient(135deg, #ff4d6d, #e0334f); }
+.legend-dot.neutral { background: var(--surface); border: 1px solid var(--border); }
+
+/* ── TOAST ── */
+.att-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+  color: white;
+  font-weight: 700;
+  font-size: 12px;
+  box-shadow: 0 10px 32px rgba(108,99,255,0.32);
+  display: none;
+  z-index: 9999;
+  transform: translateY(16px);
+  opacity: 0;
+  transition: transform 0.32s cubic-bezier(0.34,1.56,0.64,1), opacity 0.32s;
+}
+.att-toast.show {
+  display: block;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ── ERROR STATE ── */
+.error-card {
+  background: #fff5f5;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  color: #b53a3a;
+  font-size: 14px;
+}
+
+@keyframes fadeUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@media (max-width: 600px) {
+  .today-card { padding: 24px 18px 20px; }
+  .stat-cell-val { font-size: 20px; }
+  .today-status-text { font-size: 20px; }
+  .calendar-card { padding: 18px 14px; }
+  .page { padding: 16px 12px 48px; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="section-eyebrow">Attendance Overview</div>
+
+  <!-- INFO STRIP -->
+  <div class="info-strip">
+    <div class="info-pill">
+      <span class="pill-label">Student</span>
+      <span id="att-student-name">Loading…</span>
+    </div>
+    <div class="info-pill">
+      <span class="pill-label">Class</span>
+      <span id="att-class">—</span>
+    </div>
+    <div class="info-pill">
+      <span class="pill-label">Roll No</span>
+      <span id="att-roll">—</span>
+    </div>
+    <div class="info-pill accent">
+      <span class="pill-label">Parent</span>
+      <span id="att-parent-name">—</span>
+    </div>
+  </div>
+
+  <!-- TODAY HERO -->
+  <div class="today-card">
+    <div class="today-top">
+      <div>
+        <div class="today-label">Today's Status</div>
+        <div class="today-date" id="att-date-display">—</div>
+      </div>
+      <div class="today-status-wrap">
+        <span class="status-orb" id="att-status-dot"></span>
+        <span class="today-status-text" id="att-today-text">Checking…</span>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-cell">
+        <div class="stat-cell-label">Present</div>
+        <div class="stat-cell-val green" id="att-present">—</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-cell-label">Absent</div>
+        <div class="stat-cell-val red" id="att-absent">—</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-cell-label">Rate</div>
+        <div class="stat-cell-val purple" id="att-percent">—</div>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-labels">
+        <span>Attendance Progress</span>
+        <span id="att-percent-label">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="att-progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALENDAR -->
+  <div class="calendar-card">
+    <div class="calendar-header">
+      <div class="calendar-title" id="att-month-year">Month Year</div>
+      <div class="calendar-nav">
+        <button class="cal-btn" onclick="attChangeMonth(-1)">←</button>
+        <span class="cal-month" id="att-cal-label"></span>
+        <button class="cal-btn" onclick="attChangeMonth(1)">→</button>
+      </div>
+    </div>
+
+    <div class="cal-dow-row">
+      <div class="cal-dow">Sun</div>
+      <div class="cal-dow">Mon</div>
+      <div class="cal-dow">Tue</div>
+      <div class="cal-dow">Wed</div>
+      <div class="cal-dow">Thu</div>
+      <div class="cal-dow">Fri</div>
+      <div class="cal-dow">Sat</div>
+    </div>
+
+    <div class="cal-grid" id="att-calendar-grid"></div>
+
+    <div class="cal-legend">
+      <div class="legend-item"><div class="legend-dot present"></div> Present</div>
+      <div class="legend-item"><div class="legend-dot absent"></div> Absent</div>
+      <div class="legend-item"><div class="legend-dot neutral"></div> No record</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="att-toast" id="att-notify-box"></div>
+
+<script>
+var attCalendarDate = new Date();
+var attStudentId    = null;
+var attLastStatus   = null;
+
+async function attInit() {
+  document.getElementById("att-date-display").innerText =
+    new Date().toLocaleDateString("en-IN", { weekday:"long", year:"numeric", month:"long", day:"numeric" });
+
+  try {
+    const res  = await fetch("/get_student_context");
+    if (res.status === 401) {
+      window.location.href = "/login_page";
+      return;
+    }
+    const data = await res.json();
+
+    if (data.status !== "success" || !data.student) {
+      document.querySelector(".page").innerHTML =
+        '<div class="error-card">⚠️ Student profile could not be loaded. Please login again.</div>';
+      return;
+    }
+
+    const student = data.student;
+    attStudentId  = student.student_id;
+
+    /* ── Populate info strip ── */
+    document.getElementById("att-student-name").innerText =
+      student.name || "—";
+    document.getElementById("att-class").innerText =
+      student.class || ((student.standard || "") + (student.section ? "-" + student.section : "")) || "—";
+    document.getElementById("att-roll").innerText =
+      student.roll_number || "—";
+
+    /* Parent name */
+    const parentName = data.parent_name || "Parent";
+    document.getElementById("att-parent-name").innerText = parentName;
+
+    await attRefreshAll();
+
+  } catch (err) {
+    console.error("attInit error:", err);
+    document.querySelector(".page").innerHTML =
+      '<div class="error-card">⚠️ Failed to load attendance data. Please try again.</div>';
+  }
+}
+
+async function attRefreshAll() {
+  if (!attStudentId) return;
+
+  try {
+    const res  = await fetch("/get_student_context");
+    const data = await res.json();
+    if (data.status !== "success" || !data.student) return;
+
+    const student       = data.student;
+    const currentStatus = student.today_attendance_status || "Not Marked";
+
+    if (attLastStatus && attLastStatus !== currentStatus) {
+      attShowNotification("📢 Attendance Updated: " + currentStatus);
+    }
+    attLastStatus = currentStatus;
+
+    /* Today status dot + text */
+    const dot  = document.getElementById("att-status-dot");
+    const text = document.getElementById("att-today-text");
+    dot.className = "status-orb";
+    if (currentStatus === "Present") {
+      text.innerText = "PRESENT";
+      dot.classList.add("present");
+    } else if (currentStatus === "Absent") {
+      text.innerText = "ABSENT";
+      dot.classList.add("absent");
+    } else {
+      text.innerText = "Not Marked";
+    }
+
+    /* Stats */
+    const sum = student.attendance_summary || { percentage: 0, present: 0, absent: 0 };
+    document.getElementById("att-percent").innerText       = sum.percentage + "%";
+    document.getElementById("att-percent-label").innerText = sum.percentage + "%";
+    document.getElementById("att-present").innerText       = sum.present;
+    document.getElementById("att-absent").innerText        = sum.absent;
+
+    /* Progress bar */
+    setTimeout(() => {
+      document.getElementById("att-progress-fill").style.width = sum.percentage + "%";
+    }, 300);
+
+    attLoadCalendar();
+
+  } catch (err) {
+    console.error("attRefreshAll error:", err);
+  }
+}
+
+async function attLoadCalendar() {
+  const year  = attCalendarDate.getFullYear();
+  const month = attCalendarDate.getMonth() + 1;
+
+  const monthLabel = attCalendarDate.toLocaleString("default", { month: "long", year: "numeric" });
+  document.getElementById("att-month-year").innerText = monthLabel;
+  document.getElementById("att-cal-label").innerText  = monthLabel;
+
+  try {
+    const res  = await fetch(`/get_month_attendance/${attStudentId}/${year}/${month}`);
+    const data = await res.json();
+
+    const grid = document.getElementById("att-calendar-grid");
+    grid.innerHTML = "";
+
+    const daysInMonth  = new Date(year, month, 0).getDate();
+    const firstWeekday = new Date(year, month - 1, 1).getDay();
+    const todayStr     = new Date().toISOString().split("T")[0];
+
+    /* Empty leading cells */
+    for (let i = 0; i < firstWeekday; i++) {
+      const empty = document.createElement("div");
+      empty.classList.add("cal-day", "empty");
+      grid.appendChild(empty);
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr =
+        year + "-" +
+        String(month).padStart(2, "0") + "-" +
+        String(d).padStart(2, "0");
+
+      const box = document.createElement("div");
+      box.classList.add("cal-day");
+      box.innerText = d;
+
+      if (data[dateStr] === "Present") box.classList.add("present");
+      else if (data[dateStr] === "Absent") box.classList.add("absent");
+
+      if (dateStr === todayStr) box.classList.add("today-marker");
+
+      box.style.animation = `fadeUp 0.3s ${(firstWeekday + d) * 0.012}s both`;
+      grid.appendChild(box);
+    }
+
+  } catch (err) {
+    console.error("attLoadCalendar error:", err);
+  }
+}
+
+function attChangeMonth(step) {
+  attCalendarDate.setMonth(attCalendarDate.getMonth() + step);
+  attLoadCalendar();
+}
+
+function attShowNotification(msg) {
+  const box     = document.getElementById("att-notify-box");
+  box.innerText = msg;
+  box.style.display = "block";
+  requestAnimationFrame(() => box.classList.add("show"));
+  setTimeout(() => {
+    box.classList.remove("show");
+    setTimeout(() => { box.style.display = "none"; }, 400);
+  }, 3000);
+}
+
+/* Auto-init: works both as standalone page and when injected via loadSection() */
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", attInit);
+} else {
+  attInit();
+}
+</script>
+</body>
+</html>

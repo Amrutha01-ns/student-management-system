@@ -1,0 +1,203 @@
+:root {
+    --primary: #6c63ff;
+    --bg-color: #f0f2f5;
+    --card-bg: #ffffff;
+    --text-color: #333;
+    --accent: #ff6584;
+}
+
+/* Theme Switcher Styles */
+.theme-pink {
+    --primary: #ff6584;
+    --accent: #6c63ff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    overflow-x: hidden;
+    transition: background 0.5s ease;
+}
+
+/* Animated Background Blobs */
+.background-blobs {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1;
+    background: radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 101, 132, 0.1) 0%, transparent 40%);
+}
+
+header {
+    background: var(--primary);
+    padding: 2rem;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    position: relative;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    animation: slideDown 0.8s ease-out;
+}
+
+.back-arrow {
+    position: absolute;
+    left: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-size: 1.5rem;
+    transition: 0.3s;
+}
+
+.back-arrow:hover {
+    transform: translateY(-50%) scale(1.2);
+}
+
+.container {
+    max-width: 900px;
+    margin: -20px auto 40px;
+    padding: 0 20px;
+}
+
+.info-card {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    animation: fadeIn 1s ease-in;
+}
+
+.student-details p {
+    margin: 5px 0;
+    font-size: 1.1rem;
+}
+
+.sub-details {
+    display: flex;
+    gap: 20px;
+    color: #666;
+}
+
+.settings-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.settings-btn:hover {
+    transform: rotate(-3deg);
+    filter: brightness(1.1);
+}
+
+/* Graph Styling */
+.graph-container {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.graph-box {
+    position: relative;
+    padding: 20px;
+    border-left: 3px solid var(--primary);
+    border-bottom: 3px solid var(--primary);
+    margin-bottom: 30px;
+}
+
+.progress-graph {
+    width: 100%;
+    height: auto;
+}
+
+.graph-line {
+    fill: none;
+    stroke: var(--primary);
+    stroke-width: 3;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: draw 2s forwards ease-in-out;
+}
+
+.point {
+    fill: var(--accent);
+    transition: 0.3s;
+}
+
+.point:hover {
+    r: 10;
+    fill: var(--primary);
+}
+
+.y-axis-label {
+    position: absolute;
+    left: -80px;
+    top: 50%;
+    transform: rotate(-90deg) translateY(-50%);
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.x-axis-label {
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.styled-select, .download-btn {
+    padding: 12px 25px;
+    border-radius: 12px;
+    border: 2px solid var(--primary);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.download-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+}
+
+.download-btn:hover {
+    background: var(--accent);
+}
+
+/* Animations */
+@keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes draw {
+    to { stroke-dashoffset: 0; }
+}

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements | AET Parent Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='parent_ann.css') }}">
+<style>
+
+/* ── reset any inherited overflow clipping ── */
+* { box-sizing: border-box; }
+
+/* ── Tabs ── */
+.ann-navbar {
+  display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;
+}
+.ann-tab {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 40px; padding: 0 22px;
+  background: #1c2430;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  font-size: 13px; font-weight: 600; color: #8b949e;
+  cursor: pointer; font-family: 'Outfit', sans-serif;
+  transition: all 0.18s; text-decoration: none;
+}
+.ann-tab:hover {
+  background: #21262d; color: #e6edf3; border-color: #58a6ff;
+}
+.ann-tab.active {
+  background: linear-gradient(135deg, rgba(88,166,255,0.20), rgba(88,166,255,0.08));
+  color: #79c0ff;
+  border-color: rgba(88,166,255,0.55);
+  box-shadow: 0 0 18px rgba(88,166,255,0.12), inset 0 0 0 1px rgba(88,166,255,0.08);
+}
+
+/* ── Current announcement cards ── */
+.ann-card-wrap {
+  background: #161b22; border: 1px solid #21262d; border-radius: 12px;
+  padding: 16px 18px; margin-bottom: 10px;
+  display: flex; gap: 14px; align-items: flex-start; transition: all 0.16s;
+}
+.ann-card-wrap:hover { border-color: #30363d; background: #1c2430; }
+.ann-side-bar {
+  width: 3px; border-radius: 3px; flex-shrink: 0; align-self: stretch; min-height: 38px;
+  background: linear-gradient(180deg, #58a6ff, #a78bfa);
+}
+.ann-body h4 { font-size: 13.5px; font-weight: 600; color: #e6edf3; margin-bottom: 5px; }
+.ann-body p  { font-size: 12.5px; color: #8b949e; line-height: 1.65; }
+.ann-meta    { font-size: 10.5px; color: #6e7681; margin-top: 9px; }
+.ann-empty {
+  background: #161b22; border: 1px dashed #30363d; border-radius: 12px;
+  padding: 32px 20px; text-align: center; font-size: 13px; color: #8b949e;
+}
+
+/* ── hint ── */
+.hint-text {
+  font-size: 12px; color: #6e7681; margin-bottom: 20px; line-height: 1.8;
+}
+
+/* ── Two-column layout ── */
+.search-layout {
+  display: flex; gap: 24px; align-items: flex-start;
+}
+.cal-col     { flex: 0 0 300px; }
+.results-col { flex: 1; min-width: 0; }
+
+/* ── Calendar card ── */
+.cal-wrapper {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 16px;
+  overflow: visible;          /* never clip the footer */
+  font-family: 'Outfit', sans-serif;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+}
+
+/* month nav */
+.cal-nav-row {
+  padding: 14px 14px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid #21262d;
+}
+.cal-month-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px; font-weight: 700; color: #e6edf3; letter-spacing: -0.2px;
+}
+.cal-nav-btn {
+  width: 30px; height: 30px;
+  background: #1c2430; border: 1px solid #30363d; border-radius: 8px;
+  cursor: pointer; color: #8b949e; font-size: 17px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; user-select: none; line-height: 1;
+}
+.cal-nav-btn:hover { background: rgba(88,166,255,0.12); color: #79c0ff; border-color: rgba(88,166,255,0.5); }
+
+/* year row */
+.cal-year-row {
+  padding: 8px 14px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid #21262d;
+  background: rgba(255,255,255,0.015);
+}
+.cal-year-lbl { font-size: 11px; color: #6e7681; flex: 1; }
+.cal-year-step {
+  width: 24px; height: 24px;
+  background: #1c2430; border: 1px solid #30363d; border-radius: 6px;
+  cursor: pointer; color: #8b949e; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; user-select: none; line-height: 1;
+}
+.cal-year-step:hover { background: rgba(88,166,255,0.12); color: #79c0ff; border-color: rgba(88,166,255,0.5); }
+.cal-year-val {
+  font-size: 13px; font-weight: 600; color: #e6edf3; min-width: 38px; text-align: center;
+}
+
+/* day names */
+.cal-daynames {
+  display: grid; grid-template-columns: repeat(7,1fr);
+  padding: 10px 8px 4px;
+}
+.cal-daynames span {
+  text-align: center; font-size: 9.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.8px; color: #6e7681;
+}
+
+/* day grid */
+.cal-grid {
+  display: grid; grid-template-columns: repeat(7,1fr);
+  gap: 3px; padding: 0 8px 10px;
+}
+.cal-day {
+  aspect-ratio: 1/1; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12.5px; font-weight: 500; color: #6e7681;
+  cursor: pointer; transition: all 0.13s;
+  position: relative; border: 1px solid transparent;
+}
+.cal-day:hover:not(.cal-empty):not(.cal-selected) {
+  background: rgba(88,166,255,0.08); color: #e6edf3; border-color: rgba(88,166,255,0.25);
+}
+.cal-empty { cursor: default; pointer-events: none; }
+.cal-today { color: #58a6ff; font-weight: 700; }
+.cal-today::after {
+  content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+  width: 4px; height: 4px; border-radius: 50%;
+  background: #58a6ff; box-shadow: 0 0 6px #58a6ff;
+}
+.cal-has-ann { color: #e6edf3; }
+.cal-has-ann::before {
+  content: ''; position: absolute; top: 3px; right: 3px;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #58a6ff; box-shadow: 0 0 6px rgba(88,166,255,0.9);
+}
+.cal-selected {
+  background: rgba(88,166,255,0.18) !important;
+  border-color: #58a6ff !important;
+  color: #79c0ff !important; font-weight: 700;
+  box-shadow: 0 0 0 2px rgba(88,166,255,0.22);
+}
+
+/* footer with search button */
+.cal-footer {
+  padding: 12px 14px 14px;
+  border-top: 1px solid #21262d;
+  border-radius: 0 0 16px 16px;
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.015);
+}
+.cal-sel-label { flex: 1; font-size: 11px; color: #8b949e; line-height: 1.5; }
+.cal-sel-label strong { color: #e6edf3; display: block; font-size: 11.5px; }
+
+.cal-search-btn {
+  height: 34px; padding: 0 20px; flex-shrink: 0;
+  background: linear-gradient(135deg, #58a6ff 0%, #79c0ff 100%);
+  border: none; border-radius: 9px;
+  font-size: 13px; font-weight: 700; color: #0d1117;
+  cursor: pointer; font-family: 'Outfit', sans-serif; transition: all 0.18s;
+  box-shadow: 0 3px 12px rgba(88,166,255,0.35);
+  white-space: nowrap;
+}
+.cal-search-btn:hover {
+  opacity: 0.88; transform: translateY(-1px);
+  box-shadow: 0 5px 18px rgba(88,166,255,0.45);
+}
+.cal-search-btn:disabled {
+  opacity: 0.22; cursor: not-allowed; transform: none; box-shadow: none;
+}
+
+/* ── Results column ── */
+.results-placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 280px; text-align: center;
+  border: 1px dashed #21262d; border-radius: 14px;
+  background: rgba(255,255,255,0.01); padding: 24px;
+}
+.results-placeholder .ph-ico { font-size: 34px; margin-bottom: 12px; opacity: 0.45; }
+.results-placeholder p { font-size: 13px; color: #6e7681; margin-bottom: 4px; }
+.results-placeholder small { font-size: 11px; color: #3d444d; }
+
+.search-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 14px; gap: 8px;
+}
+.search-title {
+  font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: #e6edf3;
+}
+.search-date-tag {
+  font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+  color: #58a6ff; background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.28);
+  padding: 4px 10px; border-radius: 999px; white-space: nowrap;
+}
+.search-meta-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.search-clear {
+  font-size: 11px; color: #6e7681; cursor: pointer; background: none; border: none;
+  font-family: 'Outfit', sans-serif; text-decoration: underline;
+}
+.search-clear:hover { color: #8b949e; }
+.search-no-result {
+  background: #161b22; border: 1px dashed #30363d; border-radius: 12px;
+  padding: 30px 20px; text-align: center;
+}
+.search-no-result .no-ico { font-size: 28px; display: block; margin-bottom: 12px; }
+.search-no-result p { font-size: 13px; color: #8b949e; margin-bottom: 4px; }
+.search-no-result small { font-size: 11px; color: #6e7681; }
+
+.search-ann-card {
+  background: #161b22; border: 1px solid #21262d; border-radius: 12px;
+  padding: 15px 17px; margin-bottom: 10px;
+  display: flex; gap: 13px; align-items: flex-start; transition: all 0.16s;
+}
+.search-ann-card:hover { border-color: #30363d; background: #1c2430; }
+.search-ann-bar {
+  width: 3px; border-radius: 3px; flex-shrink: 0; align-self: stretch; min-height: 38px;
+  background: linear-gradient(180deg, #58a6ff, #a78bfa);
+}
+.search-ann-body h4 { font-size: 13px; font-weight: 600; color: #e6edf3; margin-bottom: 5px; }
+.search-ann-body p  { font-size: 12px; color: #8b949e; line-height: 1.6; }
+.search-ann-meta    { font-size: 10.5px; color: #6e7681; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <header class="info-header">
+        <div class="info-group">
+            <p><strong>Parent:</strong> <span id="ann-parent-name">Loading...</span></p>
+        </div>
+        <div class="info-group right">
+            <button class="back-btn" onclick="window.location.href='/parent_dashboard'">
+                &#8592; Back to Dashboard
+            </button>
+        </div>
+    </header>
+
+    <!-- Tabs -->
+    <div class="ann-navbar">
+        <a class="ann-tab active" id="tab-current" href="javascript:void(0)"
+           onclick="annShowSection('current')">
+            🔔 Current Announcements
+        </a>
+        <a class="ann-tab" id="tab-history" href="javascript:void(0)"
+           onclick="annShowSection('history')">
+            📅 Search by Date
+        </a>
+    </div>
+
+    <!-- ── Current Announcements ── -->
+    <div id="ann-section-current">
+        <div id="ann-list"><p class="ann-empty">Loading announcements...</p></div>
+    </div>
+
+    <!-- ── Search by Date ── -->
+    <div id="ann-section-history" style="display:none;">
+
+        <p class="hint-text">
+            Pick a date on the calendar to find announcements from that day.&nbsp;
+            A <span style="color:#58a6ff; font-weight:700;">&#9679;</span> blue dot means
+            announcements exist on that day.
+        </p>
+
+        <div class="search-layout">
+
+            <!-- Calendar -->
+            <div class="cal-col">
+                <div class="cal-wrapper">
+                    <div class="cal-nav-row">
+                        <button class="cal-nav-btn" id="ann-prev-month">&#8249;</button>
+                        <span class="cal-month-label" id="ann-month-label">—</span>
+                        <button class="cal-nav-btn" id="ann-next-month">&#8250;</button>
+                    </div>
+                    <div class="cal-year-row">
+                        <span class="cal-year-lbl">Year</span>
+                        <button class="cal-year-step" id="ann-prev-year">&#8722;</button>
+                        <span class="cal-year-val" id="ann-year-val">—</span>
+                        <button class="cal-year-step" id="ann-next-year">&#43;</button>
+                    </div>
+                    <div class="cal-daynames">
+                        <span>Su</span><span>Mo</span><span>Tu</span><span>We</span>
+                        <span>Th</span><span>Fr</span><span>Sa</span>
+                    </div>
+                    <div class="cal-grid" id="ann-cal-grid"></div>
+                    <div class="cal-footer">
+                        <span class="cal-sel-label" id="ann-sel-label">
+                            No date selected
+                        </span>
+                        <button class="cal-search-btn" id="ann-search-btn" disabled>
+                            Search &#8594;
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="results-col">
+                <div id="ann-search-results">
+                    <div class="results-placeholder">
+                        <div class="ph-ico">📅</div>
+                        <p>Select a date to see announcements</p>
+                        <small>Dates with a blue dot have content</small>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div><!-- /.container -->
+
+<script>
+(function(){
+
+var MONTHS=["January","February","March","April","May","June",
+            "July","August","September","October","November","December"];
+function pad(n){return ("0"+n).slice(-2);}
+function toKey(y,m,d){return y+"-"+pad(m+1)+"-"+pad(d);}
+function todayKey(){var t=new Date();return toKey(t.getFullYear(),t.getMonth(),t.getDate());}
+function niceDate(s){
+    var p=s.split("-").map(Number);
+    return new Date(p[0],p[1]-1,p[2]).toLocaleDateString("en-IN",
+        {weekday:"long",day:"numeric",month:"long",year:"numeric"});
+}
+function fmtFull(ds){
+    var d=new Date(ds);
+    return d.toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})
+          +" at "+d.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+}
+
+var viewY=new Date().getFullYear(), viewM=new Date().getMonth();
+var selDate=null, allAnn=[];
+
+document.getElementById("ann-parent-name").innerText=localStorage.getItem("name")||"Parent";
+
+/* fetch once */
+fetch("/get_announcements/parent/A")
+  .then(function(r){return r.json();})
+  .then(function(data){
+      allAnn=Array.isArray(data)?data:[];
+      renderList(); renderCal();
+  })
+  .catch(function(){
+      allAnn=[];
+      document.getElementById("ann-list").innerHTML=
+          '<p class="ann-empty">&#10060; Failed to load announcements.</p>';
+  });
+
+function renderList(){
+    var c=document.getElementById("ann-list");
+    if(!allAnn.length){
+        c.innerHTML='<div class="ann-empty">&#128235; No announcements yet.</div>';
+        return;
+    }
+    c.innerHTML=allAnn.map(function(a){
+        return '<div class="ann-card-wrap">'
+              +'<div class="ann-side-bar"></div>'
+              +'<div class="ann-body">'
+              +'<h4>'+a.title+'</h4><p>'+a.content+'</p>'
+              +'<div class="ann-meta">&#128204; '+a.posted_by+' &nbsp;&middot;&nbsp; '+fmtFull(a.date)+'</div>'
+              +'</div></div>';
+    }).join("");
+}
+
+window.annShowSection=function(name){
+    document.getElementById("ann-section-current").style.display=name==="current"?"block":"none";
+    document.getElementById("ann-section-history").style.display=name==="history"?"block":"none";
+    document.getElementById("tab-current").classList.toggle("active",name==="current");
+    document.getElementById("tab-history").classList.toggle("active",name==="history");
+    if(name==="history") renderCal();
+};
+
+function renderCal(){
+    document.getElementById("ann-month-label").textContent=MONTHS[viewM];
+    document.getElementById("ann-year-val").textContent=viewY;
+
+    var ann={};
+    allAnn.forEach(function(a){if(a.date)ann[a.date.substring(0,10)]=true;});
+
+    var today=todayKey();
+    var first=new Date(viewY,viewM,1).getDay();
+    var total=new Date(viewY,viewM+1,0).getDate();
+    var html="";
+    for(var i=0;i<first;i++) html+='<div class="cal-day cal-empty"></div>';
+    for(var d=1;d<=total;d++){
+        var k=toKey(viewY,viewM,d);
+        var c="cal-day";
+        if(k===today)  c+=" cal-today";
+        if(ann[k])     c+=" cal-has-ann";
+        if(k===selDate)c+=" cal-selected";
+        html+='<div class="'+c+'" data-date="'+k+'">'+d+'</div>';
+    }
+    var grid=document.getElementById("ann-cal-grid");
+    grid.innerHTML=html;
+    var cells=grid.querySelectorAll(".cal-day:not(.cal-empty)");
+    for(var j=0;j<cells.length;j++){
+        cells[j].addEventListener("click",function(){
+            selDate=this.getAttribute("data-date");
+            var lbl=document.getElementById("ann-sel-label");
+            lbl.innerHTML="<strong>"+niceDate(selDate)+"</strong>";
+            document.getElementById("ann-search-btn").disabled=false;
+            renderCal();
+        });
+    }
+}
+
+document.getElementById("ann-prev-month").onclick=function(){if(viewM===0){viewM=11;viewY--;}else viewM--;renderCal();};
+document.getElementById("ann-next-month").onclick=function(){if(viewM===11){viewM=0;viewY++;}else viewM++;renderCal();};
+document.getElementById("ann-prev-year").onclick=function(){viewY--;renderCal();};
+document.getElementById("ann-next-year").onclick=function(){viewY++;renderCal();};
+
+var PLACEHOLDER='<div class="results-placeholder">'
+    +'<div class="ph-ico">📅</div>'
+    +'<p>Select a date to see announcements</p>'
+    +'<small>Dates with a blue dot have content</small>'
+    +'</div>';
+
+document.getElementById("ann-search-btn").onclick=function(){
+    if(!selDate)return;
+    var filtered=allAnn.filter(function(a){return a.date&&a.date.indexOf(selDate)===0;});
+    var rd=document.getElementById("ann-search-results");
+
+    var header='<div class="search-header">'
+        +'<span class="search-title">Results</span>'
+        +'<div class="search-meta-row">'
+        +'<span class="search-date-tag">'+niceDate(selDate)+'</span>'
+        +'<button class="search-clear" id="ann-clear-btn">Clear</button>'
+        +'</div></div>';
+
+    if(!filtered.length){
+        rd.innerHTML=header+'<div class="search-no-result">'
+            +'<span class="no-ico">&#128235;</span>'
+            +'<p>No announcements on this date.</p>'
+            +'<small>Try a different date or check Current Announcements.</small>'
+            +'</div>';
+    } else {
+        rd.innerHTML=header+filtered.map(function(a){
+            return '<div class="search-ann-card">'
+                +'<div class="search-ann-bar"></div>'
+                +'<div class="search-ann-body">'
+                +'<h4>'+(a.title||"Announcement")+'</h4>'
+                +'<p>'+(a.content||"")+'</p>'
+                +'<div class="search-ann-meta">&#128204; '+(a.posted_by||"Teacher")
+                +' &nbsp;&middot;&nbsp; '+(a.date?a.date.substring(0,10):"")+'</div>'
+                +'</div></div>';
+        }).join("");
+    }
+    /* wire clear button after injection */
+    var clr=document.getElementById("ann-clear-btn");
+    if(clr) clr.onclick=function(){rd.innerHTML=PLACEHOLDER;};
+};
+
+renderCal();
+})();
+</script>
+</body>
+</html>

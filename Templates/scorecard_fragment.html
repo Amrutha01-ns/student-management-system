@@ -1,0 +1,289 @@
+{# scorecard_fragment.html — embedded inside parent/student dashboard dynamic-content #}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+/* ── Hard reset: stop scorecard styles bleeding into parent dashboard ── */
+#scorecard-embed-root {
+    all: initial;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+#scorecard-embed-root * {
+    box-sizing: border-box;
+}
+
+/* ── Marks Card ───────────────────────────────────────────────── */
+#scorecard-embed-root .sc-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    max-width: 760px;
+    margin: 0 auto;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+/* ── Header ───────────────────────────────────────────────────── */
+#scorecard-embed-root .sc-header {
+    background: #1a1a2e;
+    color: white;
+    text-align: center;
+    padding: 24px 20px 16px;
+}
+#scorecard-embed-root .sc-header .sc-logo {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 8px;
+}
+#scorecard-embed-root .sc-header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin: 0 0 4px;
+    color: white;
+}
+#scorecard-embed-root .sc-header p {
+    font-size: 13px;
+    color: #a0aec0;
+    margin: 0;
+}
+#scorecard-embed-root .sc-divider {
+    border: none;
+    border-top: 2px solid #4f46e5;
+    margin: 12px 20px 0;
+}
+
+/* ── Profile Grid ─────────────────────────────────────────────── */
+#scorecard-embed-root .sc-profile {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 18px 20px;
+    background: #f8faff;
+    border-bottom: 1px solid #e2e8f0;
+}
+#scorecard-embed-root .sc-profile .p-item {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #374151;
+}
+#scorecard-embed-root .sc-profile .p-item strong {
+    color: #6b7280;
+    font-weight: 600;
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+}
+
+/* ── Marks Table ──────────────────────────────────────────────── */
+#scorecard-embed-root .sc-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+#scorecard-embed-root .sc-table thead tr {
+    background: #1a1a2e;
+    color: white;
+}
+#scorecard-embed-root .sc-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: white;
+}
+#scorecard-embed-root .sc-table tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+}
+#scorecard-embed-root .sc-table tbody tr:hover {
+    background: #f8faff;
+}
+#scorecard-embed-root .sc-table td {
+    padding: 12px 16px;
+    color: #374151;
+}
+#scorecard-embed-root .sc-table .grade {
+    font-weight: 700;
+    color: #4f46e5;
+}
+
+/* ── Summary ──────────────────────────────────────────────────── */
+#scorecard-embed-root .sc-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px;
+    background: #f8faff;
+    border-top: 1px solid #e2e8f0;
+}
+#scorecard-embed-root .sc-summary .sc-stats p {
+    font-size: 14px;
+    color: #374151;
+    margin: 4px 0;
+}
+#scorecard-embed-root .sc-summary .sc-stats strong {
+    color: #1f2937;
+    font-weight: 700;
+}
+#scorecard-embed-root .sc-result {
+    text-align: center;
+}
+#scorecard-embed-root .sc-result .stars {
+    font-size: 20px;
+    margin-bottom: 6px;
+}
+#scorecard-embed-root .result-badge {
+    display: inline-block;
+    padding: 6px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+#scorecard-embed-root .result-badge.pass     { background: #dcfce7; color: #16a34a; }
+#scorecard-embed-root .result-badge.fail     { background: #fee2e2; color: #dc2626; }
+#scorecard-embed-root .result-badge.first    { background: #dbeafe; color: #1d4ed8; }
+#scorecard-embed-root .result-badge.distinct { background: #fef9c3; color: #b45309; }
+
+/* ── Footer ───────────────────────────────────────────────────── */
+#scorecard-embed-root .sc-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 16px 20px;
+    border-top: 1px solid #e2e8f0;
+    font-size: 13px;
+    color: #6b7280;
+}
+#scorecard-embed-root .sc-footer .sig-line {
+    width: 140px;
+    border-top: 1px solid #374151;
+    margin-bottom: 4px;
+}
+
+/* ── Print Button ─────────────────────────────────────────────── */
+#scorecard-embed-root .sc-print-btn {
+    display: block;
+    margin: 16px auto 0;
+    padding: 10px 28px;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#scorecard-embed-root .sc-print-btn:hover { background: #4338ca; }
+
+@media print {
+    #scorecard-embed-root .sc-print-btn { display: none; }
+}
+</style>
+
+<div id="scorecard-embed-root">
+    <div class="sc-card" id="printable-area">
+
+        <!-- Header -->
+        <div class="sc-header">
+            <span class="sc-logo">🏛️</span>
+            <h1>AET SCHOOL OF EXCELLENCE</h1>
+            <p>Karnataka</p>
+            <hr class="sc-divider">
+        </div>
+
+        <!-- Profile -->
+        <div class="sc-profile">
+            <div class="p-item"><strong>Student Name</strong>{{ student_name }}</div>
+            <div class="p-item"><strong>Reg No</strong>{{ reg_no }}</div>
+            <div class="p-item"><strong>Class</strong>{{ class_name }}</div>
+            <div class="p-item"><strong>Father's Name</strong>{{ father_name }}</div>
+            <div class="p-item"><strong>Exam</strong>{{ exam_type }}</div>
+            <div class="p-item"><strong>Date</strong>{{ exam_date }}</div>
+        </div>
+
+        <!-- Marks Table -->
+        <table class="sc-table">
+            <thead>
+                <tr>
+                    <th>Sl.No</th>
+                    <th>Subject</th>
+                    <th>Max</th>
+                    <th>Obtained</th>
+                    <th>Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set subjects = [
+                    ('Kannada',     kannada),
+                    ('English',     english),
+                    ('Physics',     physics),
+                    ('Chemistry',   chemistry),
+                    ('Mathematics', maths),
+                    ('Biology',     biology)
+                ] %}
+                {% for sname, marks in subjects %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ sname }}</td>
+                    <td>100</td>
+                    <td>{{ marks }}</td>
+                    <td class="grade">
+                        {% if marks >= 85 %}A+
+                        {% elif marks >= 70 %}A
+                        {% elif marks >= 50 %}B
+                        {% else %}C{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Summary -->
+        <div class="sc-summary">
+            <div class="sc-stats">
+                <p>Total: <strong>{{ total_marks }} / 600</strong></p>
+                <p>Percentage: <strong>{{ percentage }}%</strong></p>
+            </div>
+            <div class="sc-result">
+                <div class="stars">
+                    {% if percentage >= 85 %}⭐⭐⭐
+                    {% elif percentage >= 60 %}⭐⭐
+                    {% else %}⭐{% endif %}
+                </div>
+                <span class="result-badge
+                    {% if result_status == 'DISTINCTION' %}distinct
+                    {% elif result_status in ['FIRST CLASS', 'SECOND CLASS', 'PASS'] %}pass
+                    {% else %}fail{% endif %}">
+                    {{ result_status }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="sc-footer">
+            <span>Date: {{ exam_date }}</span>
+            <div style="text-align:center;">
+                <div class="sig-line"></div>
+                <span>Principal Signature</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Print button -->
+    <button class="sc-print-btn" onclick="window.print()">
+        <i class="fas fa-print"></i> Download / Print Report
+    </button>
+</div>

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Register | AET School</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='register.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+<div class="bg-orb orb-3"></div>
+
+<!-- Existing Account Popup -->
+<div id="existingAccountPopup" style="
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,0.55);
+    justify-content:center; align-items:center;
+    z-index:9999; backdrop-filter:blur(4px);
+">
+  <div style="
+      background:white; border-radius:16px;
+      padding:36px 32px; max-width:380px; width:90%;
+      text-align:center;
+      box-shadow:0 24px 60px rgba(0,0,0,0.25);
+      animation:popIn 0.25s ease;
+  ">
+    <div style="font-size:52px; margin-bottom:8px;">👋</div>
+    <h3 style="margin:0 0 8px; font-size:20px; color:#111;">Welcome back!</h3>
+    <p style="margin:0 0 6px; color:#374151; font-size:15px;">Account found for</p>
+    <p style="margin:0 0 4px; font-weight:700; font-size:17px; color:#2563eb;" id="existingName"></p>
+    <p style="margin:0 0 4px; font-size:13px; color:#6b7280;" id="existingRole"></p>
+    <p style="margin:12px 0 24px; font-size:13px; color:#9ca3af;">
+      Name, phone and email match an existing account.<br>
+      Press Enter or click below to open your dashboard.
+    </p>
+    <div style="display:flex; gap:12px; justify-content:center;">
+      <button id="dashboardBtn" onclick="goToDashboard()" style="
+          background:#2563eb; color:white; border:none;
+          padding:11px 28px; border-radius:8px;
+          cursor:pointer; font-weight:600; font-size:14px;
+      ">Open My Dashboard →</button>
+      <button onclick="closeExistingPopup()" style="
+          background:#f3f4f6; color:#374151; border:none;
+          padding:11px 20px; border-radius:8px;
+          cursor:pointer; font-size:14px;
+      ">Dismiss</button>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes popIn {
+  from { transform:scale(0.85); opacity:0; }
+  to   { transform:scale(1);    opacity:1; }
+}
+</style>
+
+<div class="page-wrapper">
+  <div class="register-card">
+
+    <div class="card-header">
+      <div class="logo-wrap">
+        <div class="logo-ring"></div>
+        <div class="logo">🎓</div>
+      </div>
+      <h2>Create Account</h2>
+      <p class="subtitle">AET School of Excellence — Management System</p>
+      <div class="header-line"></div>
+    </div>
+
+    <form id="registerForm" autocomplete="off">
+
+      <input type="text"     style="display:none;" aria-hidden="true">
+      <input type="password" style="display:none;" aria-hidden="true">
+
+      <!-- Full Name -->
+      <div class="field-group anim-field" style="--i:1">
+        <label>Full Name <span class="required">*</span></label>
+        <div class="input-wrap">
+          <span class="input-icon">👤</span>
+          <input type="text" id="name" placeholder="Enter your full name" autocomplete="off" required>
+        </div>
+      </div>
+
+      <!-- Role -->
+      <div class="field-group anim-field" style="--i:2">
+        <label>Register As <span class="required">*</span></label>
+        <div class="role-tabs">
+          <button type="button" class="role-tab active" data-role="student" onclick="selectRole('student')">🎒 Student</button>
+          <button type="button" class="role-tab" data-role="teacher" onclick="selectRole('teacher')">📖 Teacher</button>
+          <button type="button" class="role-tab" data-role="parent" onclick="selectRole('parent')">👨‍👩‍👦 Parent</button>
+        </div>
+        <select id="role" style="display:none;">
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+          <option value="parent">Parent</option>
+        </select>
+      </div>
+
+      <!-- Father / Mother -->
+      <div id="parentNamesBlock" class="field-row anim-field" style="--i:3">
+        <div class="field-group">
+          <label>Father's Name</label>
+          <div class="input-wrap">
+            <span class="input-icon">👨</span>
+            <input type="text" id="father_name" placeholder="Father's name" autocomplete="off">
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Mother's Name</label>
+          <div class="input-wrap">
+            <span class="input-icon">👩</span>
+            <input type="text" id="mother_name" placeholder="Mother's name" autocomplete="off">
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone -->
+      <div class="field-group anim-field" style="--i:4">
+        <label>Phone Number <span class="required">*</span></label>
+        <div class="input-wrap">
+          <span class="input-icon">📱</span>
+          <input type="tel" id="phone" placeholder="10-digit phone number" maxlength="10" autocomplete="off" required>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="field-group anim-field" style="--i:5">
+        <label>Email Address <span class="required">*</span></label>
+        <div class="input-wrap">
+          <span class="input-icon">✉️</span>
+          <input type="email" id="email" placeholder="Enter your email" autocomplete="off" required>
+        </div>
+      </div>
+
+      <!-- Student fields -->
+      <div id="studentFields" class="special-fields-box anim-field" style="--i:6">
+        <div class="section-badge">📚 Student Details</div>
+        <div class="field-group">
+          <label>Roll Number <span class="required">*</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">🔢</span>
+            <input type="text" id="roll_number" placeholder="e.g. 101" autocomplete="off">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Standard <span class="required">*</span></label>
+            <div class="input-wrap select-wrap">
+              <span class="input-icon">🏫</span>
+              <select id="standard" autocomplete="off">
+                <option value="8th">8th Standard</option>
+                <option value="9th">9th Standard</option>
+                <option value="10th">10th Standard</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Section <span class="required">*</span></label>
+            <div class="input-wrap select-wrap">
+              <span class="input-icon">🔤</span>
+              <select id="section" autocomplete="off">
+                <option value="A">Section A</option>
+                <option value="B">Section B</option>
+                <option value="C">Section C</option>
+                <option value="D">Section D</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parent fields -->
+      <div id="parentFields" style="display:none;" class="special-fields-box anim-field" style="--i:6">
+        <div class="section-badge">👪 Child Details</div>
+        <div class="field-group">
+          <label>Child's Full Name <span class="required">*</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">🧒</span>
+            <input type="text" id="child_name" placeholder="Enter your child's full name" autocomplete="off">
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Child's Roll Number <span class="required">*</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">🔢</span>
+            <input type="text" id="child_roll_number" placeholder="Must match existing roll number in DB" autocomplete="off">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Child's Standard <span class="required">*</span></label>
+            <div class="input-wrap select-wrap">
+              <span class="input-icon">🏫</span>
+              <select id="parent_standard" autocomplete="off">
+                <option value="8th">8th Standard</option>
+                <option value="9th">9th Standard</option>
+                <option value="10th">10th Standard</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Child's Section <span class="required">*</span></label>
+            <div class="input-wrap select-wrap">
+              <span class="input-icon">🔤</span>
+              <select id="parent_section" autocomplete="off">
+                <option value="A">Section A</option>
+                <option value="B">Section B</option>
+                <option value="C">Section C</option>
+                <option value="D">Section D</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="field-group anim-field" style="--i:7">
+        <label>Password <span class="required">*</span></label>
+        <div class="input-wrap password-wrapper">
+          <span class="input-icon">🔒</span>
+          <input type="password" id="password" placeholder="Min 6 characters" autocomplete="new-password" required>
+          <button type="button" class="eye-btn" onclick="togglePassword()">
+            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="strength-bar"><div id="strengthFill" class="strength-fill"></div></div>
+        <div id="strengthText" class="strength-text"></div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" id="registerBtn" class="anim-field" style="--i:8">
+        <span id="btnText">Create Account →</span>
+        <span id="btnLoader" class="btn-loader" style="display:none;">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        </span>
+      </button>
+
+      <!-- ── LOGIN STRIP ── -->
+      <div style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 16px;
+        padding: 14px 20px;
+        background: #eff6ff;
+        border: 1.5px solid #bfdbfe;
+        border-radius: 12px;
+        font-size: 14px;
+        color: #374151;
+        font-family: 'DM Sans', sans-serif;
+      ">
+        Already have an account?&nbsp;
+        <a href="/login_page" style="
+          color: #2563eb;
+          font-weight: 600;
+          text-decoration: none;
+          transition: color 0.15s;
+        "
+        onmouseover="this.style.textDecoration='underline'"
+        onmouseout="this.style.textDecoration='none'"
+        >Login →</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+
+// ── State ───────────────────────────────────────────────────────
+let detectedRole     = null;
+let existingDetected = false; // true once server confirms account exists
+
+// ── Role Tab ────────────────────────────────────────────────────
+function selectRole(role) {
+  document.getElementById("role").value = role;
+  document.querySelectorAll(".role-tab").forEach(t => t.classList.remove("active"));
+  document.querySelector(`.role-tab[data-role="${role}"]`).classList.add("active");
+
+  const sf = document.getElementById("studentFields");
+  const pf = document.getElementById("parentFields");
+  const pn = document.getElementById("parentNamesBlock");
+
+  if (role === "student") {
+    sf.style.display = "block"; sf.classList.add("slide-in");
+    pf.style.display = "none";
+    pn.style.display = "flex";
+  } else if (role === "parent") {
+    pf.style.display = "block"; pf.classList.add("slide-in");
+    sf.style.display = "none";
+    pn.style.display = "none";
+  } else {
+    sf.style.display = "none";
+    pf.style.display = "none";
+    pn.style.display = "flex";
+  }
+
+  tryCheckExisting();
+}
+
+// ── Check existing — fires when all 3 fields filled ─────────────
+function tryCheckExisting() {
+  const name  = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const role  = document.getElementById("role").value;
+
+  const baseReady = name.length >= 3 && phone.length === 10 && !isNaN(phone) && email.includes("@");
+  if (!baseReady) return;
+
+  if (role === "parent") {
+    const rollEl = document.getElementById("child_roll_number");
+    const roll   = rollEl ? rollEl.value.trim() : "";
+    if (!roll) return;
+    checkExisting(name, phone, email, role, roll);
+  } else {
+    checkExisting(name, phone, email, role, "");
+  }
+}
+
+["name", "phone", "email"].forEach(id => {
+  document.getElementById(id).addEventListener("blur", tryCheckExisting);
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  const rollEl = document.getElementById("child_roll_number");
+  if (rollEl) rollEl.addEventListener("blur", tryCheckExisting);
+});
+
+async function checkExisting(name, phone, email, role, child_roll_number) {
+  try {
+    const res  = await fetch("/check_existing", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, phone, email, role, child_roll_number })
+    });
+    const data = await res.json();
+    if (data.exists) {
+      detectedRole     = role;
+      existingDetected = true;
+      document.getElementById("existingName").innerText = data.name;
+      document.getElementById("existingRole").innerText =
+        "Role: " + role.charAt(0).toUpperCase() + role.slice(1);
+      showExistingPopup();
+    }
+  } catch (err) {
+    console.warn("Check failed:", err);
+  }
+}
+
+// ── Popup controls ──────────────────────────────────────────────
+function showExistingPopup() {
+  const popup = document.getElementById("existingAccountPopup");
+  popup.style.display = "flex";
+  setTimeout(() => document.getElementById("dashboardBtn").focus(), 100);
+}
+
+function closeExistingPopup() {
+  document.getElementById("existingAccountPopup").style.display = "none";
+  existingDetected = false;
+}
+
+document.addEventListener("keydown", function(e) {
+  const popup = document.getElementById("existingAccountPopup");
+  if (e.key === "Enter" && popup.style.display === "flex") {
+    e.preventDefault();
+    goToDashboard();
+  }
+});
+
+function goToDashboard() {
+  if (detectedRole === "student")      window.location.href = "/student_dashboard";
+  else if (detectedRole === "teacher") window.location.href = "/teacher_dashboard";
+  else if (detectedRole === "parent")  window.location.href = "/parent_dashboard";
+  else                                 window.location.href = "/login_page";
+}
+
+// ── Password Strength ────────────────────────────────────────────
+document.getElementById("password").addEventListener("input", function() {
+  const val  = this.value;
+  const fill = document.getElementById("strengthFill");
+  const text = document.getElementById("strengthText");
+  let s = 0;
+  if (val.length >= 6)           s++;
+  if (val.length >= 10)          s++;
+  if (/[A-Z]/.test(val))         s++;
+  if (/[0-9]/.test(val))         s++;
+  if (/[^A-Za-z0-9]/.test(val)) s++;
+  const levels = [
+    { w:"0%",   c:"transparent", l:"" },
+    { w:"25%",  c:"#ef4444",     l:"Weak" },
+    { w:"50%",  c:"#f97316",     l:"Fair" },
+    { w:"75%",  c:"#eab308",     l:"Good" },
+    { w:"100%", c:"#22c55e",     l:"Strong" },
+  ];
+  const lvl = levels[Math.min(s, 4)];
+  fill.style.width = lvl.w; fill.style.background = lvl.c;
+  text.textContent = lvl.l; text.style.color = lvl.c;
+});
+
+// ── Eye toggle ───────────────────────────────────────────────────
+let passwordVisible = false;
+function togglePassword() {
+  passwordVisible = !passwordVisible;
+  document.getElementById("password").type = passwordVisible ? "text" : "password";
+  document.getElementById("eyeIcon").innerHTML = passwordVisible
+    ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+       <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+       <line x1="1" y1="1" x2="23" y2="23"/>`
+    : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+       <circle cx="12" cy="12" r="3"/>`;
+}
+
+// ── Clear on load ────────────────────────────────────────────────
+window.addEventListener("load", function() {
+  setTimeout(() => {
+    ["name","father_name","mother_name","phone","email",
+     "password","roll_number","child_name","child_roll_number"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+  }, 100);
+});
+
+// ── Submit ───────────────────────────────────────────────────────
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  if (existingDetected && detectedRole) {
+    goToDashboard();
+    return;
+  }
+
+  const name     = document.getElementById("name").value.trim();
+  const phone    = document.getElementById("phone").value.trim();
+  const email    = document.getElementById("email").value.trim();
+  const role     = document.getElementById("role").value;
+  const password = document.getElementById("password").value;
+
+  if (!name)  { showAlert("Please enter your full name."); return; }
+  if (phone.length !== 10 || isNaN(phone)) { showAlert("Enter a valid 10-digit phone number."); return; }
+  if (!email) { showAlert("Please enter your email."); return; }
+  if (password.length < 6) { showAlert("Password must be at least 6 characters."); return; }
+
+  if (role === "student") {
+    if (!document.getElementById("roll_number").value.trim()) {
+      showAlert("Please enter your roll number."); return;
+    }
+  }
+  if (role === "parent") {
+    if (!document.getElementById("child_name").value.trim())         { showAlert("Please enter your child's name."); return; }
+    if (!document.getElementById("child_roll_number").value.trim())  { showAlert("Please enter your child's roll number."); return; }
+  }
+
+  setLoading(true);
+
+  try {
+    const otpSend = await fetch("/send-otp", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email })
+    });
+    const otpData = await otpSend.json();
+    if (otpData.status !== "success") {
+      showAlert("Failed to send OTP. Check your email address.");
+      setLoading(false); return;
+    }
+
+    const otp = prompt("📧 OTP sent to " + email + "\n\nEnter your OTP:");
+    if (!otp) { setLoading(false); return; }
+
+    const verify     = await fetch("/verify-otp", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp })
+    });
+    const verifyData = await verify.json();
+    if (verifyData.status !== "success") {
+      showAlert("❌ Invalid OTP. Please try again.");
+      setLoading(false); return;
+    }
+
+    const payload = { name, phone, email, role, password };
+    if (role === "student") {
+      payload.father_name = document.getElementById("father_name").value.trim();
+      payload.mother_name = document.getElementById("mother_name").value.trim();
+      payload.roll_number = document.getElementById("roll_number").value.trim();
+      payload.standard    = document.getElementById("standard").value;
+      payload.section     = document.getElementById("section").value;
+    } else if (role === "teacher") {
+      payload.father_name = document.getElementById("father_name").value.trim();
+      payload.mother_name = document.getElementById("mother_name").value.trim();
+    } else if (role === "parent") {
+      payload.child_name        = document.getElementById("child_name").value.trim();
+      payload.child_roll_number = document.getElementById("child_roll_number").value.trim();
+      payload.parent_standard   = document.getElementById("parent_standard").value;
+      payload.parent_section    = document.getElementById("parent_section").value;
+    }
+
+    const response = await fetch("/register", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await response.json();
+
+    if (data.status === "success") {
+      showSuccess();
+      localStorage.setItem("user_id", data.user_id);
+      localStorage.setItem("name",    data.name);
+      localStorage.setItem("role",    data.role);
+      setTimeout(() => {
+        if (data.role === "student") {
+          localStorage.setItem("student_id", data.student_id);
+          window.location.href = "/student_dashboard";
+        } else if (data.role === "teacher") {
+          localStorage.setItem("teacher_id", data.teacher_id);
+          window.location.href = "/teacher_dashboard";
+        } else {
+          localStorage.setItem("linked_student_id", data.linked_student_id);
+          window.location.href = "/parent_dashboard";
+        }
+      }, 1500);
+
+    } else if (data.status === "exists") {
+      setLoading(false);
+      detectedRole = data.role;
+      showAlert("⚠️ Account already exists! Redirecting...");
+      setTimeout(() => goToDashboard(), 1500);
+
+    } else {
+      showAlert("Registration failed: " + (data.message || "Unknown error"));
+      setLoading(false);
+    }
+
+  } catch (err) {
+    console.error(err);
+    showAlert("Server error. Please try again.");
+    setLoading(false);
+  }
+});
+
+// ── Helpers ──────────────────────────────────────────────────────
+function setLoading(on) {
+  document.getElementById("btnText").style.display   = on ? "none"        : "inline";
+  document.getElementById("btnLoader").style.display = on ? "inline-flex" : "none";
+  document.getElementById("registerBtn").disabled    = on;
+}
+function showAlert(msg) {
+  const box = document.createElement("div");
+  box.className = "toast toast-error"; box.textContent = msg;
+  document.body.appendChild(box);
+  setTimeout(() => box.classList.add("show"), 10);
+  setTimeout(() => { box.classList.remove("show"); setTimeout(() => box.remove(), 400); }, 3500);
+}
+function showSuccess() {
+  const box = document.createElement("div");
+  box.className = "toast toast-success";
+  box.textContent = "✅ Registered successfully! Redirecting...";
+  document.body.appendChild(box);
+  setTimeout(() => box.classList.add("show"), 10);
+}
+
+</script>
+</body>
+</html>

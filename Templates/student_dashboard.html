@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Portal | AET School</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:          #0d1117;
+  --surface:     #161b22;
+  --surface2:    #1c2430;
+  --border:      #21262d;
+  --border2:     #30363d;
+  --text:        #e6edf3;
+  --text2:       #8b949e;
+  --text3:       #6e7681;
+  --accent:      #3fb950;
+  --accent2:     #56d364;
+  --accent-rgb:  63,185,80;
+  --green:       #3fb950;
+  --green-bg:    rgba(63,185,80,0.12);
+  --red:         #f85149;
+  --red-bg:      rgba(248,81,73,0.12);
+
+  /* ── Sidebar consistent palette ── */
+  /* Hover: cool indigo/blue tint — always the same regardless of active section */
+  --nav-hover-bg:        rgba(99,120,198,0.13);
+  --nav-hover-border:    rgba(99,120,198,0.35);
+  --nav-hover-text:      #93b4f7;
+  --nav-hover-sub:       rgba(99,120,198,0.65);
+  /* Active: warm green accent */
+  --nav-active-bg-from:  rgba(63,185,80,0.18);
+  --nav-active-bg-to:    rgba(63,185,80,0.07);
+  --nav-active-border:   rgba(63,185,80,0.40);
+  --nav-active-text:     #56d364;
+  --nav-active-sub:      rgba(63,185,80,0.60);
+  --nav-active-bar-top:  #56d364;
+  --nav-active-bar-bot:  #3fb950;
+  --nav-active-bar-glow: rgba(63,185,80,0.70);
+
+  --sidebar-w:   252px;
+  --topbar-h:    60px;
+  --radius:      10px;
+  --radius-lg:   14px;
+}
+html, body { height: 100%; overflow: hidden; }
+body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+/* ── TOP BAR ── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--topbar-h);
+  background: rgba(22,27,34,0.92);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; z-index: 300;
+}
+.t-left { display: flex; align-items: center; gap: 12px; }
+.t-logo {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--accent), #34d399);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+  box-shadow: 0 0 16px rgba(var(--accent-rgb), 0.35);
+}
+.t-brand { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); letter-spacing: 0.2px; }
+.t-pill {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--accent); background: rgba(var(--accent-rgb),0.1);
+  border: 1px solid rgba(var(--accent-rgb),0.25);
+  padding: 3px 10px; border-radius: 999px;
+}
+.t-right { display: flex; align-items: center; gap: 8px; }
+.t-name-chip {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 999px; padding: 5px 14px; font-size: 13px; color: var(--text2);
+}
+.t-name-chip .live { width: 6px; height: 6px; background: var(--green); border-radius: 50%; box-shadow: 0 0 6px var(--green); }
+.t-name-chip strong { color: var(--accent2); font-weight: 600; }
+.t-btn {
+  height: 32px; padding: 0 14px;
+  background: transparent; border: 1px solid var(--border2);
+  border-radius: 8px; font-size: 12.5px; font-weight: 500;
+  color: var(--text2); cursor: pointer; font-family: 'Outfit', sans-serif;
+  transition: all 0.18s; display: flex; align-items: center; gap: 5px;
+}
+.t-btn:hover { background: var(--surface2); color: var(--text); }
+.t-btn.danger:hover { border-color: var(--red); color: var(--red); background: var(--red-bg); }
+
+/* ── LAYOUT ── */
+.shell { display: flex; margin-top: var(--topbar-h); height: calc(100vh - var(--topbar-h)); }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w); min-width: var(--sidebar-w); max-width: var(--sidebar-w); flex-shrink: 0;
+  background: var(--surface); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  padding: 18px 10px 16px; overflow-y: auto; overflow-x: hidden;
+}
+.s-section-label {
+  font-size: 9.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.6px; color: var(--text3);
+  padding: 0 10px; margin: 16px 0 7px; display: block;
+}
+.s-section-label:first-child { margin-top: 2px; }
+
+/* ── NAV ITEMS — fixed consistent states ── */
+.nav-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 9px 12px; border-radius: 9px;
+  cursor: pointer;
+  font-size: 13px; font-weight: 500;
+  transition: background 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, color 0.22s ease;
+  margin-bottom: 3px;
+  border: 1px solid var(--border);
+  position: relative;
+  color: var(--text2);
+  background: transparent;
+  min-height: 48px;
+}
+
+/* Hover — always cool indigo blue, no green leakage */
+.nav-item:not(.active):hover {
+  background: var(--nav-hover-bg);
+  border-color: var(--nav-hover-border);
+  box-shadow: inset 0 0 0 1px rgba(99,120,198,0.10), 0 2px 10px rgba(99,120,198,0.10);
+  color: var(--nav-hover-text);
+}
+.nav-item:not(.active):hover .nav-sub {
+  color: var(--nav-hover-sub);
+}
+
+/* Active — warm green */
+.nav-item.active {
+  background: linear-gradient(135deg, var(--nav-active-bg-from) 0%, var(--nav-active-bg-to) 100%);
+  border-color: var(--nav-active-border);
+  box-shadow: inset 0 0 0 1px rgba(63,185,80,0.12), 0 4px 16px rgba(63,185,80,0.12);
+  color: var(--nav-active-text);
+}
+.nav-item.active .nav-sub { color: var(--nav-active-sub); }
+.nav-item.active::before {
+  content: ''; position: absolute; left: 0; top: 18%; height: 64%;
+  width: 3px;
+  background: linear-gradient(180deg, var(--nav-active-bar-top), var(--nav-active-bar-bot));
+  border-radius: 0 3px 3px 0;
+  box-shadow: 0 0 10px var(--nav-active-bar-glow), 0 0 20px rgba(63,185,80,0.3);
+}
+
+.nav-icon  { font-size: 16px; width: 22px; text-align: center; flex-shrink: 0; line-height: 1; }
+.nav-texts { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.nav-main  { font-size: 13px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav-sub   { font-size: 10.5px; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.22s; }
+
+.s-footer  { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border); }
+.s-info-card { background: var(--surface2); border: 1px solid var(--border2); border-radius: 10px; padding: 13px 14px; }
+.s-info-tag {
+  font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px;
+  color: var(--text3); margin-bottom: 8px; display: flex; align-items: center; gap: 5px;
+}
+.s-info-tag::before { content: ''; width: 5px; height: 5px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 5px var(--accent); }
+.s-info-name   { font-family: 'Syne', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.s-info-detail { font-size: 11px; color: var(--text3); }
+
+/* ── CONTENT ── */
+.content { flex: 1; overflow-y: auto; padding: 30px 32px; background: var(--bg); }
+
+/* ── PAGE HEADER ── */
+.pg-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 26px; }
+.pg-title  { font-family: 'Syne', sans-serif; font-size: 25px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; line-height: 1.2; }
+.pg-title em { color: var(--accent); font-style: normal; }
+.pg-date   { font-size: 12px; color: var(--text3); margin-top: 5px; }
+
+/* ── TODAY BADGE ── */
+.today-row {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 22px;
+}
+.today-label { font-size: 13px; font-weight: 500; color: var(--text2); }
+.att-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 14px; border-radius: 7px;
+  font-size: 13px; font-weight: 600;
+  background: var(--surface2); color: var(--text2); border: 1px solid var(--border2);
+}
+.att-badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--text3); }
+.att-badge.present { background: var(--green-bg); color: var(--green); border-color: rgba(63,185,80,0.28); }
+.att-badge.present::before { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.att-badge.absent  { background: var(--red-bg);   color: var(--red);   border-color: rgba(248,81,73,0.28); }
+.att-badge.absent::before  { background: var(--red);   box-shadow: 0 0 6px var(--red); }
+
+/* ── QUICK CARDS ── */
+.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 24px; }
+.q-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 12px;
+  text-align: center; cursor: pointer; transition: all 0.18s;
+}
+.q-card:hover {
+  background: var(--surface2); border-color: rgba(var(--accent-rgb),0.32);
+  transform: translateY(-2px); box-shadow: 0 6px 20px rgba(var(--accent-rgb),0.1);
+}
+.q-ico { font-size: 22px; margin-bottom: 8px; display: block; }
+.q-lbl { font-size: 12px; font-weight: 500; color: var(--text2); }
+.q-card:hover .q-lbl { color: var(--accent2); }
+
+/* ── TIMETABLE CARD ── */
+.tt-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.tt-card-head {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.tt-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; color: var(--text); }
+.tt-tag {
+  font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text3); background: var(--surface2); border: 1px solid var(--border2);
+  padding: 2px 8px; border-radius: 999px;
+}
+.timetable { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.timetable th {
+  padding: 11px 14px; text-align: left;
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text3); background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+.timetable td {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  color: var(--text2); font-size: 12.5px;
+}
+.timetable td:first-child { color: var(--text); font-weight: 600; font-size: 12px; }
+.timetable tr:last-child td { border-bottom: none; }
+.timetable tr:hover td { background: var(--surface2); }
+.today-row-tt td { background: rgba(var(--accent-rgb),0.06) !important; }
+.today-row-tt td:first-child { color: var(--accent2); }
+
+/* subject pills */
+.sub-pill {
+  display: inline-block; padding: 2px 8px;
+  border-radius: 5px; font-size: 11px; font-weight: 600;
+  background: var(--surface2); color: var(--text3);
+  border: 1px solid var(--border2);
+}
+
+/* ── DYNAMIC / BACK ── */
+#dyn { display: none; }
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 7px 15px;
+  font-size: 12.5px; font-weight: 500; color: var(--text2);
+  cursor: pointer; margin-bottom: 20px; font-family: 'Outfit', sans-serif;
+  transition: all 0.18s;
+}
+.back-btn:hover { background: var(--surface2); color: var(--text); }
+.loader { color: var(--text3); font-size: 13px; padding: 40px; text-align: center; }
+
+footer {
+  background: var(--surface); border-top: 1px solid var(--border);
+  color: var(--text3); font-size: 11px; padding: 10px 24px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0; z-index: 5;
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="t-left">
+    <div class="t-logo">🚀</div>
+    <span class="t-brand">AET School</span>
+    <span class="t-pill">Student Portal</span>
+  </div>
+  <div class="t-right">
+    <div class="t-name-chip">
+      <span class="live"></span>
+      Welcome, <strong id="studentNameDisplay">Student</strong>
+    </div>
+    <button class="t-btn danger" onclick="logout()">Logout →</button>
+  </div>
+</header>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <span class="s-section-label">Navigation</span>
+
+    <div class="nav-item active" id="homeNav" onclick="showHome()">
+      <span class="nav-icon">🏠</span>
+      <div class="nav-texts">
+        <span class="nav-main">Home</span>
+        <span class="nav-sub">Timetable & overview</span>
+      </div>
+    </div>
+
+    <div class="nav-item" id="scorecardNav" onclick="goToScorecard()">
+      <span class="nav-icon">🏆</span>
+      <div class="nav-texts">
+        <span class="nav-main">Score Card</span>
+        <span class="nav-sub">Exam results & marks</span>
+      </div>
+    </div>
+
+    <div class="nav-item" id="attendanceNav" onclick="goToAttendance()">
+      <span class="nav-icon">📅</span>
+      <div class="nav-texts">
+        <span class="nav-main">Attendance</span>
+        <span class="nav-sub">Monthly calendar log</span>
+      </div>
+    </div>
+
+    <div class="nav-item" id="graphNav" onclick="goToGraphAnalysis()">
+      <span class="nav-icon">📈</span>
+      <div class="nav-texts">
+        <span class="nav-main">Graph Analysis</span>
+        <span class="nav-sub">Subject progress charts</span>
+      </div>
+    </div>
+
+    <div class="nav-item" id="announcementsNav" onclick="goToAnnouncements()">
+      <span class="nav-icon">🔔</span>
+      <div class="nav-texts">
+        <span class="nav-main">Announcements</span>
+        <span class="nav-sub">School notices & alerts</span>
+      </div>
+    </div>
+
+    <div class="s-footer">
+      <div class="s-info-card">
+        <div class="s-info-tag">My Profile</div>
+        <div class="s-info-name"   id="sidebarName">—</div>
+        <div class="s-info-detail" id="sidebarDetail">—</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- HOME -->
+    <div id="homeSection">
+      <div class="pg-header">
+        <div>
+          <h1 class="pg-title">Academic <em>Timetable</em></h1>
+          <p class="pg-date" id="date-display"></p>
+        </div>
+      </div>
+
+      <div class="today-row">
+        <span class="today-label">Today's Attendance</span>
+        <span id="studentTodayAttendance" class="att-badge">Checking…</span>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="grid-4">
+        <div class="q-card" onclick="goToScorecard()">
+          <span class="q-ico">📋</span>
+          <div class="q-lbl">View Scorecard</div>
+        </div>
+        <div class="q-card" onclick="goToAttendance()">
+          <span class="q-ico">📅</span>
+          <div class="q-lbl">Attendance Log</div>
+        </div>
+        <div class="q-card" onclick="goToGraphAnalysis()">
+          <span class="q-ico">📈</span>
+          <div class="q-lbl">Performance Graph</div>
+        </div>
+        <div class="q-card" onclick="goToAnnouncements()">
+          <span class="q-ico">🔔</span>
+          <div class="q-lbl">Announcements</div>
+        </div>
+      </div>
+
+      <!-- Timetable -->
+      <div class="tt-card">
+        <div class="tt-card-head">
+          <span class="tt-title">Weekly Timetable</span>
+          <span class="tt-tag">Current Week</span>
+        </div>
+        <table class="timetable">
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>09–10</th>
+              <th>10–11</th>
+              <th>11–12</th>
+              <th>12–01</th>
+              <th>01–02</th>
+            </tr>
+          </thead>
+          <tbody id="ttBody">
+            <tr><td>Monday</td>   <td><span class="sub-pill">MC</span></td>   <td><span class="sub-pill">LAT</span></td>  <td><span class="sub-pill">BIO</span></td>  <td><span class="sub-pill">MAT</span></td> <td><span class="sub-pill">UHV</span></td></tr>
+            <tr><td>Tuesday</td>  <td><span class="sub-pill">MATH</span></td> <td><span class="sub-pill">BIO</span></td>  <td><span class="sub-pill">DBMS</span></td> <td><span class="sub-pill">PE</span></td>  <td><span class="sub-pill">ADA</span></td></tr>
+            <tr><td>Wednesday</td><td><span class="sub-pill">LAT</span></td>  <td><span class="sub-pill">MAT</span></td>  <td><span class="sub-pill">PE</span></td>   <td><span class="sub-pill">MCL</span></td> <td><span class="sub-pill">MCL</span></td></tr>
+            <tr><td>Thursday</td> <td><span class="sub-pill">DBMS</span></td> <td><span class="sub-pill">MAT</span></td>  <td><span class="sub-pill">LAT</span></td>  <td><span class="sub-pill">LIB</span></td> <td><span class="sub-pill">—</span></td></tr>
+            <tr><td>Friday</td>   <td><span class="sub-pill">ADA</span></td>  <td><span class="sub-pill">MC</span></td>   <td><span class="sub-pill">BIO</span></td>  <td><span class="sub-pill">—</span></td>  <td><span class="sub-pill">—</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DYNAMIC -->
+    <div id="dyn"></div>
+  </main>
+</div>
+
+<footer>
+  <span>AET School of Excellence — Student Portal</span>
+  <span>v3.1</span>
+</footer>
+
+<script>
+document.getElementById("date-display").textContent = new Date().toDateString();
+document.getElementById("studentNameDisplay").textContent = localStorage.getItem("name") || "Student";
+
+// Highlight today's row
+const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const todayName = days[new Date().getDay()];
+document.querySelectorAll("#ttBody tr").forEach(tr => {
+  if (tr.querySelector("td")?.textContent === todayName) tr.classList.add("today-row-tt");
+});
+
+function setActiveNav(id) {
+  document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+  const el = document.getElementById(id); if (el) el.classList.add("active");
+}
+
+function showHome() {
+  document.getElementById("homeSection").style.display = "block";
+  document.getElementById("dyn").style.display = "none";
+  setActiveNav("homeNav");
+}
+
+function loadSection(url, navId) {
+  if (navId) setActiveNav(navId);
+  document.getElementById("homeSection").style.display = "none";
+  const dyn = document.getElementById("dyn");
+  dyn.style.display = "block"; dyn.innerHTML = "<p class='loader'>Loading…</p>";
+  fetch(url).then(r => r.text()).then(html => {
+    dyn.innerHTML = `<button class="back-btn" onclick="showHome()">← Back</button>${html}`;
+    dyn.querySelectorAll("script").forEach(old => {
+      if (old.src) { const s = document.createElement("script"); s.src = old.src; s.async = false; document.body.appendChild(s); }
+      else { new Function(old.textContent)(); } old.remove();
+    });
+    if (typeof attInit === "function") attInit();
+  }).catch(() => {
+    dyn.innerHTML = `<button class="back-btn" onclick="showHome()">← Back</button><p style="color:var(--red);padding:20px;">Failed to load content.</p>`;
+  });
+}
+
+async function getStudentIdFromSession() {
+  try {
+    const r = await fetch("/get_student_context");
+    if (r.status === 401) { window.location.href = "/login_page"; return null; }
+    if (r.ok) { const d = await r.json(); if (d.status === "success" && d.student?.student_id) { const s = String(d.student.student_id); localStorage.setItem("student_id", s); return s; } }
+  } catch(_) {}
+  try {
+    const r = await fetch("/me");
+    if (r.status === 401) { window.location.href = "/login_page"; return null; }
+    if (r.ok) { const d = await r.json(); if (d.student_id) { const s = String(d.student_id); localStorage.setItem("student_id", s); return s; } }
+  } catch(_) {}
+  return localStorage.getItem("student_id");
+}
+
+async function goToScorecard() {
+  const sid = await getStudentIdFromSession();
+  if (!sid) { alert("Student profile not linked. Please login again."); return; }
+  loadSection("/scorecard_embed/" + sid, "scorecardNav");
+}
+function goToAttendance()    { loadSection("/attendence_db",          "attendanceNav"); }
+function goToGraphAnalysis() { loadSection("/graph_analysis",         "graphNav"); }
+function goToAnnouncements() { loadSection("/student_announcements",  "announcementsNav"); }
+function logout() { localStorage.clear(); window.location.href = "/logout"; }
+
+async function loadAttendanceBadge() {
+  try {
+    const r = await fetch("/get_student_context");
+    if (r.status === 401) { window.location.href = "/login_page"; return; }
+    if (!r.ok) return;
+    const d = await r.json();
+    if (d.status !== "success" || !d.student) return;
+
+    const s = d.student;
+    const sn = document.getElementById("sidebarName");
+    const sd = document.getElementById("sidebarDetail");
+    if (sn) sn.textContent = s.name || "—";
+    if (sd) sd.textContent = [(s.class ? "Class "+s.class : ""), (s.roll_number ? "Roll "+s.roll_number : "")].filter(Boolean).join(" · ") || "—";
+    if (s.name) { document.getElementById("studentNameDisplay").textContent = s.name; localStorage.setItem("name", s.name); }
+
+    const badge  = document.getElementById("studentTodayAttendance");
+    const status = s.today_attendance_status || "Not Marked";
+    badge.textContent = status;
+    badge.className = "att-badge" + (status === "Present" ? " present" : status === "Absent" ? " absent" : "");
+  } catch(_) {}
+}
+
+loadAttendanceBadge();
+</script>
+</body>
+</html>

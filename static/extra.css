@@ -1,0 +1,153 @@
+:root {
+    --primary: #2c3e50;
+    --accent: #10b981; /* Parent Green */
+    --bg-light: #f8fafc;
+    --text-dark: #1e293b;
+    --transition-speed: 0.4s;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-light);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Header --- */
+.top-bar {
+    height: 75px;
+    background: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    border-bottom: 2px solid #e2e8f0;
+}
+.logo-icon{
+    font-size: 2rem;
+      border-radius: 12px;
+}
+.logo-text { font-family: 'Poppins'; font-weight: 1000; color: var(--primary); font-size: 1.8rem; }
+.pro-tag { background: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; }
+
+/* --- Sidebar with Dynamic Student Hover Style --- */
+.sidebar {
+    width: 300px;
+    background: var(--primary);
+    padding: 30px 15px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    color: #cbd5e1;
+    border-radius: 15px;
+    cursor: pointer;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    /* Faster response for mouse movement, slower for color */
+    transition: all var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.card-icon{
+    font-size: 3rem;
+}
+.nav-item .icon {
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 45px;
+    transition: transform var(--transition-speed) ease;
+}
+
+.nav-item .text {
+    font-size: 1.05rem;
+    font-weight: 500;
+    transition: all var(--transition-speed) ease;
+}
+
+/* --- THE ENHANCED HOVER EFFECT --- */
+.nav-item:hover {
+    background: rgba(16, 185, 129, 0.1); /* Slight accent tint */
+    border-color: var(--accent);
+    color: white;
+    transform: translateX(10px); /* Moves right slightly */
+}
+
+.nav-item:hover .icon {
+    transform: scale(1.4) rotate(8deg); /* Symbol increases and tilts */
+}
+
+.nav-item:hover .text {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.5px; /* Subtle font enhancement */
+}
+
+.nav-item.active {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+}
+
+/* --- Workspace --- */
+.main-container { display: flex; flex: 1; overflow: hidden; }
+.content { flex: 1; padding: 5px; overflow-y: auto; margin: 20px; }
+.highlight { color: var(--accent); }
+
+.dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+.main-card { background: white; border-radius: 20px; padding: 30px; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+
+.status-indicator{
+    background: #d1fae5;
+    color: #065f46;
+    padding: 10px 35px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 1.6rem;
+    margin: 4px;
+}
+
+/* --- Logout & Bottom Bar --- */
+.logout-pill {
+    background: linear-gradient(135deg, #ff4d4d, #c0392b);
+    color: white; border: none; padding: 10px 22px; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 0px #922b21;
+}
+
+.bottom-bar { height: 50px; background: white; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; color: #94a3b8; font-size: 0.8rem; }
+.dot {
+    background-color: var(--accent); border-radius: 20%; 
+    height: 8px;
+    width: 8px;
+    display: inline-block;
+    margin-right: 5px;
+    animation: pulse 2s infinite;
+}
+.announcement-card{
+margin-top:30px;
+}
+
+.announcement-item{
+border-bottom:1px solid #eee;
+padding:12px 0;
+}
+
+.announcement-item h4{
+margin:0;
+font-size:16px;
+}
+
+.announcement-item p{
+margin:4px 0;
+font-size:14px;
+}
+
+.announcement-item span{
+font-size:12px;
+color:gray;
+}

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elite Parent Portal</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='parent_dashboard.css') }}">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<header class="top-bar">
+
+<div class="logo-section">
+<div class="logo-wrapper">
+<span class="logo-icon">👪</span>
+<span class="logo-text">AET <span class="pro-tag">PARENT</span></span>
+</div>
+</div>
+
+<div class="user-section">
+
+<div class="parent-info">
+<span class="info-item"><strong>Parent:</strong> <span id="parentNameDisplay"></span></span>
+</div>
+
+<button class="logout-pill" onclick="window.location.href='/logout'">
+Logout <span class="arrow">→</span>
+</button>
+
+</div>
+
+</header>
+
+
+<div class="main-container">
+
+<nav class="sidebar">
+
+<ul class="nav-links">
+
+<li class="nav-item active">
+<span class="icon">🏠</span>
+<span class="text">Home Dashboard</span>
+</li>
+
+<li class="nav-item">
+<span class="icon">📅</span>
+<a href="/parent_attendance" style="text-decoration:none;color:inherit;">
+<span class="text">View Attendance</span>
+</a>
+</li>
+
+<li class="nav-item">
+<span class="icon">🏆</span>
+<a href="#" onclick="goToScorecard()" style="text-decoration:none;color:inherit;">
+    <span class="text">Score Card</span>
+</a>
+</li>
+
+<li class="nav-item">
+<span class="icon">📈</span>
+<a href="/graph_analysis" style="text-decoration:none;color:inherit;">
+<span class="text">Graph Analysis</span>
+</a>
+</li>
+
+<li class="nav-item">
+<span class="icon">🔔</span>
+<a href="/parent_announcements" style="text-decoration:none;color:inherit;">
+    <span class="text">Announcements</span>
+</a>
+</li>
+
+</ul>
+
+</nav>
+
+
+<main class="content">
+
+<div class="welcome-section">
+<h1>Parental <span class="highlight">Overview</span></h1>
+<p id="date-display" class="date-text"></p>
+</div>
+
+<br>
+
+<div class="dashboard-grid">
+
+<!-- Student Profile -->
+
+<div class="main-card profile-card">
+
+<div class="card-header">
+<span class="card-icon">🎓</span>
+<h2>Student Profile</h2>
+</div>
+
+<div class="card-content">
+
+<div class="detail-row">
+<strong>Name:</strong>
+<span>Alex Johnson</span>
+</div>
+
+<div class="detail-row">
+<strong>Class:</strong>
+<span>Grade 10</span>
+</div>
+
+<div class="detail-row">
+<strong>Section:</strong>
+<span>A</span>
+</div>
+</div>
+</div>
+<!-- Attendance Status -->
+<div class="main-card status-card">
+<div class="card-header">
+<span class="card-icon">📍</span>
+<h3>Attendance Status</h3>
+</div>
+<div class="card-content centered">
+<div class="status-indicator">
+PRESENT
+</div>
+<p class="sub-text">
+Status for Today: 1st March 2026
+</p>
+
+</div>
+</div>
+<!-- Announcements -->
+<div class="main-card announcement-card">
+<div class="card-header">
+<span class="card-icon">🔔</span>
+<h3>Latest Announcements</h3>
+</div>
+<div class="card-content">
+{% if announcements %}
+{% for announcement in announcements %}
+<div class="detail-row">
+<strong>
+<a href="{{ url_for('view_announcement', id=announcement.id) }}">
+{{ announcement.title }}
+</a>
+</strong>
+<p>{{ announcement.content }}</p>
+<small>{{ announcement.date }}</small>
+</div>
+<hr>
+{% endfor %}
+{% else %}
+<p>No announcements available.</p>
+{% endif %}
+</div>
+</div>
+</div>
+</main>
+</div>
+<footer class="bottom-bar">
+<div class="status-indicator">
+<span class="dot"></span> Secure Connection Active
+</div>
+<div class="footer-links">
+<span>Parent Support</span>
+<span>v2.4.0</span>
+</div>
+</footer>
+<script>
+const options = {
+weekday: 'long',
+year: 'numeric',
+month: 'long',
+day: 'numeric'
+};
+document.getElementById('date-display').innerText =
+new Date().toLocaleDateString(undefined, options);
+document.getElementById("parentNameDisplay").innerText =
+    localStorage.getItem("name") || "Parent";
+function goToScorecard() {
+    const studentId = localStorage.getItem("linked_student_id");
+    if(!studentId || studentId === "null") {
+        alert("Student not linked. Please logout and login again as parent.");
+        return;
+    }
+    window.location.href = "/scorecard/" + studentId;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Marks Card - 2026</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='scorecard.css') }}">
+</head>
+<body>
+
+    <div class="dashboard-wrapper">
+        <div class="marks-card" id="printable-area">
+            <header class="card-header">
+                <div class="college-logo">🏛️</div>
+                <h1>AET SCHOOL OF EXCELLENCE</h1>
+                <p class="location">Karnataka</p>
+                <div class="double-line"></div>
+            </header>
+
+            <section class="profile-section">
+                <div class="profile-grid">
+                    <div class="p-item"><strong>Student Name:</strong> {{ student_name }}</div>
+                    <div class="p-item"><strong>Reg No:</strong> {{ reg_no }}</div>
+                    <div class="p-item"><strong>Class:</strong> {{ class_name }}</div>
+                    <div class="p-item"><strong>Father's Name:</strong> {{ father_name }}</div>
+                    <div class="p-item"><strong>Exam:</strong> {{ exam_type }}</div>
+                    <div class="p-item"><strong>Date:</strong> {{ exam_date }}</div>
+                </div>
+            </section>
+
+            <table class="marks-table">
+                <thead>
+                    <tr>
+                        <th>Sl.No</th>
+                        <th>Subject</th>
+                        <th>Max</th>
+                        <th>Obtained</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td><td>Kannada</td><td>100</td><td>{{ kannada }}</td>
+                        <td>{% if kannada >= 85 %}A+{% elif kannada >= 70 %}A{% elif kannada >= 50 %}B{% else %}C{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>2</td><td>English</td><td>100</td><td>{{ english }}</td>
+                        <td>{% if english >= 85 %}A+{% elif english >= 70 %}A{% elif english >= 50 %}B{% else %}C{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>3</td><td>Physics</td><td>100</td><td>{{ physics }}</td>
+                        <td>{% if physics >= 85 %}A+{% elif physics >= 70 %}A{% elif physics >= 50 %}B{% else %}C{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>4</td><td>Chemistry</td><td>100</td><td>{{ chemistry }}</td>
+                        <td>{% if chemistry >= 85 %}A+{% elif chemistry >= 70 %}A{% elif chemistry >= 50 %}B{% else %}C{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>5</td><td>Mathematics</td><td>100</td><td>{{ maths }}</td>
+                        <td>{% if maths >= 85 %}A+{% elif maths >= 70 %}A{% elif maths >= 50 %}B{% else %}C{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>6</td><td>Biology</td><td>100</td><td>{{ biology }}</td>
+                        <td>{% if biology >= 85 %}A+{% elif biology >= 70 %}A{% elif biology >= 50 %}B{% else %}C{% endif %}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="summary-container">
+                <div class="stats">
+                    <p>Total: <strong>{{ total_marks }} / 600</strong></p>
+                    <p>Percentage: <strong>{{ percentage }}%</strong></p>
+                </div>
+                <div class="rating-box">
+                    <div class="stars">
+                        {% if percentage >= 85 %}⭐⭐⭐
+                        {% elif percentage >= 60 %}⭐⭐
+                        {% else %}⭐{% endif %}
+                    </div>
+                    <p class="result-status">{{ result_status }}</p>
+                </div>
+            </div>
+
+            <footer class="footer-sign">
+                <div class="gen-date">Date: {{ exam_date }}</div>
+                <div class="sig-block">
+                    <div class="line"></div>
+                    <p>Principal Signature</p>
+                </div>
+            </footer>
+        </div>
+
+        <div class="no-print-zone">
+            <button onclick="window.print()" class="print-btn">
+                <i class="fas fa-print"></i> Download / Print Report
+            </button>
+        </div>
+    </div>
+
+</body>
+</html>
