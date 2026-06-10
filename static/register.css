@@ -330,7 +330,6 @@ select {
   letter-spacing: 0.3px;
 }
 
-/* Slide-in for dynamic boxes */
 .slide-in {
   animation: slideDown 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -514,24 +513,164 @@ button[type="submit"]:disabled {
   border-left: 4px solid #51cf66;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 480px) {
-  .register-card {
-    padding: 32px 22px 28px;
+/* =============================================
+   RESPONSIVE — TABLET & MOBILE
+   ============================================= */
+
+/* Tablet */
+@media (max-width: 600px) {
+  body {
+    padding: 20px 12px 40px;
+    align-items: flex-start;
   }
+
+  .page-wrapper {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .register-card {
+    padding: 28px 18px 24px;
+    border-radius: 14px;
+  }
+
+  .card-header h2 {
+    font-size: 22px;
+  }
+
+  .subtitle {
+    font-size: 11.5px;
+  }
+
+  .logo {
+    font-size: 36px;
+  }
+
+  .logo-ring {
+    width: 58px;
+    height: 58px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  body {
+    padding: 12px 10px 40px;
+  }
+
+  .register-card {
+    padding: 24px 14px 20px;
+    border-radius: 12px;
+  }
+
+  .card-header {
+    margin-bottom: 22px;
+  }
+
+  .card-header h2 {
+    font-size: 20px;
+  }
+
+  .subtitle {
+    font-size: 11px;
+  }
+
+  /* Stack all field rows vertically */
   .field-row {
     grid-template-columns: 1fr;
     gap: 0;
   }
+
+  /* Role tabs — keep horizontal, smaller text */
   .role-tabs {
-    flex-direction: column;
+    flex-direction: row;
+    gap: 6px;
   }
-  .card-header h2 {
-    font-size: 22px;
+
+  .role-tab {
+    font-size: 11px;
+    padding: 9px 4px;
   }
+
+  /* Inputs — font-size 16px prevents iOS auto-zoom */
+  input, select {
+    font-size: 16px;
+    padding: 12px 14px 12px 38px;
+  }
+
+  input::placeholder {
+    font-size: 13px;
+  }
+
+  .input-icon {
+    font-size: 14px;
+    left: 11px;
+  }
+
+  label {
+    font-size: 11.5px;
+  }
+
+  .special-fields-box {
+    padding: 14px 12px;
+  }
+
+  .section-badge {
+    font-size: 11px;
+  }
+
+  button[type="submit"] {
+    padding: 14px;
+    font-size: 14px;
+  }
+
+  /* Toast */
   .toast {
     white-space: normal;
     text-align: center;
-    max-width: 90vw;
+    max-width: 92vw;
+    font-size: 13px;
+    bottom: 20px;
+  }
+
+  /* Login strip */
+  #registerForm > div:last-child {
+    font-size: 13px;
+    padding: 12px 14px;
+  }
+
+  /* Hide orbs on mobile for performance */
+  .bg-orb {
+    display: none;
+  }
+}
+
+/* Very small phones (360px and below) */
+@media (max-width: 360px) {
+  body {
+    padding: 10px 8px 30px;
+  }
+
+  .register-card {
+    padding: 20px 12px 18px;
+  }
+
+  .card-header h2 {
+    font-size: 18px;
+  }
+
+  .role-tab {
+    font-size: 10px;
+    padding: 8px 2px;
+  }
+
+  input, select {
+    font-size: 16px;
+    padding: 11px 12px 11px 36px;
+  }
+
+  button[type="submit"] {
+    font-size: 13px;
+    padding: 13px;
   }
 }

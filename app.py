@@ -18,23 +18,23 @@ app = Flask(__name__)
 app.secret_key = "abc123"
 otp_store = {}
 
-app.config['MAIL_SERVER']       = 'smtp.gmail.com'
-app.config['MAIL_PORT']         = 587
-app.config['MAIL_USE_TLS']      = True
-app.config['MAIL_USE_SSL']      = False
-app.config['MAIL_USERNAME']     = 'studentmanagebyns@gmail.com'
-app.config['MAIL_PASSWORD']     = 'qsytjehybkywbawd'
-app.config['MAIL_DEFAULT_SENDER'] = 'studentmanagebyns@gmail.com'
-
+app.config['MAIL_SERVER']         = 'smtp.gmail.com'
+app.config['MAIL_PORT']           = 465
+app.config['MAIL_USE_TLS']        = False
+app.config['MAIL_USE_SSL']        = True
+app.config['MAIL_USERNAME']       = 'adminemaila@gmail.com'  # your new email
+app.config['MAIL_PASSWORD'] = 'tajtshstdtjmzshr'  # shst not shat!
+app.config['MAIL_DEFAULT_SENDER'] = 'adminemaila@gmail.com'  # same new email
 mail = Mail(app)
 
 # -------------------- DATABASE --------------------
 
 import os
 import psycopg2
-
 def get_db_connection():
-    return psycopg2.connect(os.environ["DATABASE_URL"])
+    return psycopg2.connect(
+        "postgresql://postgres:r2wnu8ner67daoxl@db.snlfgcbehrzhttykeabv.supabase.co:5432/postgres"
+    )
 def get_session_student_id():
     user_id = session.get("user_id")
     role    = session.get("role")
@@ -157,29 +157,98 @@ def send_otp():
 
     try:
         msg = Message(
-            subject    = "Student Management System — OTP Verification",
-            recipients = [email],
-            body       = f"""Dear Student / Parent,
-
-Welcome to AET School of Excellence Management System.
-
-Your One-Time Password (OTP) for registration is:
-
-        {otp}
-
-This OTP is valid for 10 minutes. Do not share it with anyone.
-
-Regards,
-NIMMA SHALA MANDALI
-School Management System"""
+            subject="AET School of Excellence — OTP Verification",
+            recipients=[email]
         )
-        mail.send(msg)
-        return jsonify({"status": "success"})
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return jsonify({"status": "error", "message": str(e)})
+        msg.body = (
+            "Dear Student / Parent,\n\n"
+            "Welcome to AET School of Excellence Management System.\n\n"
+            "You have requested to register on our Student Management Portal.\n"
+            "Please use the One-Time Password (OTP) below to verify your email address:\n\n"
+            f"  Your OTP Code: {otp}\n\n"
+            "This OTP is valid for 10 minutes only.\n"
+            "Do NOT share this OTP with anyone including school staff.\n\n"
+            "If you did not request this, please ignore this email.\n\n"
+            "Regards,\n"
+            "AET School of Excellence\n"
+            "Student Management System\n"
+            "NIMMA SHALA MANDALI"
+        )
+        msg.html = f"""
+        <div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;
+                    border:1px solid #e0e0e0;border-radius:12px;overflow:hidden;">
 
+            <!-- HEADER -->
+            <div style="background:#1a73e8;padding:25px;text-align:center;">
+                <h2 style="color:white;margin:0;font-size:22px;">
+                    🏫 AET School of Excellence
+                </h2>
+                <p style="color:#cce0ff;margin:5px 0 0 0;font-size:13px;">
+                    Student Management System
+                </p>
+            </div>
+
+            <!-- BODY -->
+            <div style="padding:30px;background:#ffffff;">
+                <p style="font-size:15px;color:#333;">Dear Student / Parent,</p>
+
+                <p style="font-size:14px;color:#555;line-height:1.6;">
+                    You have requested to create an account on the
+                    <b>AET School of Excellence Student Management Portal</b>.
+                    <br><br>
+                    To complete your registration, please verify your email address
+                    using the One-Time Password (OTP) below:
+                </p>
+
+                <!-- OTP BOX -->
+                <div style="background:#f0f4ff;border:2px dashed #1a73e8;
+                            border-radius:10px;padding:25px;text-align:center;margin:25px 0;">
+                    <p style="margin:0 0 8px 0;font-size:13px;color:#666;">
+                        Your One-Time Password (OTP)
+                    </p>
+                    <h1 style="color:#1a73e8;letter-spacing:10px;
+                               margin:0;font-size:36px;font-weight:bold;">
+                        {otp}
+                    </h1>
+                </div>
+
+                <!-- INSTRUCTIONS -->
+                <table style="width:100%;background:#fff8e1;border-radius:8px;
+                              padding:15px;border:1px solid #ffe082;">
+                    <tr>
+                        <td style="font-size:13px;color:#555;line-height:2;">
+                            ⏱ &nbsp;<b>Valid for:</b> 10 minutes only<br>
+                            🔒 &nbsp;<b>Do not share</b> this OTP with anyone<br>
+                            📧 &nbsp;<b>Requested for:</b> {email}<br>
+                            🏫 &nbsp;<b>Purpose:</b> New Student / Parent Registration
+                        </td>
+                    </tr>
+                </table>
+
+                <p style="font-size:13px;color:#999;margin-top:20px;">
+                    If you did not request this OTP, please ignore this email.
+                    Your account will not be created without verification.
+                </p>
+            </div>
+
+            <!-- FOOTER -->
+            <div style="background:#f5f5f5;padding:15px;text-align:center;
+                        border-top:1px solid #e0e0e0;">
+                <p style="color:#aaa;font-size:12px;margin:0;">
+                    © 2024 AET School of Excellence &nbsp;|&nbsp; NIMMA SHALA MANDALI<br>
+                    This is an automated email. Please do not reply.
+                </p>
+            </div>
+
+        </div>
+        """
+        mail.send(msg)
+        print(f"OTP SENT to {email}: {otp}")
+        return jsonify({"status": "success"})
+
+    except Exception as e:
+        print("MAIL ERROR:", str(e))
+        return jsonify({"status": "error", "message": str(e)})
 @app.route("/verify-otp", methods=["POST"])
 def verify_otp():
     data  = request.get_json()
