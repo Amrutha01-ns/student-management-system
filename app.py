@@ -30,14 +30,11 @@ mail = Mail(app)
 
 # -------------------- DATABASE --------------------
 
-def get_db_connection():
-    return psycopg2.connect(
-        host="localhost",
-        database="sms_db",
-        user="postgres",
-        password="f25ns@2029"
-    )
+import os
+import psycopg2
 
+def get_db_connection():
+    return psycopg2.connect(os.environ["DATABASE_URL"])
 def get_session_student_id():
     user_id = session.get("user_id")
     role    = session.get("role")
