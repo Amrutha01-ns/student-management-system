@@ -30,7 +30,13 @@ app.config['MAIL_DEFAULT_SENDER'] = os.environ.get("MAIL_USERNAME", "adminemaila
 mail = Mail(app)
 
 # -------------------- DATABASE --------------------
-
+print("========== MAIL CONFIG ==========")
+print("MAIL_SERVER =", app.config['MAIL_SERVER'])
+print("MAIL_PORT =", app.config['MAIL_PORT'])
+print("MAIL_USE_TLS =", app.config['MAIL_USE_TLS'])
+print("MAIL_USERNAME =", app.config['MAIL_USERNAME'])
+print("MAIL_PASSWORD EXISTS =", bool(app.config['MAIL_PASSWORD']))
+print("=================================")
 def get_db_connection():
     return psycopg2.connect(
         os.environ.get("DATABASE_URL", "postgresql://postgres.snlfgcbehrzhttykeabv:r2wnu8ner67daoxl@aws-0-ap-south-1.pooler.supabase.com:5432/postgres")
