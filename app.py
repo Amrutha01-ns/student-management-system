@@ -184,140 +184,36 @@ def send_otp():
             recipients=[email]
         )
 
-        # Plain text version
         msg.body = f"""
 Dear Student / Parent,
 
 Welcome to AET School of Excellence Student Management System.
 
-A registration request has been received for this email address on our website.
+Your OTP for registration is:
 
-To continue registration and verify your email address, please use the OTP below:
-
-OTP: {otp}
+{otp}
 
 This OTP is valid for 10 minutes.
 
-Why did you receive this email?
---------------------------------
-Someone used this email address while registering on the AET School of Excellence Student Management Portal.
-
-If this was you, enter the OTP on the registration page.
-
-If you did not request this registration, please ignore this email. No account will be created without OTP verification.
-
-Security Notice:
-- Do not share this OTP with anyone.
-- School staff will never ask for your OTP.
-- OTP expires automatically after 10 minutes.
+If you did not request this OTP, please ignore this email.
 
 Regards,
 AET School of Excellence
-Student Management System
-Nimma Shala Mandali
 """
 
-        # HTML version
         msg.html = f"""
-        <div style="font-family:Arial,sans-serif;max-width:650px;margin:auto;border:1px solid #ddd;border-radius:12px;overflow:hidden;">
+        <h2>AET School of Excellence</h2>
 
-            <div style="background:#1a73e8;padding:25px;text-align:center;">
-                <h2 style="color:white;margin:0;">
-                    AET School of Excellence
-                </h2>
-                <p style="color:#dce9ff;margin-top:8px;">
-                    Student Management System
-                </p>
-            </div>
+        <p>Email Verification OTP</p>
 
-            <div style="padding:30px;">
+        <h1>{otp}</h1>
 
-                <h3 style="color:#333;">
-                    Email Verification Required
-                </h3>
+        <p>This OTP is valid for 10 minutes.</p>
 
-                <p style="color:#555;line-height:1.7;">
-                    Welcome to the
-                    <b>AET School of Excellence Student Management Portal</b>.
-                </p>
-
-                <p style="color:#555;line-height:1.7;">
-                    A registration request has been received using this email address.
-                    To continue registration, please verify your email using the OTP below.
-                </p>
-
-                <div style="
-                    background:#f4f8ff;
-                    border:2px dashed #1a73e8;
-                    border-radius:10px;
-                    text-align:center;
-                    padding:25px;
-                    margin:25px 0;
-                ">
-                    <p style="margin:0;color:#666;">
-                        One Time Password (OTP)
-                    </p>
-
-                    <h1 style="
-                        color:#1a73e8;
-                        letter-spacing:10px;
-                        margin:10px 0;
-                    ">
-                        {otp}
-                    </h1>
-                </div>
-
-                <table style="
-                    width:100%;
-                    background:#fff8e1;
-                    border:1px solid #ffe082;
-                    border-radius:8px;
-                    padding:15px;
-                ">
-                    <tr>
-                        <td style="line-height:1.9;color:#555;">
-                            ⏱ Validity: <b>10 Minutes</b><br>
-                            📧 Email: <b>{email}</b><br>
-                            🏫 Purpose: <b>New Registration Verification</b><br>
-                            🔒 Do not share this OTP with anyone
-                        </td>
-                    </tr>
-                </table>
-
-                <h4 style="margin-top:25px;color:#333;">
-                    Why am I receiving this email?
-                </h4>
-
-                <p style="color:#555;line-height:1.7;">
-                    Someone used this email address while registering on the
-                    AET School of Excellence Student Management System.
-                </p>
-
-                <p style="color:#555;line-height:1.7;">
-                    If this was you, enter the OTP on the registration page.
-                    If not, simply ignore this email.
-                </p>
-
-                <p style="color:#d32f2f;">
-                    School staff will never ask for your OTP.
-                </p>
-
-            </div>
-
-            <div style="
-                background:#f5f5f5;
-                padding:15px;
-                text-align:center;
-                border-top:1px solid #ddd;
-            ">
-                <p style="font-size:12px;color:#777;">
-                    © AET School of Excellence<br>
-                    Student Management System<br>
-                    Nimma Shala Mandali
-                </p>
-            </div>
-
-        </div>
+        <p>
+        If you did not request this OTP,
+        please ignore this email.
+        </p>
         """
 
         mail.send(msg)
