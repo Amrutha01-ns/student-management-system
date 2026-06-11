@@ -20,9 +20,9 @@ app.secret_key = os.environ.get("SECRET_KEY", "abc123")
 otp_store = {}
 
 app.config['MAIL_SERVER']         = 'smtp.gmail.com'
-app.config['MAIL_PORT']           = 465
-app.config['MAIL_USE_TLS']        = False
-app.config['MAIL_USE_SSL']        = True
+app.config['MAIL_PORT']           = 587
+app.config['MAIL_USE_TLS']        = True
+app.config['MAIL_USE_SSL']        = False
 app.config['MAIL_USERNAME']       = os.environ.get("MAIL_USERNAME", "adminemaila@gmail.com")
 app.config['MAIL_PASSWORD']       = os.environ.get("MAIL_PASSWORD", "tajtshstdtjmzshr")
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get("MAIL_USERNAME", "adminemaila@gmail.com")
@@ -33,7 +33,7 @@ mail = Mail(app)
 
 def get_db_connection():
     return psycopg2.connect(
-        os.environ.get("DATABASE_URL", "postgresql://postgres:r2wnu8ner67daoxl@db.snlfgcbehrzhttykeabv.supabase.co:5432/postgres")
+        os.environ.get("DATABASE_URL", "postgresql://postgres.snlfgcbehrzhttykeabv:r2wnu8ner67daoxl@aws-0-ap-south-1.pooler.supabase.com:5432/postgres")
     )
 def get_session_student_id():
     user_id = session.get("user_id")
