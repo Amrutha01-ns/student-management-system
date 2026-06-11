@@ -13,12 +13,14 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import pagesizes
-
+import socket
+socket.setdefaulttimeout(30)
 app = Flask(__name__)
 
 app.secret_key = os.environ.get("SECRET_KEY", "abc123")
 otp_store = {}
-
+app.config['MAIL_MAX_EMAILS'] = None
+app.config['MAIL_SUPPRESS_SEND'] = False
 app.config['MAIL_SERVER']         = 'smtp.gmail.com'
 app.config['MAIL_PORT']           = 587
 app.config['MAIL_USE_TLS']        = True
@@ -154,107 +156,186 @@ def build_student_context(student_id):
 
 # -------------------- OTP --------------------
 
+
 @app.route("/send-otp", methods=["POST"])
 def send_otp():
-    data  = request.get_json()
+    data = request.get_json()
+
+    if not data:
+        return jsonify({
+            "status": "error",
+            "message": "No data received"
+        }), 400
+
     email = data.get("email")
-    otp   = str(random.randint(100000, 999999))
+
+    if not email:
+        return jsonify({
+            "status": "error",
+            "message": "Email is required"
+        }), 400
+
+    otp = str(random.randint(100000, 999999))
     otp_store[email] = otp
 
     try:
         msg = Message(
-            subject="AET School of Excellence — OTP Verification",
+            subject="AET School of Excellence - Email Verification OTP",
             recipients=[email]
         )
-        msg.body = (
-            "Dear Student / Parent,\n\n"
-            "Welcome to AET School of Excellence Management System.\n\n"
-            "You have requested to register on our Student Management Portal.\n"
-            "Please use the One-Time Password (OTP) below to verify your email address:\n\n"
-            f"  Your OTP Code: {otp}\n\n"
-            "This OTP is valid for 10 minutes only.\n"
-            "Do NOT share this OTP with anyone including school staff.\n\n"
-            "If you did not request this, please ignore this email.\n\n"
-            "Regards,\n"
-            "AET School of Excellence\n"
-            "Student Management System\n"
-            "NIMMA SHALA MANDALI"
-        )
-        msg.html = f"""
-        <div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;
-                    border:1px solid #e0e0e0;border-radius:12px;overflow:hidden;">
 
-            <!-- HEADER -->
+        # Plain text version
+        msg.body = f"""
+Dear Student / Parent,
+
+Welcome to AET School of Excellence Student Management System.
+
+A registration request has been received for this email address on our website.
+
+To continue registration and verify your email address, please use the OTP below:
+
+OTP: {otp}
+
+This OTP is valid for 10 minutes.
+
+Why did you receive this email?
+--------------------------------
+Someone used this email address while registering on the AET School of Excellence Student Management Portal.
+
+If this was you, enter the OTP on the registration page.
+
+If you did not request this registration, please ignore this email. No account will be created without OTP verification.
+
+Security Notice:
+- Do not share this OTP with anyone.
+- School staff will never ask for your OTP.
+- OTP expires automatically after 10 minutes.
+
+Regards,
+AET School of Excellence
+Student Management System
+Nimma Shala Mandali
+"""
+
+        # HTML version
+        msg.html = f"""
+        <div style="font-family:Arial,sans-serif;max-width:650px;margin:auto;border:1px solid #ddd;border-radius:12px;overflow:hidden;">
+
             <div style="background:#1a73e8;padding:25px;text-align:center;">
-                <h2 style="color:white;margin:0;font-size:22px;">
-                    🏫 AET School of Excellence
+                <h2 style="color:white;margin:0;">
+                    AET School of Excellence
                 </h2>
-                <p style="color:#cce0ff;margin:5px 0 0 0;font-size:13px;">
+                <p style="color:#dce9ff;margin-top:8px;">
                     Student Management System
                 </p>
             </div>
 
-            <!-- BODY -->
-            <div style="padding:30px;background:#ffffff;">
-                <p style="font-size:15px;color:#333;">Dear Student / Parent,</p>
+            <div style="padding:30px;">
 
-                <p style="font-size:14px;color:#555;line-height:1.6;">
-                    You have requested to create an account on the
+                <h3 style="color:#333;">
+                    Email Verification Required
+                </h3>
+
+                <p style="color:#555;line-height:1.7;">
+                    Welcome to the
                     <b>AET School of Excellence Student Management Portal</b>.
-                    <br><br>
-                    To complete your registration, please verify your email address
-                    using the One-Time Password (OTP) below:
                 </p>
 
-                <!-- OTP BOX -->
-                <div style="background:#f0f4ff;border:2px dashed #1a73e8;
-                            border-radius:10px;padding:25px;text-align:center;margin:25px 0;">
-                    <p style="margin:0 0 8px 0;font-size:13px;color:#666;">
-                        Your One-Time Password (OTP)
+                <p style="color:#555;line-height:1.7;">
+                    A registration request has been received using this email address.
+                    To continue registration, please verify your email using the OTP below.
+                </p>
+
+                <div style="
+                    background:#f4f8ff;
+                    border:2px dashed #1a73e8;
+                    border-radius:10px;
+                    text-align:center;
+                    padding:25px;
+                    margin:25px 0;
+                ">
+                    <p style="margin:0;color:#666;">
+                        One Time Password (OTP)
                     </p>
-                    <h1 style="color:#1a73e8;letter-spacing:10px;
-                               margin:0;font-size:36px;font-weight:bold;">
+
+                    <h1 style="
+                        color:#1a73e8;
+                        letter-spacing:10px;
+                        margin:10px 0;
+                    ">
                         {otp}
                     </h1>
                 </div>
 
-                <!-- INSTRUCTIONS -->
-                <table style="width:100%;background:#fff8e1;border-radius:8px;
-                              padding:15px;border:1px solid #ffe082;">
+                <table style="
+                    width:100%;
+                    background:#fff8e1;
+                    border:1px solid #ffe082;
+                    border-radius:8px;
+                    padding:15px;
+                ">
                     <tr>
-                        <td style="font-size:13px;color:#555;line-height:2;">
-                            ⏱ &nbsp;<b>Valid for:</b> 10 minutes only<br>
-                            🔒 &nbsp;<b>Do not share</b> this OTP with anyone<br>
-                            📧 &nbsp;<b>Requested for:</b> {email}<br>
-                            🏫 &nbsp;<b>Purpose:</b> New Student / Parent Registration
+                        <td style="line-height:1.9;color:#555;">
+                            ⏱ Validity: <b>10 Minutes</b><br>
+                            📧 Email: <b>{email}</b><br>
+                            🏫 Purpose: <b>New Registration Verification</b><br>
+                            🔒 Do not share this OTP with anyone
                         </td>
                     </tr>
                 </table>
 
-                <p style="font-size:13px;color:#999;margin-top:20px;">
-                    If you did not request this OTP, please ignore this email.
-                    Your account will not be created without verification.
+                <h4 style="margin-top:25px;color:#333;">
+                    Why am I receiving this email?
+                </h4>
+
+                <p style="color:#555;line-height:1.7;">
+                    Someone used this email address while registering on the
+                    AET School of Excellence Student Management System.
                 </p>
+
+                <p style="color:#555;line-height:1.7;">
+                    If this was you, enter the OTP on the registration page.
+                    If not, simply ignore this email.
+                </p>
+
+                <p style="color:#d32f2f;">
+                    School staff will never ask for your OTP.
+                </p>
+
             </div>
 
-            <!-- FOOTER -->
-            <div style="background:#f5f5f5;padding:15px;text-align:center;
-                        border-top:1px solid #e0e0e0;">
-                <p style="color:#aaa;font-size:12px;margin:0;">
-                    © 2024 AET School of Excellence &nbsp;|&nbsp; NIMMA SHALA MANDALI<br>
-                    This is an automated email. Please do not reply.
+            <div style="
+                background:#f5f5f5;
+                padding:15px;
+                text-align:center;
+                border-top:1px solid #ddd;
+            ">
+                <p style="font-size:12px;color:#777;">
+                    © AET School of Excellence<br>
+                    Student Management System<br>
+                    Nimma Shala Mandali
                 </p>
             </div>
 
         </div>
         """
+
         mail.send(msg)
-        print(f"OTP SENT to {email}: {otp}")
-        return jsonify({"status": "success"})
+
+        print(f"OTP SENT TO {email}")
+
+        return jsonify({
+            "status": "success",
+            "message": "OTP sent successfully"
+        })
 
     except Exception as e:
         print("MAIL ERROR:", str(e))
-        return jsonify({"status": "error", "message": str(e)})
+
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
 @app.route("/verify-otp", methods=["POST"])
 def verify_otp():
     data  = request.get_json()
