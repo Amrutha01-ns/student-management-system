@@ -7,6 +7,7 @@ import io
 import random
 import bcrypt
 import requests
+import os
 
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib import colors
@@ -15,25 +16,24 @@ from reportlab.lib import pagesizes
 
 app = Flask(__name__)
 
-app.secret_key = "abc123"
+app.secret_key = os.environ.get("SECRET_KEY", "abc123")
 otp_store = {}
 
 app.config['MAIL_SERVER']         = 'smtp.gmail.com'
 app.config['MAIL_PORT']           = 465
 app.config['MAIL_USE_TLS']        = False
 app.config['MAIL_USE_SSL']        = True
-app.config['MAIL_USERNAME']       = 'adminemaila@gmail.com'  # your new email
-app.config['MAIL_PASSWORD'] = 'tajtshstdtjmzshr'  # shst not shat!
-app.config['MAIL_DEFAULT_SENDER'] = 'adminemaila@gmail.com'  # same new email
+app.config['MAIL_USERNAME']       = os.environ.get("MAIL_USERNAME", "adminemaila@gmail.com")
+app.config['MAIL_PASSWORD']       = os.environ.get("MAIL_PASSWORD", "tajtshstdtjmzshr")
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get("MAIL_USERNAME", "adminemaila@gmail.com")
+
 mail = Mail(app)
 
 # -------------------- DATABASE --------------------
 
-import os
-import psycopg2
 def get_db_connection():
     return psycopg2.connect(
-        "postgresql://postgres:r2wnu8ner67daoxl@db.snlfgcbehrzhttykeabv.supabase.co:5432/postgres"
+        os.environ.get("DATABASE_URL", "postgresql://postgres:r2wnu8ner67daoxl@db.snlfgcbehrzhttykeabv.supabase.co:5432/postgres")
     )
 def get_session_student_id():
     user_id = session.get("user_id")
@@ -265,7 +265,44 @@ def verify_otp():
 
 
 # -------------------- AUTH --------------------
+@app.route("/validate_contact", methods=["POST"])
+def validate_contact():
+    data  = request.get_json()
+    email = data.get("email", "").strip().lower()
+    phone = data.get("phone", "").strip()
+    role  = data.get("role", "").strip()
 
+    if not email or not phone:
+        return jsonify({"valid": False, "message": "Email and phone are required"})
+
+    # Basic email format check
+    import re
+    email_pattern = r'^[\w\.-]+@[\w\.-]+\.\w{2,}$'
+    if not re.match(email_pattern, email):
+        return jsonify({"valid": False, "message": "Invalid email format"})
+
+    # Basic phone check — must be 10 digits
+    if not re.match(r'^\d{10}$', phone):
+        return jsonify({"valid": False, "message": "Phone must be exactly 10 digits"})
+
+    # Check if email already registered with different phone
+    conn = get_db_connection()
+    cur  = conn.cursor()
+    cur.execute(
+        "SELECT phone FROM users WHERE LOWER(email) = %s AND role = %s",
+        (email, role)
+    )
+    row = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    if row and row[0] != phone:
+        return jsonify({
+            "valid":   False,
+            "message": "This email is already registered with a different phone number"
+        })
+
+    return jsonify({"valid": True})
 @app.route("/login", methods=["POST"])
 def login():
     data     = request.get_json(silent=True) or request.form
