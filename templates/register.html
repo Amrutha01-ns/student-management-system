@@ -476,7 +476,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
       setLoading(false); return;
     }
 
-    const otp = prompt("📧 OTP sent to " + email + "\n\nEnter your OTP:");
+    const otp = prompt("📧 OTP for " + email + ":\n\n" + (otpData.otp || "Check server logs") + "\n\nEnter the OTP above:");
     if (!otp) { setLoading(false); return; }
 
     const verify     = await fetch("/verify-otp", {
