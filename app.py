@@ -159,79 +159,142 @@ def build_student_context(student_id):
 
 @app.route("/send-otp", methods=["POST"])
 def send_otp():
-    data = request.get_json()
-
+    data  = request.get_json()
     if not data:
-        return jsonify({
-            "status": "error",
-            "message": "No data received"
-        }), 400
+        return jsonify({"status": "error", "message": "No data received"}), 400
 
     email = data.get("email")
-
     if not email:
-        return jsonify({
-            "status": "error",
-            "message": "Email is required"
-        }), 400
+        return jsonify({"status": "error", "message": "Email is required"}), 400
 
     otp = str(random.randint(100000, 999999))
     otp_store[email] = otp
 
     try:
-        msg = Message(
-            subject="AET School of Excellence - Email Verification OTP",
-            recipients=[email]
-        )
+        import resend
+        resend.api_key = os.environ.get("RESEND_API_KEY")
 
-        msg.body = f"""
-Dear Student / Parent,
+        resend.Emails.send({
+            "from":    "AET School <onboarding@resend.dev>",
+            "to":      [email],
+            "subject": "Your OTP — AET School of Excellence",
+            "html":    f"""
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;background:#f4f6fb;font-family:Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0"
+         style="background:#f4f6fb;padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table width="520" cellpadding="0" cellspacing="0"
+               style="background:#ffffff;border-radius:12px;
+                      box-shadow:0 4px 24px rgba(0,0,0,0.08);
+                      overflow:hidden;max-width:520px;width:100%;">
 
-Welcome to AET School of Excellence Student Management System.
+          <!-- HEADER -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#0f1f3d,#1a3a6b);
+                       padding:32px 40px;text-align:center;">
+              <div style="font-size:40px;margin-bottom:10px;">🏫</div>
+              <h1 style="color:#ffffff;margin:0;font-size:22px;font-weight:700;">
+                AET School of Excellence
+              </h1>
+              <p style="color:#93c5fd;margin:6px 0 0;font-size:13px;">
+                Student Management System
+              </p>
+            </td>
+          </tr>
 
-Your OTP for registration is:
+          <!-- BODY -->
+          <tr>
+            <td style="padding:36px 40px;">
+              <p style="color:#1a1a2e;font-size:16px;margin:0 0 8px;">
+                Dear Student / Parent,
+              </p>
+              <p style="color:#4a5568;font-size:14px;line-height:1.7;margin:0 0 24px;">
+                You have requested to register on the
+                <strong>AET School of Excellence Student Management Portal</strong>.
+                Please use the OTP below to verify your email address.
+              </p>
 
-{otp}
+              <!-- OTP BOX -->
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background:#f0f5ff;border:2px dashed #1a3a6b;
+                             border-radius:10px;padding:28px;text-align:center;">
+                    <p style="color:#4a5568;font-size:12px;
+                               text-transform:uppercase;letter-spacing:1px;margin:0 0 10px;">
+                      Your One-Time Password
+                    </p>
+                    <p style="color:#0f1f3d;font-size:42px;font-weight:900;
+                               letter-spacing:12px;margin:0;
+                               font-family:'Courier New',monospace;">
+                      {otp}
+                    </p>
+                  </td>
+                </tr>
+              </table>
 
-This OTP is valid for 10 minutes.
+              <!-- INFO TABLE -->
+              <table width="100%" cellpadding="0" cellspacing="0"
+                     style="margin-top:24px;background:#fffbeb;
+                            border:1px solid #fde68a;border-radius:8px;">
+                <tr>
+                  <td style="padding:16px 20px;">
+                    <p style="margin:0 0 8px;color:#555;font-size:13px;">
+                      ⏱ &nbsp;<strong>Valid for:</strong> 10 minutes only
+                    </p>
+                    <p style="margin:0 0 8px;color:#555;font-size:13px;">
+                      📧 &nbsp;<strong>Requested for:</strong> {email}
+                    </p>
+                    <p style="margin:0 0 8px;color:#555;font-size:13px;">
+                      🎯 &nbsp;<strong>Purpose:</strong> New Account Registration
+                    </p>
+                    <p style="margin:0;color:#555;font-size:13px;">
+                      🔒 &nbsp;<strong>Do not share</strong> this OTP with anyone
+                    </p>
+                  </td>
+                </tr>
+              </table>
 
-If you did not request this OTP, please ignore this email.
+              <p style="color:#9aa5b4;font-size:12px;margin:24px 0 0;text-align:center;">
+                If you did not request this OTP, please ignore this email.
+              </p>
+            </td>
+          </tr>
 
-Regards,
-AET School of Excellence
-"""
+          <!-- FOOTER -->
+          <tr>
+            <td style="background:#f8f9fc;border-top:1px solid #e5e7eb;
+                       padding:20px 40px;text-align:center;">
+              <p style="color:#9aa5b4;font-size:12px;margin:0 0 4px;">
+                © 2024 AET School of Excellence &nbsp;|&nbsp; NIMMA SHALA MANDALI
+              </p>
+              <p style="color:#c4c9d4;font-size:11px;margin:0;">
+                This is an automated email — please do not reply.
+              </p>
+            </td>
+          </tr>
 
-        msg.html = f"""
-        <h2>AET School of Excellence</h2>
-
-        <p>Email Verification OTP</p>
-
-        <h1>{otp}</h1>
-
-        <p>This OTP is valid for 10 minutes.</p>
-
-        <p>
-        If you did not request this OTP,
-        please ignore this email.
-        </p>
-        """
-
-        mail.send(msg)
-
-        print(f"OTP SENT TO {email}")
-
-        return jsonify({
-            "status": "success",
-            "message": "OTP sent successfully"
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+            """
         })
 
-    except Exception as e:
-        print("MAIL ERROR:", str(e))
+        print(f"✅ OTP SENT to {email}: {otp}")
+        return jsonify({"status": "success"})
 
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
+    except Exception as e:
+        print(f"❌ MAIL ERROR: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)})
 @app.route("/verify-otp", methods=["POST"])
 def verify_otp():
     data  = request.get_json()
