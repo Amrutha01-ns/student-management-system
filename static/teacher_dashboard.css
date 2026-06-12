@@ -248,3 +248,175 @@ table th, table td {
     border-radius: 8px;
     cursor: pointer;
 }
+/* ==========================================
+   MOBILE & TABLET RESPONSIVE DESIGN
+   ========================================== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+
+    .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .sidebar {
+        width: 220px;
+        min-width: 220px;
+        max-width: 220px;
+    }
+}
+
+
+/* Mobile */
+@media (max-width: 768px) {
+
+    html,
+    body {
+        overflow: auto;
+    }
+
+    .shell,
+    .main-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    /* ---------- TOP BAR ---------- */
+
+    .topbar,
+    .top-bar {
+        height: auto;
+        padding: 12px;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .t-right {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .logo-text,
+    .t-brand {
+        font-size: 1.2rem;
+    }
+
+    /* ---------- SIDEBAR ---------- */
+
+    .sidebar {
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 10px;
+    }
+
+    .nav-item {
+        min-height: auto;
+        padding: 12px;
+    }
+
+    /* ---------- CONTENT ---------- */
+
+    .content {
+        padding: 15px;
+        width: 100%;
+    }
+
+    /* ---------- PAGE HEADER ---------- */
+
+    .pg-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .pg-title {
+        font-size: 22px;
+    }
+
+    /* ---------- QUICK ACTIONS ---------- */
+
+    .grid-4 {
+        grid-template-columns: 1fr;
+    }
+
+    .q-card {
+        width: 100%;
+    }
+
+    /* ---------- TABLES ---------- */
+
+    .tt-card,
+    .table-container,
+    .card {
+        overflow-x: auto;
+    }
+
+    .timetable,
+    .styled-table {
+        min-width: 700px;
+    }
+
+    /* ---------- TODAY BADGE ---------- */
+
+    .today-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    /* ---------- FOOTER ---------- */
+
+    footer,
+    .bottom-bar {
+        flex-direction: column;
+        gap: 6px;
+        text-align: center;
+        height: auto;
+        padding: 12px;
+    }
+
+    /* ---------- BUTTONS ---------- */
+
+    .logout-pill,
+    .t-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+
+/* Small Phones */
+@media (max-width: 480px) {
+
+    .pg-title {
+        font-size: 18px;
+    }
+
+    .t-name-chip {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .nav-main {
+        font-size: 12px;
+    }
+
+    .nav-sub {
+        font-size: 10px;
+    }
+
+    .q-ico {
+        font-size: 20px;
+    }
+
+    .q-lbl {
+        font-size: 11px;
+    }
+}
