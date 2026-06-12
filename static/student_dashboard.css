@@ -225,8 +225,16 @@ body {
 /* ==========================================
    MOBILE & TABLET RESPONSIVE DESIGN
 ========================================== */
+/* ==========================================
+   RESPONSIVE FIX FOR MOBILE & TABLETS
+========================================== */
+
 
 /* Tablet */
+html,
+body{
+    overflow-x:hidden;
+}
 @media (max-width:1024px){
 
     .content{

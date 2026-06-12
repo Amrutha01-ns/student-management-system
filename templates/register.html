@@ -408,7 +408,6 @@ document.getElementById("password").addEventListener("input", function() {
   fill.style.width = lvl.w; fill.style.background = lvl.c;
   text.textContent = lvl.l; text.style.color = lvl.c;
 });
-
 // ── Eye toggle ───────────────────────────────────────────────────
 let passwordVisible = false;
 function togglePassword() {
@@ -421,7 +420,6 @@ function togglePassword() {
     : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
        <circle cx="12" cy="12" r="3"/>`;
 }
-
 // ── Clear on load ────────────────────────────────────────────────
 window.addEventListener("load", function() {
   setTimeout(() => {
@@ -432,27 +430,22 @@ window.addEventListener("load", function() {
     });
   }, 100);
 });
-
 // ── Submit ───────────────────────────────────────────────────────
 document.getElementById("registerForm").addEventListener("submit", async function(e) {
   e.preventDefault();
-
   if (existingDetected && detectedRole) {
     goToDashboard();
     return;
   }
-
   const name     = document.getElementById("name").value.trim();
   const phone    = document.getElementById("phone").value.trim();
   const email    = document.getElementById("email").value.trim();
   const role     = document.getElementById("role").value;
   const password = document.getElementById("password").value;
-
   if (!name)  { showAlert("Please enter your full name."); return; }
   if (phone.length !== 10 || isNaN(phone)) { showAlert("Enter a valid 10-digit phone number."); return; }
   if (!email) { showAlert("Please enter your email."); return; }
   if (password.length < 6) { showAlert("Password must be at least 6 characters."); return; }
-
   if (role === "student") {
     if (!document.getElementById("roll_number").value.trim()) {
       showAlert("Please enter your roll number."); return;
@@ -462,9 +455,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     if (!document.getElementById("child_name").value.trim())         { showAlert("Please enter your child's name."); return; }
     if (!document.getElementById("child_roll_number").value.trim())  { showAlert("Please enter your child's roll number."); return; }
   }
-
   setLoading(true);
-
   try {
     const otpSend = await fetch("/send-otp", {
       method: "POST", headers: { "Content-Type": "application/json" },
@@ -475,10 +466,8 @@ document.getElementById("registerForm").addEventListener("submit", async functio
       showAlert("Failed to send OTP. Check your email address.");
       setLoading(false); return;
     }
-
     const otp = prompt("📧 OTP for " + email + ":\n\n" + (otpData.otp || "Check server logs") + "\n\nEnter the OTP above:");
     if (!otp) { setLoading(false); return; }
-
     const verify     = await fetch("/verify-otp", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, otp })
@@ -488,7 +477,6 @@ document.getElementById("registerForm").addEventListener("submit", async functio
       showAlert("❌ Invalid OTP. Please try again.");
       setLoading(false); return;
     }
-
     const payload = { name, phone, email, role, password };
     if (role === "student") {
       payload.father_name = document.getElementById("father_name").value.trim();
@@ -505,13 +493,11 @@ document.getElementById("registerForm").addEventListener("submit", async functio
       payload.parent_standard   = document.getElementById("parent_standard").value;
       payload.parent_section    = document.getElementById("parent_section").value;
     }
-
     const response = await fetch("/register", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
     const data = await response.json();
-
     if (data.status === "success") {
       showSuccess();
       localStorage.setItem("user_id", data.user_id);
@@ -529,25 +515,21 @@ document.getElementById("registerForm").addEventListener("submit", async functio
           window.location.href = "/parent_dashboard";
         }
       }, 1500);
-
     } else if (data.status === "exists") {
       setLoading(false);
       detectedRole = data.role;
       showAlert("⚠️ Account already exists! Redirecting...");
       setTimeout(() => goToDashboard(), 1500);
-
     } else {
       showAlert("Registration failed: " + (data.message || "Unknown error"));
       setLoading(false);
     }
-
   } catch (err) {
     console.error(err);
     showAlert("Server error. Please try again.");
     setLoading(false);
   }
 });
-
 // ── Helpers ──────────────────────────────────────────────────────
 function setLoading(on) {
   document.getElementById("btnText").style.display   = on ? "none"        : "inline";
@@ -568,7 +550,6 @@ function showSuccess() {
   document.body.appendChild(box);
   setTimeout(() => box.classList.add("show"), 10);
 }
-
 </script>
 </body>
 </html>
