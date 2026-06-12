@@ -7,377 +7,92 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --ink:     #0f0f12;
-  --ink2:    #2a2a35;
-  --ink3:    #5a5a72;
-  --silver:  #e8e8f0;
-  --blue:    #2563eb;
-  --blue2:   #1d4ed8;
-  --blue-lt: #eff6ff;
-  --red:     #ef4444;
-  --green:   #22c55e;
-  --card:    #ffffff;
-  --bg:      #f3f4f8;
-  --radius:  16px;
-  --shadow:  0 24px 64px rgba(15,15,18,0.10);
+  --ink:#0f0f12; --ink2:#2a2a35; --ink3:#5a5a72;
+  --silver:#e8e8f0; --blue:#2563eb; --blue2:#1d4ed8;
+  --blue-lt:#eff6ff; --red:#ef4444; --green:#22c55e;
+  --card:#ffffff; --bg:#f3f4f8; --radius:16px;
+  --shadow:0 24px 64px rgba(15,15,18,0.10);
 }
-
-html, body {
-  height: 100%;
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--ink);
-  overflow-x: hidden;
-}
-
-/* ── ORBS ── */
-.orb {
-  position: fixed;
-  border-radius: 50%;
-  filter: blur(80px);
-  pointer-events: none;
-  z-index: 0;
-  animation: drift 18s ease-in-out infinite alternate;
-}
-.orb-1 { width:520px; height:520px; background:rgba(37,99,235,0.10); top:-140px; left:-120px; animation-delay:0s; }
+html,body { height:100%; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); overflow-x:hidden; }
+.orb { position:fixed; border-radius:50%; filter:blur(80px); pointer-events:none; z-index:0; animation:drift 18s ease-in-out infinite alternate; }
+.orb-1 { width:520px; height:520px; background:rgba(37,99,235,0.10); top:-140px; left:-120px; }
 .orb-2 { width:380px; height:380px; background:rgba(99,102,241,0.08); bottom:-60px; right:-80px; animation-delay:-6s; }
-.orb-3 { width:260px; height:260px; background:rgba(34,197,94,0.06);  top:40%; left:55%; animation-delay:-12s; }
-@keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(30px,40px) scale(1.07); } }
-
-/* ── LAYOUT ── */
-.page {
-  position: relative;
-  z-index: 1;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 32px 16px;
-}
-
-/* ── CARD ── */
-.card {
-  background: var(--card);
-  border-radius: 24px;
-  box-shadow: var(--shadow);
-  width: 100%;
-  max-width: 460px;
-  overflow: hidden;
-  animation: slideUp 0.55s cubic-bezier(.22,1,.36,1) both;
-}
-@keyframes slideUp {
-  from { opacity:0; transform:translateY(36px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-
-/* ── HEADER BAND ── */
-.card-head {
-  background: linear-gradient(135deg, #1e40af 0%, #2563eb 60%, #3b82f6 100%);
-  padding: 36px 40px 32px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-.card-head::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-}
-.logo-wrap {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 72px;
-  height: 72px;
-  margin-bottom: 16px;
-}
-.logo-ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.3);
-  animation: spin 12s linear infinite;
-}
-.logo-ring::before {
-  content: '';
-  position: absolute;
-  top: -4px; left: 50%;
-  transform: translateX(-50%);
-  width: 8px; height: 8px;
-  background: rgba(255,255,255,0.7);
-  border-radius: 50%;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.logo-emoji {
-  font-size: 36px;
-  position: relative;
-  z-index: 1;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
-}
-.card-head h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 26px;
-  color: #fff;
-  margin-bottom: 6px;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.15);
-}
-.card-head p {
-  font-size: 13px;
-  color: rgba(255,255,255,0.75);
-  letter-spacing: 0.02em;
-}
-.head-line {
-  width: 48px; height: 3px;
-  background: rgba(255,255,255,0.4);
-  border-radius: 2px;
-  margin: 14px auto 0;
-}
-
-/* ── BODY ── */
-.card-body {
-  padding: 36px 40px 40px;
-}
-
-/* ── ROLE TABS ── */
-.role-label {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink3);
-  margin-bottom: 10px;
-  display: block;
-}
-.role-tabs {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 28px;
-}
-.rtab {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  padding: 12px 8px;
-  border-radius: 12px;
-  border: 1.5px solid var(--silver);
-  background: transparent;
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--ink3);
-  transition: all 0.18s ease;
-}
-.rtab .icon { font-size: 22px; }
-.rtab:hover { border-color: #93c5fd; background: var(--blue-lt); color: var(--blue); }
-.rtab.active {
-  border-color: var(--blue);
-  background: var(--blue-lt);
-  color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
-}
-
-/* ── FIELDS ── */
-.field { margin-bottom: 18px; }
-.field label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink3);
-  margin-bottom: 7px;
-}
-.input-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-.input-icon {
-  position: absolute;
-  left: 14px;
-  font-size: 17px;
-  pointer-events: none;
-  z-index: 1;
-}
-.input-wrap input {
-  width: 100%;
-  height: 48px;
-  padding: 0 16px 0 44px;
-  border: 1.5px solid var(--silver);
-  border-radius: 12px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  color: var(--ink);
-  background: #fff;
-  outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.input-wrap input::placeholder { color: #b4b4c8; }
-.input-wrap input:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
-}
-.input-wrap input.error { border-color: var(--red); }
-.input-wrap input.valid { border-color: var(--green); }
-
-/* ── STATUS PILL ── */
-#statusPill {
-  display: none;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 500;
-  margin-bottom: 20px;
-  animation: fadeIn 0.3s ease;
-}
-@keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
-#statusPill.found {
-  background: #f0fdf4;
-  border: 1.5px solid #86efac;
-  color: #15803d;
-}
-#statusPill.notfound {
-  background: #fef9ee;
-  border: 1.5px solid #fcd34d;
-  color: #92400e;
-}
-
-/* ── CTA BUTTON ── */
-.btn-login {
-  width: 100%;
-  height: 52px;
-  border: none;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #1d4ed8, #2563eb, #3b82f6);
-  color: #fff;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.15s, box-shadow 0.15s;
-  box-shadow: 0 4px 20px rgba(37,99,235,0.30);
-  margin-bottom: 8px;
-}
-.btn-login::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
-  opacity: 0;
-  transition: opacity 0.15s;
-}
-.btn-login:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(37,99,235,0.38); }
-.btn-login:hover::before { opacity: 1; }
-.btn-login:active { transform: translateY(0); }
-.btn-login:disabled { opacity: 0.65; cursor: default; transform: none; }
-
-.btn-inner { display: flex; align-items: center; justify-content: center; gap: 8px; }
-.btn-loader { display: none; gap: 5px; }
-.dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.8); animation: bounce 1.1s ease-in-out infinite; }
-.dot:nth-child(2) { animation-delay: .15s; }
-.dot:nth-child(3) { animation-delay: .3s; }
+.orb-3 { width:260px; height:260px; background:rgba(34,197,94,0.06); top:40%; left:55%; animation-delay:-12s; }
+@keyframes drift { from{transform:translate(0,0) scale(1)} to{transform:translate(30px,40px) scale(1.07)} }
+.page { position:relative; z-index:1; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:32px 16px; }
+.card { background:var(--card); border-radius:24px; box-shadow:var(--shadow); width:100%; max-width:460px; overflow:hidden; animation:slideUp 0.55s cubic-bezier(.22,1,.36,1) both; }
+@keyframes slideUp { from{opacity:0;transform:translateY(36px)} to{opacity:1;transform:translateY(0)} }
+.card-head { background:linear-gradient(135deg,#1e40af 0%,#2563eb 60%,#3b82f6 100%); padding:36px 40px 32px; text-align:center; position:relative; overflow:hidden; }
+.card-head::before { content:''; position:absolute; inset:0; background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+.logo-wrap { position:relative; display:inline-flex; align-items:center; justify-content:center; width:72px; height:72px; margin-bottom:16px; }
+.logo-ring { position:absolute; inset:0; border-radius:50%; border:2px solid rgba(255,255,255,0.3); animation:spin 12s linear infinite; }
+.logo-ring::before { content:''; position:absolute; top:-4px; left:50%; transform:translateX(-50%); width:8px; height:8px; background:rgba(255,255,255,0.7); border-radius:50%; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.logo-emoji { font-size:36px; position:relative; z-index:1; filter:drop-shadow(0 2px 8px rgba(0,0,0,0.2)); }
+.card-head h2 { font-family:'Playfair Display',serif; font-size:26px; color:#fff; margin-bottom:6px; text-shadow:0 2px 12px rgba(0,0,0,0.15); }
+.card-head p { font-size:13px; color:rgba(255,255,255,0.75); letter-spacing:0.02em; }
+.head-line { width:48px; height:3px; background:rgba(255,255,255,0.4); border-radius:2px; margin:14px auto 0; }
+.card-body { padding:36px 40px 40px; }
+.role-label { font-size:12px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink3); margin-bottom:10px; display:block; }
+.role-tabs { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:28px; }
+.rtab { display:flex; flex-direction:column; align-items:center; gap:5px; padding:12px 8px; border-radius:12px; border:1.5px solid var(--silver); background:transparent; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--ink3); transition:all 0.18s ease; }
+.rtab .icon { font-size:22px; }
+.rtab:hover { border-color:#93c5fd; background:var(--blue-lt); color:var(--blue); }
+.rtab.active { border-color:var(--blue); background:var(--blue-lt); color:var(--blue); box-shadow:0 0 0 3px rgba(37,99,235,0.10); }
+.field { margin-bottom:18px; }
+.field label { display:block; font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink3); margin-bottom:7px; }
+.input-wrap { position:relative; display:flex; align-items:center; }
+.input-icon { position:absolute; left:14px; font-size:17px; pointer-events:none; z-index:1; }
+.input-wrap input { width:100%; height:48px; padding:0 16px 0 44px; border:1.5px solid var(--silver); border-radius:12px; font-family:'DM Sans',sans-serif; font-size:15px; color:var(--ink); background:#fff; outline:none; transition:border-color 0.15s,box-shadow 0.15s; }
+.input-wrap input::placeholder { color:#b4b4c8; }
+.input-wrap input:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(37,99,235,0.10); }
+.eye-btn { position:absolute; right:14px; background:none; border:none; cursor:pointer; color:var(--ink3); padding:4px; display:flex; align-items:center; }
+.found-banner { display:none; gap:12px; align-items:center; background:linear-gradient(135deg,#eff6ff,#f0fdf4); border:1.5px solid #86efac; border-radius:12px; padding:14px 18px; margin-bottom:20px; animation:popIn 0.3s cubic-bezier(.22,1,.36,1); }
+.found-banner.visible { display:flex; }
+@keyframes popIn { from{opacity:0;transform:scale(0.93)} to{opacity:1;transform:scale(1)} }
+.found-avatar { width:40px; height:40px; background:linear-gradient(135deg,#2563eb,#3b82f6); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.found-info { flex:1; }
+.found-name { font-size:15px; font-weight:600; color:var(--ink); }
+.found-role { font-size:12px; color:#15803d; font-weight:500; margin-top:1px; }
+#statusPill { display:none; align-items:center; gap:8px; padding:10px 16px; border-radius:10px; font-size:13px; font-weight:500; margin-bottom:20px; }
+#statusPill.notfound { background:#fef9ee; border:1.5px solid #fcd34d; color:#92400e; }
+.btn-login { width:100%; height:52px; border:none; border-radius:14px; background:linear-gradient(135deg,#1d4ed8,#2563eb,#3b82f6); color:#fff; font-family:'DM Sans',sans-serif; font-size:16px; font-weight:600; cursor:pointer; position:relative; overflow:hidden; transition:transform 0.15s,box-shadow 0.15s; box-shadow:0 4px 20px rgba(37,99,235,0.30); margin-bottom:8px; }
+.btn-login:hover { transform:translateY(-1px); box-shadow:0 8px 28px rgba(37,99,235,0.38); }
+.btn-login:disabled { opacity:0.65; cursor:default; transform:none; }
+.btn-inner { display:flex; align-items:center; justify-content:center; gap:8px; }
+.btn-loader { display:none; gap:5px; justify-content:center; align-items:center; }
+.dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.8); animation:bounce 1.1s ease-in-out infinite; }
+.dot:nth-child(2){animation-delay:.15s} .dot:nth-child(3){animation-delay:.3s}
 @keyframes bounce { 0%,80%,100%{transform:scale(.75)} 40%{transform:scale(1)} }
+.forgot-link { text-align:right; margin-top:-10px; margin-bottom:18px; }
+.forgot-link a { font-size:13px; color:var(--blue); text-decoration:none; font-weight:500; cursor:pointer; }
+.forgot-link a:hover { text-decoration:underline; }
+.divider { display:flex; align-items:center; gap:14px; margin:24px 0 20px; color:var(--ink3); font-size:12px; font-weight:500; letter-spacing:0.06em; }
+.divider::before,.divider::after { content:''; flex:1; height:1px; background:var(--silver); }
+.reg-strip { display:flex; align-items:center; justify-content:center; gap:8px; padding:14px 20px; background:var(--blue-lt); border:1.5px solid #bfdbfe; border-radius:12px; font-size:14px; color:var(--ink2); text-align:center; }
+.reg-strip a { color:var(--blue); font-weight:600; text-decoration:none; }
+.reg-strip a:hover { text-decoration:underline; }
+.toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(80px); padding:13px 22px; border-radius:12px; font-size:14px; font-weight:500; z-index:9999; opacity:0; transition:all 0.35s cubic-bezier(.22,1,.36,1); white-space:nowrap; box-shadow:0 8px 32px rgba(0,0,0,0.18); }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.toast-error { background:#fef2f2; color:#b91c1c; border:1.5px solid #fca5a5; }
+.toast-success { background:#f0fdf4; color:#15803d; border:1.5px solid #86efac; }
 
-/* ── DIVIDER ── */
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 24px 0 20px;
-  color: var(--ink3);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-}
-.divider::before, .divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--silver);
-}
-
-/* ── REGISTER LINK ── */
-.reg-strip {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px 20px;
-  background: var(--blue-lt);
-  border: 1.5px solid #bfdbfe;
-  border-radius: 12px;
-  font-size: 14px;
-  color: var(--ink2);
-  text-align: center;
-}
-.reg-strip a {
-  color: var(--blue);
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.15s;
-}
-.reg-strip a:hover { color: var(--blue2); text-decoration: underline; }
-
-/* ── TOAST ── */
-.toast {
-  position: fixed;
-  bottom: 28px; left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  padding: 13px 22px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 500;
-  z-index: 9999;
-  opacity: 0;
-  transition: all 0.35s cubic-bezier(.22,1,.36,1);
-  white-space: nowrap;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.toast-error   { background: #fef2f2; color: #b91c1c; border: 1.5px solid #fca5a5; }
-.toast-success { background: #f0fdf4; color: #15803d; border: 1.5px solid #86efac; }
-
-/* ── FOUND BANNER (animated) ── */
-.found-banner {
-  display: none;
-  gap: 12px;
-  align-items: center;
-  background: linear-gradient(135deg, #eff6ff, #f0fdf4);
-  border: 1.5px solid #86efac;
-  border-radius: 12px;
-  padding: 14px 18px;
-  margin-bottom: 20px;
-  animation: popIn 0.3s cubic-bezier(.22,1,.36,1);
-}
-.found-banner.visible { display: flex; }
-@keyframes popIn { from { opacity:0; transform:scale(0.93); } to { opacity:1; transform:scale(1); } }
-.found-avatar {
-  width: 40px; height: 40px;
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
-}
-.found-info { flex: 1; }
-.found-name { font-size: 15px; font-weight: 600; color: var(--ink); }
-.found-role { font-size: 12px; color: #15803d; font-weight: 500; margin-top: 1px; }
-
-@media (max-width: 500px) {
-  .card-head, .card-body { padding-left: 24px; padding-right: 24px; }
-  .card-head { padding-top: 28px; padding-bottom: 24px; }
-}
+/* ── FORGOT PASSWORD MODAL ── */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); justify-content:center; align-items:center; z-index:9999; backdrop-filter:blur(4px); }
+.modal-overlay.open { display:flex; }
+.modal-box { background:#fff; border-radius:20px; padding:36px 32px; max-width:400px; width:90%; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,0.25); animation:popIn 0.25s ease; }
+.modal-box h3 { font-size:20px; font-weight:700; margin-bottom:8px; color:var(--ink); }
+.modal-box p { font-size:14px; color:var(--ink3); margin-bottom:24px; }
+.modal-input { width:100%; height:46px; padding:0 16px; border:1.5px solid var(--silver); border-radius:10px; font-size:15px; font-family:'DM Sans',sans-serif; outline:none; margin-bottom:14px; }
+.modal-input:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(37,99,235,0.10); }
+.modal-btn { width:100%; height:46px; border:none; border-radius:10px; background:linear-gradient(135deg,#1d4ed8,#2563eb); color:#fff; font-size:15px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; margin-bottom:10px; }
+.modal-btn:disabled { opacity:0.6; cursor:default; }
+.modal-cancel { background:none; border:none; color:var(--ink3); font-size:13px; cursor:pointer; font-family:'DM Sans',sans-serif; }
+.modal-cancel:hover { color:var(--ink); }
+.modal-step { display:none; }
+.modal-step.active { display:block; }
+@media(max-width:500px) { .card-head,.card-body{padding-left:24px;padding-right:24px} }
 </style>
 </head>
 <body>
@@ -386,10 +101,47 @@ html, body {
 <div class="orb orb-2"></div>
 <div class="orb orb-3"></div>
 
+<!-- ── FORGOT PASSWORD MODAL ── -->
+<div class="modal-overlay" id="forgotModal">
+  <div class="modal-box">
+
+    <!-- Step 1: Enter email -->
+    <div class="modal-step active" id="fpStep1">
+      <div style="font-size:48px;margin-bottom:12px;">🔑</div>
+      <h3>Forgot Password</h3>
+      <p>Enter your registered email to receive an OTP</p>
+      <input class="modal-input" type="email" id="fpEmail" placeholder="your@email.com">
+      <button class="modal-btn" onclick="fpSendOtp()">Send OTP</button>
+      <br><button class="modal-cancel" onclick="closeForgot()">Cancel</button>
+    </div>
+
+    <!-- Step 2: Enter OTP -->
+    <div class="modal-step" id="fpStep2">
+      <div style="font-size:48px;margin-bottom:12px;">📋</div>
+      <h3>Enter OTP</h3>
+      <p id="fpOtpHint">Check your email for the OTP</p>
+      <input class="modal-input" type="text" id="fpOtp" placeholder="6-digit OTP" maxlength="6">
+      <button class="modal-btn" onclick="fpVerifyOtp()">Verify OTP</button>
+      <br><button class="modal-cancel" onclick="closeForgot()">Cancel</button>
+    </div>
+
+    <!-- Step 3: New password -->
+    <div class="modal-step" id="fpStep3">
+      <div style="font-size:48px;margin-bottom:12px;">🔒</div>
+      <h3>New Password</h3>
+      <p>Enter your new password below</p>
+      <input class="modal-input" type="password" id="fpNewPass" placeholder="New password (min 6 chars)">
+      <input class="modal-input" type="password" id="fpConfirmPass" placeholder="Confirm new password">
+      <button class="modal-btn" onclick="fpResetPassword()">Reset Password</button>
+      <br><button class="modal-cancel" onclick="closeForgot()">Cancel</button>
+    </div>
+
+  </div>
+</div>
+
 <div class="page">
 <div class="card">
 
-  <!-- Header -->
   <div class="card-head">
     <div class="logo-wrap">
       <div class="logo-ring"></div>
@@ -400,7 +152,6 @@ html, body {
     <div class="head-line"></div>
   </div>
 
-  <!-- Body -->
   <div class="card-body">
 
     <span class="role-label">I am a</span>
@@ -440,12 +191,12 @@ html, body {
       </div>
     </div>
 
-    <!-- Found banner (shown when account is detected) -->
+    <!-- Account found banner -->
     <div class="found-banner" id="foundBanner">
       <div class="found-avatar">😊</div>
       <div class="found-info">
         <div class="found-name" id="foundName">—</div>
-        <div class="found-role" id="foundRoleTag">✓ Account found</div>
+        <div class="found-role" id="foundRoleTag">✓ Account found — enter your password</div>
       </div>
     </div>
 
@@ -453,6 +204,28 @@ html, body {
     <div id="statusPill">
       <span id="statusIcon"></span>
       <span id="statusText"></span>
+    </div>
+
+    <!-- Password field — shown only when account found -->
+    <div class="field" id="passwordField" style="display:none;">
+      <label>Password</label>
+      <div class="input-wrap">
+        <span class="input-icon">🔒</span>
+        <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password">
+        <button type="button" class="eye-btn" onclick="toggleEye()">
+          <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Forgot password link — shown only when password field visible -->
+    <div class="forgot-link" id="forgotLink" style="display:none;">
+      <a onclick="openForgot()">Forgot password?</a>
     </div>
 
     <button class="btn-login" id="loginBtn" onclick="handleLogin()">
@@ -477,22 +250,21 @@ html, body {
 </div>
 
 <script>
-// ── State ──────────────────────────────────────────────────────
-let currentRole   = 'student';
-let foundAccount  = null;   // { name, role } if server confirmed match
-let checkTimer    = null;
+let currentRole  = 'student';
+let foundAccount = null;
+let checkTimer   = null;
+let fpOtpCode    = null;   // stores OTP for forgot password
 
 // ── Role picker ────────────────────────────────────────────────
 function pickRole(role) {
   currentRole = role;
   document.querySelectorAll('.rtab').forEach(t => t.classList.toggle('active', t.dataset.role === role));
   foundAccount = null;
-  hideBanner();
-  hidePill();
+  hideBanner(); hidePill(); hidePassword();
   tryCheck();
 }
 
-// ── Live check — debounced 600 ms ──────────────────────────────
+// ── Live check ─────────────────────────────────────────────────
 ['name','phone','email'].forEach(id => {
   document.getElementById(id).addEventListener('input', () => {
     clearTimeout(checkTimer);
@@ -506,41 +278,33 @@ function isReady() {
 }
 
 async function tryCheck() {
-  hideBanner(); hidePill();
+  hideBanner(); hidePill(); hidePassword();
   foundAccount = null;
   if (!isReady()) return;
-
-  const name = v('name'), phone = v('phone'), email = v('email');
 
   try {
     const res  = await fetch('/check_existing', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, phone, email, role: currentRole, child_roll_number: '' })
+      body: JSON.stringify({ name: v('name'), phone: v('phone'), email: v('email'), role: currentRole, child_roll_number: '' })
     });
     const data = await res.json();
 
     if (data.exists) {
       foundAccount = { name: data.name, role: currentRole };
       showBanner(data.name, currentRole);
+      showPassword();   // ← show password field only when account found
     } else {
-      showPill('notfound',
-        '⚠️',
-        currentRole === 'parent'
-          ? 'No account found — fill roll number too or Register below.'
-          : 'No account found. Please register below.'
-      );
+      showPill('notfound', '⚠️', 'No account found. Please register below.');
     }
-  } catch (e) {
-    console.warn('check_existing error:', e);
-  }
+  } catch(e) { console.warn(e); }
 }
 
 // ── Banner ─────────────────────────────────────────────────────
 function showBanner(name, role) {
   document.getElementById('foundName').textContent = name;
-  const roleLabel = { student: '🎒 Student account', teacher: '📖 Teacher account', parent: '👨‍👩‍👦 Parent account' };
-  document.getElementById('foundRoleTag').textContent = '✓ ' + (roleLabel[role] || 'Account found');
+  const labels = { student:'🎒 Student account', teacher:'📖 Teacher account', parent:'👨‍👩‍👦 Parent account' };
+  document.getElementById('foundRoleTag').textContent = '✓ ' + (labels[role] || 'Account found') + ' — enter your password';
   document.getElementById('foundBanner').classList.add('visible');
 }
 function hideBanner() { document.getElementById('foundBanner').classList.remove('visible'); }
@@ -548,19 +312,42 @@ function hideBanner() { document.getElementById('foundBanner').classList.remove(
 // ── Pill ───────────────────────────────────────────────────────
 function showPill(type, icon, msg) {
   const p = document.getElementById('statusPill');
-  p.className = type;
+  p.className = type; p.style.display = 'flex';
   document.getElementById('statusIcon').textContent = icon;
   document.getElementById('statusText').textContent = msg;
-  p.style.display = 'flex';
 }
 function hidePill() { document.getElementById('statusPill').style.display = 'none'; }
 
-// ── Main action ────────────────────────────────────────────────
+// ── Password field ─────────────────────────────────────────────
+function showPassword() {
+  document.getElementById('passwordField').style.display = 'block';
+  document.getElementById('forgotLink').style.display    = 'block';
+  setTimeout(() => document.getElementById('password').focus(), 100);
+}
+function hidePassword() {
+  document.getElementById('passwordField').style.display = 'none';
+  document.getElementById('forgotLink').style.display    = 'none';
+  document.getElementById('password').value = '';
+}
+
+// ── Eye toggle ─────────────────────────────────────────────────
+let eyeOpen = false;
+function toggleEye() {
+  eyeOpen = !eyeOpen;
+  document.getElementById('password').type = eyeOpen ? 'text' : 'password';
+  document.getElementById('eyeIcon').innerHTML = eyeOpen
+    ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+       <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+       <line x1="1" y1="1" x2="23" y2="23"/>`
+    : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+       <circle cx="12" cy="12" r="3"/>`;
+}
+
+// ── Main login ─────────────────────────────────────────────────
 async function handleLogin() {
   if (!isReady()) { showToast('Please fill in all fields correctly.', 'error'); return; }
 
   if (!foundAccount) {
-    // One last attempt before telling them
     await tryCheck();
     if (!foundAccount) {
       showToast('No account found. Please register first.', 'error');
@@ -569,38 +356,143 @@ async function handleLogin() {
     }
   }
 
+  const password = v('password');
+  if (!password) { showToast('Please enter your password.', 'error'); return; }
+
   setLoading(true);
-  // Session was already set by check_existing on the server, just redirect
-  setTimeout(() => {
-    const role = foundAccount.role;
-    if      (role === 'student') window.location.href = '/student_dashboard';
-    else if (role === 'teacher') window.location.href = '/teacher_dashboard';
-    else if (role === 'parent')  window.location.href = '/parent_dashboard';
-    else                         window.location.href = '/admin_dashboard';
-  }, 400);
+
+  try {
+    const res  = await fetch('/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name:     v('name'),
+        phone:    v('phone'),
+        email:    v('email'),
+        role:     currentRole,
+        password: password
+      })
+    });
+    const data = await res.json();
+
+    if (data.status === 'success') {
+      showToast('✅ Login successful! Redirecting...', 'success');
+      setTimeout(() => {
+        if      (data.role === 'student') window.location.href = '/student_dashboard';
+        else if (data.role === 'teacher') window.location.href = '/teacher_dashboard';
+        else if (data.role === 'parent')  window.location.href = '/parent_dashboard';
+        else                              window.location.href = '/admin_dashboard';
+      }, 1000);
+    } else {
+      showToast(data.message || 'Login failed.', 'error');
+      setLoading(false);
+    }
+  } catch(err) {
+    showToast('Server error. Please try again.', 'error');
+    setLoading(false);
+  }
+}
+
+// ── FORGOT PASSWORD ────────────────────────────────────────────
+function openForgot() {
+  document.getElementById('fpEmail').value    = v('email') || '';
+  document.getElementById('fpOtp').value      = '';
+  document.getElementById('fpNewPass').value  = '';
+  document.getElementById('fpConfirmPass').value = '';
+  fpOtpCode = null;
+  showFpStep(1);
+  document.getElementById('forgotModal').classList.add('open');
+}
+function closeForgot() {
+  document.getElementById('forgotModal').classList.remove('open');
+}
+function showFpStep(n) {
+  document.querySelectorAll('.modal-step').forEach((s,i) => {
+    s.classList.toggle('active', i + 1 === n);
+  });
+}
+
+async function fpSendOtp() {
+  const email = document.getElementById('fpEmail').value.trim();
+  if (!email) { showToast('Enter your email.', 'error'); return; }
+
+  const btn = document.querySelector('#fpStep1 .modal-btn');
+  btn.disabled = true; btn.textContent = 'Sending...';
+
+  const res  = await fetch('/send-otp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  });
+  const data = await res.json();
+
+  btn.disabled = false; btn.textContent = 'Send OTP';
+
+  if (data.status === 'success') {
+    fpOtpCode = data.otp;   // store OTP (shown in prompt since email blocked)
+    // Show OTP in hint since SMTP is blocked on Render
+    document.getElementById('fpOtpHint').textContent = '🔢 Your OTP is: ' + data.otp;
+    showFpStep(2);
+  } else {
+    showToast('Failed to generate OTP.', 'error');
+  }
+}
+
+function fpVerifyOtp() {
+  const entered = document.getElementById('fpOtp').value.trim();
+  if (!entered) { showToast('Enter the OTP.', 'error'); return; }
+  if (entered !== fpOtpCode) { showToast('❌ Wrong OTP. Try again.', 'error'); return; }
+  showFpStep(3);
+}
+
+async function fpResetPassword() {
+  const email   = document.getElementById('fpEmail').value.trim();
+  const newPass = document.getElementById('fpNewPass').value;
+  const confirm = document.getElementById('fpConfirmPass').value;
+
+  if (newPass.length < 6)    { showToast('Password must be at least 6 characters.', 'error'); return; }
+  if (newPass !== confirm)   { showToast('Passwords do not match.', 'error'); return; }
+
+  const btn = document.querySelector('#fpStep3 .modal-btn');
+  btn.disabled = true; btn.textContent = 'Resetting...';
+
+  const res  = await fetch('/reset_password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, new_password: newPass })
+  });
+  const data = await res.json();
+
+  btn.disabled = false; btn.textContent = 'Reset Password';
+
+  if (data.status === 'success') {
+    showToast('✅ Password reset! Please login.', 'success');
+    closeForgot();
+  } else {
+    showToast(data.message || 'Reset failed.', 'error');
+  }
 }
 
 // ── Helpers ────────────────────────────────────────────────────
 function v(id) { return document.getElementById(id).value.trim(); }
-
 function setLoading(on) {
   document.getElementById('btnText').style.display   = on ? 'none' : 'flex';
   document.getElementById('btnLoader').style.display = on ? 'flex' : 'none';
   document.getElementById('loginBtn').disabled = on;
 }
-
 function showToast(msg, type) {
   const t = document.createElement('div');
   t.className = 'toast toast-' + type;
   t.textContent = msg;
   document.body.appendChild(t);
-  requestAnimationFrame(() => { requestAnimationFrame(() => t.classList.add('show')); });
+  requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
   setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3500);
 }
-
-// Enter key support
 document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.activeElement.tagName === 'INPUT') handleLogin();
+  if (e.key === 'Enter' && document.activeElement.tagName === 'INPUT') {
+    if (document.getElementById('forgotModal').classList.contains('open')) return;
+    handleLogin();
+  }
 });
 </script>
 </body>

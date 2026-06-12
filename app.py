@@ -285,7 +285,35 @@ def login():
         "student_id": session.get('student_id')
     })
 # -------------------- REGISTER --------------------
+@app.route("/reset_password", methods=["POST"])
+def reset_password():
+    data      = request.get_json()
+    email     = data.get("email", "").strip().lower()
+    new_pass  = data.get("new_password", "")
 
+    if not email or not new_pass:
+        return jsonify({"status": "error", "message": "Email and password required"})
+    if len(new_pass) < 6:
+        return jsonify({"status": "error", "message": "Password too short"})
+
+    hashed = bcrypt.hashpw(new_pass.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+    conn = get_db_connection()
+    cur  = conn.cursor()
+
+    # Update in users table
+    cur.execute("UPDATE users SET password = %s WHERE LOWER(email) = %s", (hashed, email))
+
+    # Also update in students / teachers / parents tables
+    cur.execute("UPDATE students SET password = %s WHERE LOWER(email) = %s", (hashed, email))
+    cur.execute("UPDATE teachers SET password = %s WHERE LOWER(email) = %s", (hashed, email))
+    cur.execute("UPDATE parents  SET password = %s WHERE LOWER(email) = %s", (hashed, email))
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return jsonify({"status": "success"})
 def _set_session(session, cur, user_id, name, role):
     session['user_id'] = user_id
     session['role']    = role
