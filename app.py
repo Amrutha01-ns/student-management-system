@@ -161,10 +161,23 @@ def build_student_context(student_id):
 def send_otp():
     data  = request.get_json()
     email = data.get("email")
+    
+    if not email:
+        return jsonify({"status": "error", "message": "Email is required"})
+
     otp   = str(random.randint(100000, 999999))
     otp_store[email] = otp
-    print(f"OTP for {email}: {otp}")
-    return jsonify({"status": "success", "otp": otp})
+    print(f"OTP for {email}: {otp}") # Keeps logging for your Render console
+
+    # --- NEW MAIL SENDING LOGIC ---
+    try:
+        msg = Message("Your Verification Code", recipients=[email])
+        msg.body = f"Your OTP for registration is: {otp}. Please do not share this code."
+        mail.send(msg)
+        return jsonify({"status": "success", "message": "OTP sent to email"})
+    except Exception as e:
+        print(f"Mail send error: {e}")
+        return jsonify({"status": "error", "message": "Failed to send email. Check SMTP config."})
 @app.route("/verify-otp", methods=["POST"])
 def verify_otp():
     data  = request.get_json()
@@ -300,18 +313,18 @@ def check_existing():
     role              = data.get("role")
     child_roll_number = data.get("child_roll_number", "").strip()
 
-    if not name or not phone or not email or not role:
+    if not phone or not email or not role:
         return jsonify({"exists": False})
 
     conn = get_db_connection()
     cur  = conn.cursor()
+    
+    # --- UPDATED QUERY: Check by Phone OR Email to catch existing accounts ---
     cur.execute(
         """SELECT id, name FROM users
-           WHERE LOWER(name) = LOWER(%s)
-             AND phone        = %s
-             AND LOWER(email) = LOWER(%s)
-             AND role         = %s""",
-        (name, phone, email, role)
+           WHERE (phone = %s OR LOWER(email) = LOWER(%s))
+             AND role = %s""",
+        (phone, email, role)
     )
     row = cur.fetchone()
 
