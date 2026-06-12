@@ -22,12 +22,13 @@ otp_store = {}
 app.config['MAIL_MAX_EMAILS'] = None
 app.config['MAIL_SUPPRESS_SEND'] = False
 app.config['MAIL_SERVER']         = 'smtp.gmail.com'
-app.config['MAIL_PORT']           = 587
-app.config['MAIL_USE_TLS']        = True
-app.config['MAIL_USE_SSL']        = False
+app.config['MAIL_PORT']    = 465
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME']       = os.environ.get("MAIL_USERNAME", "adminemaila@gmail.com")
 app.config['MAIL_PASSWORD']       = os.environ.get("MAIL_PASSWORD", "tajtshstdtjmzshr")
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get("MAIL_USERNAME", "adminemaila@gmail.com")
+
 
 mail = Mail(app)
 
@@ -235,42 +236,51 @@ def validate_contact():
 @app.route("/login", methods=["POST"])
 def login():
     data     = request.get_json(silent=True) or request.form
-    phone    = data.get("phone")
-    password = data.get("password")
+    name     = data.get("name", "").strip()
+    phone    = data.get("phone", "").strip()
+    email    = data.get("email", "").strip().lower()
+    role     = data.get("role", "").strip()
+    password = data.get("password", "")
 
     conn = get_db_connection()
     cur  = conn.cursor()
-    cur.execute("SELECT id, name, role, password FROM users WHERE phone = %s", (phone,))
+    cur.execute("""
+        SELECT id, name, role, password FROM users
+        WHERE LOWER(name) = LOWER(%s)
+          AND phone        = %s
+          AND LOWER(email) = LOWER(%s)
+          AND role         = %s
+    """, (name, phone, email, role))
     user = cur.fetchone()
 
     if not user:
         cur.close()
         conn.close()
-        return jsonify({"status": "error", "message": "Invalid credentials"})
+        return jsonify({"status": "error", "message": "No account found. Please register first."})
 
-    user_id, name, role, hashed_password = user
+    user_id, found_name, found_role, hashed_password = user
 
     if not bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8')):
         cur.close()
         conn.close()
-        return jsonify({"status": "error", "message": "Invalid credentials"})
+        return jsonify({"status": "error", "message": "Incorrect password."})
 
     session['user_id'] = user_id
-    session['role']    = role
-    session['name']    = name
+    session['role']    = found_role
+    session['name']    = found_name
 
-    if role == 'student':
+    if found_role == 'student':
         cur.execute("SELECT student_id FROM students WHERE user_id = %s", (user_id,))
         row = cur.fetchone()
         session['student_id'] = row[0] if row else None
 
-    elif role == 'parent':
+    elif found_role == 'parent':
         cur.execute("SELECT linked_student_id FROM users WHERE id = %s", (user_id,))
         row = cur.fetchone()
         session['student_id'] = row[0] if row else None
 
     else:
-        session['student_id'] = None  # teacher / admin
+        session['student_id'] = None
 
     cur.close()
     conn.close()
@@ -278,11 +288,10 @@ def login():
     return jsonify({
         "status":     "success",
         "user_id":    user_id,
-        "name":       name,
-        "role":       role,
+        "name":       found_name,
+        "role":       found_role,
         "student_id": session.get('student_id')
     })
-
 # -------------------- REGISTER --------------------
 
 def _set_session(session, cur, user_id, name, role):
@@ -309,51 +318,51 @@ def check_existing():
     data              = request.get_json()
     name              = data.get("name",              "").strip()
     phone             = data.get("phone",             "").strip()
-    email             = data.get("email",             "").strip()
-    role              = data.get("role")
+    email             = data.get("email",             "").strip().lower()
+    role              = data.get("role",              "").strip()
     child_roll_number = data.get("child_roll_number", "").strip()
 
-    if not phone or not email or not role:
-        return jsonify({"exists": False})
+    if not name or not phone or not email or not role:
+        return jsonify({"exists": False, "message": "All fields required"})
 
     conn = get_db_connection()
     cur  = conn.cursor()
-    
-    # --- UPDATED QUERY: Check by Phone OR Email to catch existing accounts ---
-    cur.execute(
-        """SELECT id, name FROM users
-           WHERE (phone = %s OR LOWER(email) = LOWER(%s))
-             AND role = %s""",
-        (phone, email, role)
-    )
+
+    # Match on ALL four fields — name + phone + email + role
+    cur.execute("""
+        SELECT id, name FROM users
+        WHERE LOWER(name) = LOWER(%s)
+          AND phone        = %s
+          AND LOWER(email) = LOWER(%s)
+          AND role         = %s
+    """, (name, phone, email, role))
     row = cur.fetchone()
 
     if not row:
         cur.close()
         conn.close()
-        return jsonify({"exists": False})
+        return jsonify({"exists": False, "message": "No account found. Please register."})
 
     user_id, found_name = row
 
-    # Extra guard for parent role: roll number must be provided and must match linked student
+    # Extra check for parent — roll number must match
     if role == "parent":
         if not child_roll_number:
             cur.close()
             conn.close()
-            return jsonify({"exists": False})   # can't confirm yet — roll number not entered
+            return jsonify({"exists": False, "message": "Please enter child roll number."})
 
-        cur.execute(
-            """SELECT s.roll_number
-               FROM users u
-               JOIN students s ON s.student_id = u.linked_student_id
-               WHERE u.id = %s""",
-            (user_id,)
-        )
+        cur.execute("""
+            SELECT s.roll_number
+            FROM users u
+            JOIN students s ON s.student_id = u.linked_student_id
+            WHERE u.id = %s
+        """, (user_id,))
         linked = cur.fetchone()
         if not linked or str(linked[0]).strip() != child_roll_number:
             cur.close()
             conn.close()
-            return jsonify({"exists": False, "roll_mismatch": True})
+            return jsonify({"exists": False, "roll_mismatch": True, "message": "Roll number does not match."})
 
     _set_session(session, cur, user_id, found_name, role)
     cur.close()
