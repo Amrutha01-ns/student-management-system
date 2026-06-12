@@ -46,7 +46,12 @@
   --radius:      10px;
   --radius-lg:   14px;
 }
-html, body { height: 100%; overflow: hidden; }
+html,
+body {
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
 body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; }
 
 ::-webkit-scrollbar { width: 5px; }
@@ -98,8 +103,11 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 .t-btn.danger:hover { border-color: var(--red); color: var(--red); background: var(--red-bg); }
 
 /* ── LAYOUT ── */
-.shell { display: flex; margin-top: var(--topbar-h); height: calc(100vh - var(--topbar-h)); }
-
+.shell {
+    display: flex;
+    margin-top: var(--topbar-h);
+    min-height: calc(100vh - var(--topbar-h));
+}
 /* ── SIDEBAR ── */
 .sidebar {
   width: var(--sidebar-w); min-width: var(--sidebar-w); max-width: var(--sidebar-w); flex-shrink: 0;
