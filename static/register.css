@@ -260,11 +260,10 @@ button[type="submit"]:disabled { opacity:0.7; cursor:not-allowed; transform:none
   .register-card { padding:18px 12px 16px; }
   .card-header h2 { font-size:18px; }
   .role-tab { font-size:10px; padding:8px 2px; }
-  button[type="submit"] { font-size:13px; padding:13px; }
+  button[type="submit"] { font-size:13px; padding:13px; }}
   /* ====================================
    EXTRA MOBILE FIXES
 ==================================== */
-
 img,
 table,
 iframe,
@@ -277,6 +276,7 @@ svg{
 *{
     min-width:0;
 }
+
 
 @media(max-width:768px){
 
@@ -304,4 +304,16 @@ svg{
         min-width:0;
     }
 }
+html,
+body{
+    width:100%;
+    overflow-x:hidden;
+}
+
+.page-wrapper{
+    width:100%;
+}
+
+.register-card{
+    width:100%;
 }
