@@ -59,14 +59,20 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
-  align-items: flex-start;       /* align top so tall cards scroll naturally */
+  align-items: flex-start;
   justify-content: center;
-  padding: 24px 16px 40px;       /* breathing room top + extra bottom for mobile keyboards */
+  padding: 24px 16px 40px;
 }
 
 /* On taller screens, keep card vertically centred */
 @media (min-height: 700px) {
   .page { align-items: center; }
+}
+
+/* On mobile — card goes full width, edge to edge */
+@media (max-width: 500px) {
+  .page { padding: 0; align-items: flex-start; }
+  .card { border-radius: 0; max-width: 100%; min-height: 100vh; min-height: 100dvh; box-shadow: none; }
 }
 
 /* Card */
