@@ -9,6 +9,7 @@ import bcrypt
 import requests
 import os
 
+
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
@@ -154,38 +155,60 @@ def build_student_context(student_id):
         },
         "latest_marks": marks_payload
     }
-
 # -------------------- OTP --------------------
-
-
+otp_store = {}  # already exists in your file, keep it
 @app.route("/send-otp", methods=["POST"])
 def send_otp():
     data  = request.get_json()
-    email = data.get("email")
+    phone = data.get("phone", "").strip()
 
-    if not email:
-        return jsonify({"status": "error", "message": "Email is required"})
+    if not phone or len(phone) != 10 or not phone.isdigit():
+        return jsonify({"status": "error", "message": "Valid 10-digit phone required"})
 
     otp = str(random.randint(100000, 999999))
-    otp_store[email] = otp
-    print(f"OTP for {email}: {otp}")
+    otp_store[phone] = otp
 
-    return jsonify({"status": "success", "message": "OTP generated", "otp": otp})
+    api_key = os.environ.get("FAST2SMS_API_KEY")
+    
+    try:
+        response = requests.post(
+            "https://www.fast2sms.com/dev/bulkV2",
+            headers={
+                "authorization": api_key,
+                "Content-Type": "application/json"
+            },
+            json={
+                "route": "otp",
+                "variables_values": otp,
+                "numbers": phone,
+                "flash": 0
+            },
+            timeout=10
+        )
+        result = response.json()
+
+        if result.get("return") == True:
+            return jsonify({"status": "success", "message": "OTP sent to your phone"})
+        else:
+            print("Fast2SMS error:", result)
+            return jsonify({"status": "error", "message": "SMS failed: " + str(result.get("message", "Unknown"))})
+
+    except Exception as e:
+        print("SMS exception:", e)
+        return jsonify({"status": "error", "message": "Could not send SMS"})
+
+
 @app.route("/verify-otp", methods=["POST"])
 def verify_otp():
     data  = request.get_json()
-    email = data.get("email")
-    otp   = data.get("otp")
+    phone = data.get("phone", "").strip()
+    otp   = data.get("otp",   "").strip()
 
-    if otp_store.get(email) == otp:
-        otp_store.pop(email)
+    if otp_store.get(phone) == otp:
+        otp_store.pop(phone)
         session['otp_verified'] = True
         return jsonify({"status": "success"})
-    return jsonify({"status": "error", "message": "Invalid OTP"})
-
-# -------------------- HOME --------------------
-
-
+    return jsonify({"status": "error", "message": "Invalid or expired OTP"})
 # -------------------- AUTH --------------------
 @app.route("/validate_contact", methods=["POST"])
 def validate_contact():

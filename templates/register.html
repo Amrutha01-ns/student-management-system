@@ -760,26 +760,26 @@ document.getElementById("registerForm").addEventListener("submit", async functio
   setLoading(true);
   try {
     const otpSend = await fetch("/send-otp", {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({email})
-    });
-    const otpData = await otpSend.json();
-    if (otpData.status !== "success") {
-      showAlert("Failed to send OTP. Check your email address.");
-      setLoading(false); return;
-    }
-    const otp = prompt("📧 OTP for " + email + ":\n\n" + (otpData.otp || "Check server logs") + "\n\nEnter the OTP above:");
-    if (!otp) { setLoading(false); return; }
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({phone})   // ← phone instead of email
+});
+const otpData = await otpSend.json();
+if (otpData.status !== "success") {
+    showAlert("Failed to send OTP: " + otpData.message);
+    setLoading(false); return;
+}
+const otp = prompt("📱 OTP sent to " + phone + "\n\nEnter the 6-digit OTP:");
+if (!otp) { setLoading(false); return; }
 
-    const verify     = await fetch("/verify-otp", {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({email, otp})
-    });
-    const verifyData = await verify.json();
-    if (verifyData.status !== "success") {
-      showAlert("❌ Invalid OTP. Please try again.");
-      setLoading(false); return;
-    }
+const verify     = await fetch("/verify-otp", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({phone, otp})   // ← phone instead of email
+});
+const verifyData = await verify.json();
+if (verifyData.status !== "success") {
+    showAlert("❌ Invalid OTP. Please try again.");
+    setLoading(false); return;
+}
 
     const payload = {name, phone, email, role, password};
     if (role === "student") {
