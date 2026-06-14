@@ -768,7 +768,7 @@ if (otpData.status !== "success") {
     showAlert("Failed to send OTP: " + otpData.message);
     setLoading(false); return;
 }
-const otp = prompt("📱 OTP sent to " + phone + "\n\nEnter the 6-digit OTP:");
+const otp = prompt("Your OTP is: " + otpData.otp + "\n\nEnter the OTP to verify:");
 if (!otp) { setLoading(false); return; }
 
 const verify     = await fetch("/verify-otp", {

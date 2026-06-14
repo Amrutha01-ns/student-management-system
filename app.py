@@ -158,7 +158,7 @@ def build_student_context(student_id):
 # -------------------- OTP --------------------
 otp_store = {}  # already exists in your file, keep it
 @app.route("/send-otp", methods=["POST"])
-def send_otp():              # ← def must be at same level as @app.route
+def send_otp():
     data  = request.get_json()
     phone = data.get("phone", "").strip()
 
@@ -167,37 +167,9 @@ def send_otp():              # ← def must be at same level as @app.route
 
     otp = str(random.randint(100000, 999999))
     otp_store[phone] = otp
+    print(f"OTP for {phone}: {otp}")  # shows in Render logs
 
-    api_key = os.environ.get("FAST2SMS_API_KEY")
-    
-    try:
-        response = requests.post(
-            "https://www.fast2sms.com/dev/bulkV2",
-            headers={
-                "authorization": api_key,
-                "Content-Type": "application/json"
-            },
-            json={
-                "route": "otp",
-                "variables_values": otp,
-                "numbers": phone,
-                "flash": 0
-            },
-            timeout=10
-        )
-        result = response.json()
-
-        if result.get("return") == True:
-            return jsonify({"status": "success", "message": "OTP sent to your phone"})
-        else:
-            print("Fast2SMS error:", result)
-            return jsonify({"status": "error", "message": "SMS failed: " + str(result.get("message", "Unknown"))})
-
-    except Exception as e:
-        print("SMS exception:", e)
-        return jsonify({"status": "error", "message": "Could not send SMS"})
-
-
+    return jsonify({"status": "success", "otp": otp})  # sends OTP back to frontend
 @app.route("/verify-otp", methods=["POST"])
 def verify_otp():
     data  = request.get_json()
