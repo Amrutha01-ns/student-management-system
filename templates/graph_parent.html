@@ -25,9 +25,9 @@
     --muted2:   #475569;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
 body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
-/* grid bg */
 body::before{
     content:'';position:fixed;inset:0;
     background-image:
@@ -41,56 +41,63 @@ header{
     position:relative;z-index:10;
     background:linear-gradient(135deg,#0d0f1a 0%,#151825 100%);
     border-bottom:1px solid var(--border);
-    padding:1.2rem 2rem;
-    display:flex;align-items:center;gap:1.5rem;
+    padding:1rem 1.2rem;
+    display:flex;align-items:center;gap:1rem;
 }
 .back-btn{
     display:flex;align-items:center;justify-content:center;
-    width:40px;height:40px;border-radius:10px;
+    width:38px;height:38px;border-radius:10px;flex-shrink:0;
     background:var(--surface2);border:1px solid var(--border);
-    color:var(--text);text-decoration:none;font-size:1rem;
-    transition:all 0.2s;flex-shrink:0;
+    color:var(--text);text-decoration:none;font-size:0.9rem;
+    transition:all 0.2s;
 }
 .back-btn:hover{background:var(--accent);border-color:var(--accent);}
-.header-title{flex:1;}
-.header-title h1{font-size:1.15rem;font-weight:700;letter-spacing:0.02em;}
-.header-title p{font-size:0.78rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px;}
+.header-title{flex:1;min-width:0;}
+.header-title h1{font-size:1rem;font-weight:700;letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.header-title p{font-size:0.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px;}
 .header-badge{
     background:linear-gradient(135deg,var(--accent),var(--accent2));
-    color:#fff;font-size:0.72rem;font-weight:700;
-    padding:4px 12px;border-radius:20px;letter-spacing:0.08em;text-transform:uppercase;
+    color:#fff;font-size:0.65rem;font-weight:700;flex-shrink:0;
+    padding:3px 10px;border-radius:20px;letter-spacing:0.08em;text-transform:uppercase;
 }
 
-/* ── main layout ── */
-.main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:2rem 1.5rem 3rem;}
+/* ── main ── */
+.main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:1.2rem 1rem 3rem;}
 
 /* ── info card ── */
 .info-card{
-    background:var(--surface);border:1px solid var(--border);border-radius:16px;
-    padding:1.4rem 1.8rem;display:flex;align-items:center;justify-content:space-between;
-    gap:1rem;margin-bottom:1.8rem;
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    padding:1.1rem 1.2rem;display:flex;align-items:center;
+    gap:1rem;margin-bottom:1.2rem;
     box-shadow:0 0 30px rgba(79,142,247,0.08);
+    flex-wrap:wrap;
 }
 .student-avatar{
-    width:48px;height:48px;border-radius:12px;
+    width:44px;height:44px;border-radius:10px;flex-shrink:0;
     background:linear-gradient(135deg,var(--accent),var(--accent2));
-    display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:1.3rem;
 }
-.student-info{flex:1;}
-.student-info .name{font-size:1.05rem;font-weight:700;}
-.student-info .meta{font-size:0.78rem;color:var(--muted);margin-top:3px;font-family:'JetBrains Mono',monospace;}
-.stats-row{display:flex;gap:1.5rem;}
+.student-info{flex:1;min-width:0;}
+.student-info .name{font-size:0.95rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.student-info .meta{font-size:0.72rem;color:var(--muted);margin-top:3px;font-family:'JetBrains Mono',monospace;}
+.stats-row{display:flex;gap:1.2rem;flex-shrink:0;}
 .stat-chip{text-align:center;}
-.stat-chip .val{font-size:1.4rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--accent);line-height:1;}
-.stat-chip .lbl{font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-top:3px;}
+.stat-chip .val{font-size:1.2rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--accent);line-height:1;}
+.stat-chip .lbl{font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-top:3px;}
 
-/* ── subject tabs ── */
-.subject-tabs{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+/* ── subject tabs — horizontal scroll on mobile ── */
+.subject-tabs{
+    display:flex;gap:0.4rem;margin-bottom:1.2rem;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;padding-bottom:4px;
+}
+.subject-tabs::-webkit-scrollbar{display:none;}
 .tab-btn{
-    padding:0.45rem 1.1rem;border-radius:8px;border:1px solid var(--border);
-    background:var(--surface);color:var(--muted);
-    font-size:0.82rem;font-weight:600;cursor:pointer;
+    padding:0.4rem 0.9rem;border-radius:8px;border:1px solid var(--border);
+    background:var(--surface);color:var(--muted);white-space:nowrap;flex-shrink:0;
+    font-size:0.78rem;font-weight:600;cursor:pointer;
     transition:all 0.2s;font-family:'Sora',sans-serif;letter-spacing:0.02em;
+    -webkit-tap-highlight-color:transparent;
 }
 .tab-btn:hover{border-color:var(--accent);color:var(--accent);}
 .tab-btn.active{color:#fff;border-color:transparent;}
@@ -101,141 +108,109 @@ header{
 .tab-btn[data-subject="maths"].active{background:var(--accent5);color:#111;}
 .tab-btn[data-subject="biology"].active{background:var(--accent6);}
 
-/* ── two-column layout ── */
-.graph-layout{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start;}
+/* ── layout: side-by-side on desktop, stacked on mobile ── */
+.graph-layout{display:flex;flex-direction:column;gap:14px;}
+@media(min-width:768px){
+    .graph-layout{display:grid;grid-template-columns:1fr 290px;align-items:start;}
+}
 
 /* ── graph card ── */
 .graph-card{
-    background:var(--surface);border:1px solid var(--border);border-radius:16px;
-    padding:1.8rem 1.8rem 1.4rem;
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    padding:1.2rem 1rem 1rem;
     box-shadow:0 0 30px rgba(79,142,247,0.08);position:relative;overflow:hidden;
 }
-.graph-card::before{
-    content:'';position:absolute;top:0;left:0;right:0;height:3px;
+.graph-top-bar{
+    position:absolute;top:0;left:0;right:0;height:3px;
     background:linear-gradient(90deg,var(--accent),var(--accent2));
-    border-radius:16px 16px 0 0;
+    border-radius:14px 14px 0 0;
 }
-.graph-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;}
-.graph-title{font-size:0.9rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
-.graph-subtitle{font-size:0.73rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:3px;}
-#trendBadge{font-size:0.75rem;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:0.05em;}
+.graph-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem;gap:0.5rem;flex-wrap:wrap;}
+.graph-title{font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
+.graph-subtitle{font-size:0.68rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:3px;}
+#trendBadge{font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:0.05em;white-space:nowrap;}
 
-.loading-msg,.empty-msg{text-align:center;padding:3rem 1rem;color:var(--muted);font-size:0.9rem;}
-.loading-msg i{font-size:1.5rem;margin-bottom:0.8rem;display:block;animation:spin 1s linear infinite;}
+.loading-msg,.empty-msg{text-align:center;padding:2.5rem 1rem;color:var(--muted);font-size:0.85rem;}
+.loading-msg i{font-size:1.3rem;margin-bottom:0.6rem;display:block;animation:spin 1s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-svg.chart{width:100%;height:300px;overflow:visible;}
+/* SVG fills its container */
+svg.chart{width:100%;height:auto;display:block;overflow:visible;}
+
 .grid-line{stroke:var(--border);stroke-width:1;}
 .axis-line{stroke:var(--border2);stroke-width:1.5;}
 .chart-line{
     fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
     stroke-dasharray:2000;stroke-dashoffset:2000;
     animation:drawLine 1.2s ease-out forwards;
-    filter:drop-shadow(0 0 6px rgba(255,255,255,0.1));
 }
 .chart-area{opacity:0.08;}
 @keyframes drawLine{to{stroke-dashoffset:0;}}
-
-.data-point{
-    cursor:pointer;
-    transition:r 0.2s ease, filter 0.2s ease;
-}
-.data-point:hover{filter:drop-shadow(0 0 8px currentColor);}
-.data-point.active-point{filter:drop-shadow(0 0 12px currentColor);}
-
+.data-point{cursor:pointer;transition:r 0.2s;}
+.data-point:hover{filter:drop-shadow(0 0 6px currentColor);}
+.data-point.active-point{filter:drop-shadow(0 0 10px currentColor);}
 .coord-line{stroke:var(--border2);stroke-width:1;stroke-dasharray:3 3;opacity:0;transition:opacity 0.2s;}
 .coord-line.visible{opacity:1;}
+.axis-label{font-family:'JetBrains Mono',monospace;font-size:9px;fill:var(--muted);}
+@keyframes pulseRing{0%{transform:scale(1);opacity:0.8;}100%{transform:scale(2.2);opacity:0;}}
+.pulse-ring{animation:pulseRing 1s ease-out infinite;}
 
-.axis-label{font-family:'JetBrains Mono',monospace;font-size:10px;fill:var(--muted);}
-.coord-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;}
-
-/* ── detail card (right panel) ── */
+/* ── detail card ── */
 .detail-panel{
-    background:var(--surface);border:1px solid var(--border);border-radius:16px;
-    overflow:hidden;
-    box-shadow:0 0 30px rgba(79,142,247,0.06);
-    transition:all 0.3s ease;
-    min-height:200px;
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    overflow:hidden;box-shadow:0 0 30px rgba(79,142,247,0.06);
+    transition:border-color 0.3s;
 }
-.detail-panel.has-data{border-color:var(--active-color, var(--accent));}
+.detail-panel.has-data{border-color:var(--active-color,var(--accent));}
 
-.detail-top{
-    padding:1.2rem 1.4rem 1rem;
-    border-bottom:1px solid var(--border);
-    position:relative;
-}
+.detail-top{padding:1rem 1.2rem 0.9rem;border-bottom:1px solid var(--border);position:relative;}
 .detail-top::after{
-    content:'';position:absolute;bottom:-1px;left:1.4rem;right:1.4rem;height:1px;
-    background:var(--active-color, var(--accent));opacity:0.4;
+    content:'';position:absolute;bottom:-1px;left:1.2rem;right:1.2rem;height:1px;
+    background:var(--active-color,var(--accent));opacity:0.4;
 }
-.detail-exam-label{
-    font-size:0.68rem;font-weight:700;text-transform:uppercase;
-    letter-spacing:0.1em;color:var(--muted);margin-bottom:6px;
-}
-.detail-exam-name{
-    font-size:1rem;font-weight:700;color:var(--text);
-    font-family:'JetBrains Mono',monospace;
-}
+.detail-exam-label{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:5px;}
+.detail-exam-name{font-size:0.95rem;font-weight:700;font-family:'JetBrains Mono',monospace;}
 .detail-subject-pill{
-    display:inline-block;margin-top:6px;
-    padding:2px 10px;border-radius:20px;
-    font-size:0.7rem;font-weight:700;letter-spacing:0.05em;
+    display:inline-block;margin-top:5px;
+    padding:2px 9px;border-radius:20px;
+    font-size:0.67rem;font-weight:700;letter-spacing:0.05em;
     background:var(--active-color,var(--accent));color:#0d0f1a;
 }
 
-.detail-score-section{padding:1.2rem 1.4rem;border-bottom:1px solid var(--border);}
-.score-big{
-    display:flex;align-items:baseline;gap:6px;margin-bottom:8px;
-}
-.score-big .num{
-    font-size:3rem;font-weight:700;font-family:'JetBrains Mono',monospace;
-    line-height:1;color:var(--active-color,var(--accent));
-}
-.score-big .denom{font-size:1rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.detail-score-section{padding:1rem 1.2rem;border-bottom:1px solid var(--border);}
+.score-big{display:flex;align-items:baseline;gap:5px;margin-bottom:7px;}
+.score-big .num{font-size:2.6rem;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1;color:var(--active-color,var(--accent));}
+.score-big .denom{font-size:0.9rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.score-bar-wrap{background:var(--surface2);border-radius:99px;height:5px;overflow:hidden;margin-bottom:7px;}
+.score-bar-fill{height:100%;border-radius:99px;background:var(--active-color,var(--accent));transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1);}
+.score-pct{font-size:0.75rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
 
-.score-bar-wrap{background:var(--surface2);border-radius:99px;height:6px;overflow:hidden;margin-bottom:8px;}
-.score-bar-fill{
-    height:100%;border-radius:99px;
-    background:var(--active-color,var(--accent));
-    transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1);
-    box-shadow:0 0 8px var(--active-color,var(--accent));
-}
-.score-pct{font-size:0.78rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.detail-grade-section{padding:0.9rem 1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.grade-badge{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:700;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+.grade-info .grade-label{font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
+.grade-info .grade-remark{font-size:0.82rem;font-weight:600;color:var(--text);margin-top:2px;}
 
-.detail-grade-section{
-    padding:1rem 1.4rem;border-bottom:1px solid var(--border);
-    display:flex;align-items:center;gap:12px;
-}
-.grade-badge{
-    width:46px;height:46px;border-radius:12px;
-    display:flex;align-items:center;justify-content:center;
-    font-size:1.3rem;font-weight:700;font-family:'JetBrains Mono',monospace;
-    flex-shrink:0;
-}
-.grade-info .grade-label{font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
-.grade-info .grade-remark{font-size:0.85rem;font-weight:600;color:var(--text);margin-top:2px;}
+.detail-trend-section{padding:0.9rem 1.2rem;}
+.trend-label{font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:7px;}
+.trend-row{display:flex;align-items:center;gap:7px;font-size:0.8rem;}
 
-.detail-trend-section{padding:1rem 1.4rem;}
-.trend-label{font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
-.trend-row{display:flex;align-items:center;gap:8px;font-size:0.82rem;}
-.trend-icon{font-size:1rem;}
-.trend-text{color:var(--text);font-weight:500;}
-
-/* placeholder state */
 .detail-placeholder{
     display:flex;flex-direction:column;align-items:center;justify-content:center;
-    min-height:260px;padding:2rem;text-align:center;gap:12px;
+    min-height:200px;padding:1.5rem;text-align:center;gap:10px;
 }
-.detail-placeholder .ph-ico{font-size:2.5rem;opacity:0.25;}
-.detail-placeholder p{font-size:0.82rem;color:var(--muted);line-height:1.6;}
-.detail-placeholder small{font-size:0.72rem;color:var(--muted2);}
+.detail-placeholder .ph-ico{font-size:2rem;opacity:0.25;}
+.detail-placeholder p{font-size:0.78rem;color:var(--muted);line-height:1.6;}
+.detail-placeholder small{font-size:0.68rem;color:var(--muted2);}
 
-/* ── crosshair dot pulse ── */
-@keyframes pulseRing{
-    0%{transform:scale(1);opacity:0.8;}
-    100%{transform:scale(2.2);opacity:0;}
+/* ── mobile tweaks ── */
+@media(max-width:480px){
+    header{padding:0.8rem 1rem;}
+    .header-title h1{font-size:0.9rem;}
+    .main{padding:1rem 0.75rem 3rem;}
+    .info-card{padding:0.9rem 1rem;gap:0.75rem;}
+    .stat-chip .val{font-size:1.05rem;}
+    .graph-card{padding:1rem 0.75rem 0.9rem;}
 }
-.pulse-ring{animation:pulseRing 1s ease-out infinite;}
 </style>
 </head>
 <body>
@@ -246,7 +221,7 @@ svg.chart{width:100%;height:300px;overflow:visible;}
         <h1>Child's Progress Analysis</h1>
         <p>AET School Management System</p>
     </div>
-    <span class="header-badge">Live Data</span>
+    <span class="header-badge">Live</span>
 </header>
 
 <div class="main">
@@ -260,11 +235,11 @@ svg.chart{width:100%;height:300px;overflow:visible;}
         <div class="stats-row">
             <div class="stat-chip">
                 <div class="val" id="statTotal">—</div>
-                <div class="lbl">Total / 600</div>
+                <div class="lbl">/ 600</div>
             </div>
             <div class="stat-chip">
                 <div class="val" id="statPct">—</div>
-                <div class="lbl">Percentage</div>
+                <div class="lbl">%</div>
             </div>
         </div>
     </div>
@@ -274,64 +249,41 @@ svg.chart{width:100%;height:300px;overflow:visible;}
         <button class="tab-btn" data-subject="english">English</button>
         <button class="tab-btn" data-subject="physics">Physics</button>
         <button class="tab-btn" data-subject="chemistry">Chemistry</button>
-        <button class="tab-btn" data-subject="maths">Mathematics</button>
+        <button class="tab-btn" data-subject="maths">Maths</button>
         <button class="tab-btn" data-subject="biology">Biology</button>
     </div>
 
     <div class="graph-layout">
-
-        <!-- Left: chart -->
         <div class="graph-card">
-            <div class="graph-card-top-bar" id="graphTopBar"
-                 style="position:absolute;top:0;left:0;right:0;height:3px;
-                        background:linear-gradient(90deg,var(--accent),var(--accent2));
-                        border-radius:16px 16px 0 0;"></div>
-
+            <div class="graph-top-bar" id="graphTopBar"></div>
             <div class="graph-header">
                 <div>
-                    <div class="graph-title" id="graphTitle">Kannada — Progress Chart</div>
-                    <div class="graph-subtitle">Click any point to see details · out of 100</div>
+                    <div class="graph-title" id="graphTitle">Kannada — Progress</div>
+                    <div class="graph-subtitle">Tap a point to see details · out of 100</div>
                 </div>
                 <div id="trendBadge"></div>
             </div>
-
             <div id="graphContent">
-                <div class="loading-msg">
-                    <i class="fas fa-spinner"></i>Loading data...
-                </div>
+                <div class="loading-msg"><i class="fas fa-spinner"></i>Loading data...</div>
             </div>
         </div>
 
-        <!-- Right: detail card -->
         <div class="detail-panel" id="detailPanel">
             <div class="detail-placeholder" id="detailPlaceholder">
                 <div class="ph-ico">📊</div>
-                <p>Click any data point on the graph to see exam details here</p>
-                <small>Each dot represents one exam</small>
+                <p>Tap any point on the graph to see exam details</p>
+                <small>Each dot = one exam</small>
             </div>
             <div id="detailContent" style="display:none;"></div>
         </div>
-
     </div>
 </div>
 
 <script>
-var COLORS={
-    kannada:'#4f8ef7',english:'#a78bfa',physics:'#34d399',
-    chemistry:'#f87171',maths:'#fbbf24',biology:'#fb923c'
-};
-var LABELS={
-    kannada:'Kannada',english:'English',physics:'Physics',
-    chemistry:'Chemistry',maths:'Mathematics',biology:'Biology'
-};
+var COLORS={kannada:'#4f8ef7',english:'#a78bfa',physics:'#34d399',chemistry:'#f87171',maths:'#fbbf24',biology:'#fb923c'};
+var LABELS={kannada:'Kannada',english:'English',physics:'Physics',chemistry:'Chemistry',maths:'Mathematics',biology:'Biology'};
+var currentSubject='kannada', studentId=null, studentContext=null, chartData={exams:[],marks:[]}, activeIdx=null;
 
-var currentSubject='kannada';
-var studentId=null;
-var studentContext=null;
-var chartData={exams:[],marks:[]};
-var activeIdx=null;
-
-/* ── session ── */
 async function getStudentId(){
     try{
         var res=await fetch("/get_student_context");
@@ -350,8 +302,7 @@ async function getStudentId(){
 function loadStudentProfile(){
     if(!studentContext)return;
     document.getElementById("studentName").textContent=studentContext.name||"Student";
-    document.getElementById("studentMeta").textContent=
-        "Roll No: "+(studentContext.roll_number||"—")+" · Class: "+(studentContext.class||"—");
+    document.getElementById("studentMeta").textContent="Roll: "+(studentContext.roll_number||"—")+" · Class: "+(studentContext.class||"—");
 }
 function loadSummary(){
     if(!studentContext||!studentContext.latest_marks)return;
@@ -359,252 +310,153 @@ function loadSummary(){
     document.getElementById("statPct").textContent=studentContext.latest_marks.percentage+"%";
 }
 
-/* ── grade helper ── */
 function gradeInfo(pct){
-    if(pct>=90) return{grade:"A+",remark:"Outstanding",bg:"rgba(52,211,153,0.18)",fg:"#34d399"};
-    if(pct>=75) return{grade:"A", remark:"Excellent",  bg:"rgba(79,142,247,0.18)",fg:"#4f8ef7"};
-    if(pct>=60) return{grade:"B+",remark:"Very Good",  bg:"rgba(167,139,250,0.18)",fg:"#a78bfa"};
-    if(pct>=50) return{grade:"B", remark:"Good",       bg:"rgba(251,191,36,0.18)", fg:"#fbbf24"};
-    if(pct>=35) return{grade:"C", remark:"Average",    bg:"rgba(251,146,60,0.18)", fg:"#fb923c"};
-    return            {grade:"F", remark:"Needs Work", bg:"rgba(248,113,113,0.18)",fg:"#f87171"};
+    if(pct>=90)return{grade:"A+",remark:"Outstanding",bg:"rgba(52,211,153,0.18)",fg:"#34d399"};
+    if(pct>=75)return{grade:"A", remark:"Excellent",  bg:"rgba(79,142,247,0.18)",fg:"#4f8ef7"};
+    if(pct>=60)return{grade:"B+",remark:"Very Good",  bg:"rgba(167,139,250,0.18)",fg:"#a78bfa"};
+    if(pct>=50)return{grade:"B", remark:"Good",       bg:"rgba(251,191,36,0.18)", fg:"#fbbf24"};
+    if(pct>=35)return{grade:"C", remark:"Average",    bg:"rgba(251,146,60,0.18)", fg:"#fb923c"};
+    return           {grade:"F", remark:"Needs Work", bg:"rgba(248,113,113,0.18)",fg:"#f87171"};
 }
 
-/* ── show detail card ── */
 function showDetailCard(exam,marks,subject,allMarks,idx){
     var color=COLORS[subject];
     var pct=marks;
     var gi=gradeInfo(pct);
-
-    /* trend */
     var trendHtml='';
     if(allMarks.length>1&&idx>0){
-        var prev=allMarks[idx-1];
-        var diff=marks-prev;
-        if(diff>0)
-            trendHtml='<span class="trend-icon">📈</span><span class="trend-text" style="color:#34d399;">+'+diff+' from previous exam</span>';
-        else if(diff<0)
-            trendHtml='<span class="trend-icon">📉</span><span class="trend-text" style="color:#f87171;">'+diff+' from previous exam</span>';
-        else
-            trendHtml='<span class="trend-icon">➡️</span><span class="trend-text" style="color:#fbbf24;">Same as previous exam</span>';
+        var diff=marks-allMarks[idx-1];
+        if(diff>0) trendHtml='<span>📈</span><span style="color:#34d399;">+'+diff+' from prev</span>';
+        else if(diff<0) trendHtml='<span>📉</span><span style="color:#f87171;">'+diff+' from prev</span>';
+        else trendHtml='<span>➡️</span><span style="color:#fbbf24;">Same as prev</span>';
     } else if(idx===0){
-        trendHtml='<span class="trend-icon">🚀</span><span class="trend-text" style="color:'+color+';">First recorded exam</span>';
+        trendHtml='<span>🚀</span><span style="color:'+color+';">First recorded exam</span>';
     }
-
-    /* best/worst */
     var bestMark=Math.max.apply(null,allMarks);
-    var bestIdx=allMarks.indexOf(bestMark);
-    var isBest=(idx===bestIdx);
-
+    var isBest=(idx===allMarks.indexOf(bestMark));
     var panel=document.getElementById("detailPanel");
     panel.style.setProperty("--active-color",color);
     panel.classList.add("has-data");
-
     document.getElementById("detailPlaceholder").style.display="none";
     var dc=document.getElementById("detailContent");
     dc.style.display="block";
-
     dc.innerHTML=
         '<div class="detail-top">'
             +'<div class="detail-exam-label">Exam</div>'
             +'<div class="detail-exam-name">'+exam+'</div>'
             +'<span class="detail-subject-pill">'+LABELS[subject]+'</span>'
-            +(isBest?'<span style="margin-left:6px;font-size:0.7rem;background:rgba(251,191,36,0.18);color:#fbbf24;padding:2px 8px;border-radius:20px;font-weight:700;">⭐ Best</span>':'')
+            +(isBest?'<span style="margin-left:6px;font-size:0.67rem;background:rgba(251,191,36,0.18);color:#fbbf24;padding:2px 7px;border-radius:20px;font-weight:700;">⭐ Best</span>':'')
         +'</div>'
-
         +'<div class="detail-score-section">'
-            +'<div class="score-big">'
-                +'<span class="num">'+marks+'</span>'
-                +'<span class="denom">/ 100</span>'
-            +'</div>'
-            +'<div class="score-bar-wrap">'
-                +'<div class="score-bar-fill" id="scoreBarFill" style="width:0%;"></div>'
-            +'</div>'
+            +'<div class="score-big"><span class="num">'+marks+'</span><span class="denom">/ 100</span></div>'
+            +'<div class="score-bar-wrap"><div class="score-bar-fill" id="scoreBarFill" style="width:0%;"></div></div>'
             +'<div class="score-pct">'+pct+'% scored</div>'
         +'</div>'
-
         +'<div class="detail-grade-section">'
             +'<div class="grade-badge" style="background:'+gi.bg+';color:'+gi.fg+';">'+gi.grade+'</div>'
-            +'<div class="grade-info">'
-                +'<div class="grade-label">Grade</div>'
-                +'<div class="grade-remark">'+gi.remark+'</div>'
-            +'</div>'
+            +'<div class="grade-info"><div class="grade-label">Grade</div><div class="grade-remark">'+gi.remark+'</div></div>'
         +'</div>'
-
-        +(trendHtml?
-            '<div class="detail-trend-section">'
-                +'<div class="trend-label">vs Previous</div>'
-                +'<div class="trend-row">'+trendHtml+'</div>'
-            +'</div>'
-        :'');
-
-    /* animate bar after render */
-    setTimeout(function(){
-        var bar=document.getElementById("scoreBarFill");
-        if(bar) bar.style.width=pct+"%";
-    },50);
+        +(trendHtml?'<div class="detail-trend-section"><div class="trend-label">vs Previous</div><div class="trend-row" style="gap:7px;font-size:0.78rem;">'+trendHtml+'</div></div>':'');
+    setTimeout(function(){var b=document.getElementById("scoreBarFill");if(b)b.style.width=pct+"%";},50);
 }
 
-/* ── smooth path ── */
 function smoothPath(marks,xPos,yPos){
     if(!marks.length)return"";
     var d="M "+xPos(0)+" "+yPos(marks[0]);
     for(var i=1;i<marks.length;i++){
-        var x1=xPos(i-1),y1=yPos(marks[i-1]);
-        var x2=xPos(i),y2=yPos(marks[i]);
-        var cx=(x1+x2)/2;
-        d+=" C "+cx+" "+y1+", "+cx+" "+y2+", "+x2+" "+y2;
+        var x1=xPos(i-1),y1=yPos(marks[i-1]),x2=xPos(i),y2=yPos(marks[i]),cx=(x1+x2)/2;
+        d+=" C "+cx+" "+y1+","+cx+" "+y2+","+x2+" "+y2;
     }
     return d;
 }
 
-/* ── draw graph ── */
 function drawGraph(exams,marks,subject){
     var color=COLORS[subject];
-    var W=500,H=260,padL=48,padR=20,padT=24,padB=44;
-    var gW=W-padL-padR, gH=H-padT-padB;
+    var W=500,H=260,padL=44,padR=16,padT=20,padB=48;
+    var gW=W-padL-padR,gH=H-padT-padB;
     var n=exams.length;
-
-    if(!n){
-        document.getElementById("graphContent").innerHTML=
-            '<div class="empty-msg">No exam data yet.</div>';
-        return;
-    }
-
+    if(!n){document.getElementById("graphContent").innerHTML='<div class="empty-msg">No exam data yet.</div>';return;}
     chartData={exams:exams,marks:marks};
-
     var xPos=function(i){return padL+(n===1?gW/2:(i/(n-1))*gW);};
     var yPos=function(v){return padT+gH-(v/100)*gH;};
 
-    /* trend badge */
     var tb=document.getElementById("trendBadge");
     if(marks.length>=2){
-        var first=marks[0],last=marks[marks.length-1];
-        var diff=last-first;
-        if(diff>0){
-            tb.textContent="▲ Improving +"+diff;
-            tb.style.cssText="background:rgba(52,211,153,0.15);color:#34d399;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;border:1px solid rgba(52,211,153,0.3);";
-        } else if(diff<0){
-            tb.textContent="▼ Declined "+diff;
-            tb.style.cssText="background:rgba(248,113,113,0.15);color:#f87171;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;border:1px solid rgba(248,113,113,0.3);";
-        } else{
-            tb.textContent="➡ Stable";
-            tb.style.cssText="background:rgba(251,191,36,0.15);color:#fbbf24;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;border:1px solid rgba(251,191,36,0.3);";
-        }
+        var diff=marks[marks.length-1]-marks[0];
+        if(diff>0){tb.textContent="▲ +"+diff;tb.style.cssText="background:rgba(52,211,153,0.15);color:#34d399;padding:3px 10px;border-radius:20px;font-size:0.7rem;font-weight:700;border:1px solid rgba(52,211,153,0.3);";}
+        else if(diff<0){tb.textContent="▼ "+diff;tb.style.cssText="background:rgba(248,113,113,0.15);color:#f87171;padding:3px 10px;border-radius:20px;font-size:0.7rem;font-weight:700;border:1px solid rgba(248,113,113,0.3);";}
+        else{tb.textContent="➡ Stable";tb.style.cssText="background:rgba(251,191,36,0.15);color:#fbbf24;padding:3px 10px;border-radius:20px;font-size:0.7rem;font-weight:700;border:1px solid rgba(251,191,36,0.3);";}
     } else tb.textContent="";
 
-    /* gradient fill area */
-    var areaPath=smoothPath(marks,xPos,yPos);
-    areaPath+=" L "+xPos(n-1)+" "+(padT+gH)+" L "+padL+" "+(padT+gH)+" Z";
-
-    /* grid + labels */
+    var areaPath=smoothPath(marks,xPos,yPos)+" L "+xPos(n-1)+" "+(padT+gH)+" L "+padL+" "+(padT+gH)+" Z";
     var grid='';
     [0,25,50,75,100].forEach(function(v){
         var y=yPos(v);
         grid+='<line class="grid-line" x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke-dasharray="4 4"/>';
-        grid+='<text class="axis-label" x="'+(padL-6)+'" y="'+(y+4)+'" text-anchor="end">'+v+'</text>';
+        grid+='<text class="axis-label" x="'+(padL-5)+'" y="'+(y+4)+'" text-anchor="end">'+v+'</text>';
     });
-
-    /* coord crosshair lines (hidden initially) */
-    var hLine='<line id="coordH" class="coord-line" x1="'+padL+'" y1="0" x2="'+(W-padR)+'" y2="0"/>';
-    var vLine='<line id="coordV" class="coord-line" x1="0" y1="'+padT+'" x2="0" y2="'+(padT+gH)+'"/>';
-
-    /* x-axis labels */
     var xlabels=exams.map(function(e,i){
-        return '<text class="axis-label" x="'+xPos(i)+'" y="'+(H-padB+18)+'" text-anchor="middle"'
-              +' transform="rotate(-30,'+xPos(i)+','+(H-padB+18)+')" style="font-size:9px;">'
-              +(e.length>10?e.slice(0,10)+'…':e)+'</text>';
+        var label=e.length>9?e.slice(0,9)+'…':e;
+        return '<text class="axis-label" x="'+xPos(i)+'" y="'+(H-padB+16)+'" text-anchor="middle" transform="rotate(-30,'+xPos(i)+','+(H-padB+16)+')" style="font-size:8px;">'+label+'</text>';
     }).join('');
-
-    /* data points */
-    var r=5;
     var dots=marks.map(function(m,i){
-        return '<circle id="dp'+i+'" class="data-point" cx="'+xPos(i)+'" cy="'+yPos(m)+'"'
-              +' r="'+r+'" fill="'+color+'" stroke="var(--bg)" stroke-width="2"'
-              +' data-idx="'+i+'" data-exam="'+exams[i]+'" data-marks="'+m+'"/>';
+        return '<circle id="dp'+i+'" class="data-point" cx="'+xPos(i)+'" cy="'+yPos(m)+'" r="6" fill="'+color+'" stroke="var(--bg)" stroke-width="2" data-idx="'+i+'"/>';
     }).join('');
-
-    /* pulse ring on active point */
-    var pulseRing='<circle id="pulseRing" cx="-999" cy="-999" r="5" fill="none" stroke="'+color+'" stroke-width="2" class="pulse-ring" opacity="0"/>';
 
     var svg='<svg class="chart" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'
-        +'<defs>'
-        +'<linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">'
+        +'<defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">'
         +'<stop offset="0%" stop-color="'+color+'" stop-opacity="0.35"/>'
         +'<stop offset="100%" stop-color="'+color+'" stop-opacity="0"/>'
-        +'</linearGradient>'
-        +'</defs>'
+        +'</linearGradient></defs>'
         +grid
         +'<line class="axis-line" x1="'+padL+'" y1="'+padT+'" x2="'+padL+'" y2="'+(padT+gH)+'"/>'
         +'<line class="axis-line" x1="'+padL+'" y1="'+(padT+gH)+'" x2="'+(W-padR)+'" y2="'+(padT+gH)+'"/>'
         +'<path d="'+areaPath+'" fill="url(#areaGrad)" class="chart-area"/>'
         +'<path class="chart-line" d="'+smoothPath(marks,xPos,yPos)+'" stroke="'+color+'"/>'
-        +hLine+vLine
-        +dots
-        +pulseRing
-        +xlabels
-        +'</svg>';
+        +'<line id="coordH" class="coord-line" x1="'+padL+'" y1="0" x2="'+(W-padR)+'" y2="0"/>'
+        +'<line id="coordV" class="coord-line" x1="0" y1="'+padT+'" x2="0" y2="'+(padT+gH)+'"/>'
+        +dots+xlabels+'</svg>';
 
     document.getElementById("graphContent").innerHTML=svg;
-    document.getElementById("graphTopBar").style.background=
-        "linear-gradient(90deg,"+color+","+color+"88)";
+    document.getElementById("graphTopBar").style.background="linear-gradient(90deg,"+color+","+color+"88)";
 
-    /* wire point clicks */
     marks.forEach(function(m,i){
         var el=document.getElementById("dp"+i);
         if(!el)return;
         el.addEventListener("click",function(){
-            /* update active point visuals */
-            marks.forEach(function(_,j){
-                var d=document.getElementById("dp"+j);
-                if(d){d.setAttribute("r","5");d.classList.remove("active-point");}
-            });
-            el.setAttribute("r","8");
-            el.classList.add("active-point");
-
-            /* crosshair */
-            var cx=parseFloat(el.getAttribute("cx"));
-            var cy=parseFloat(el.getAttribute("cy"));
-            var h=document.getElementById("coordH");
-            var v=document.getElementById("coordV");
-            var pr=document.getElementById("pulseRing");
+            marks.forEach(function(_,j){var d=document.getElementById("dp"+j);if(d){d.setAttribute("r","6");d.classList.remove("active-point");}});
+            el.setAttribute("r","9");el.classList.add("active-point");
+            var cx=parseFloat(el.getAttribute("cx")),cy=parseFloat(el.getAttribute("cy"));
+            var h=document.getElementById("coordH"),v=document.getElementById("coordV");
             if(h){h.setAttribute("y1",cy);h.setAttribute("y2",cy);h.classList.add("visible");}
             if(v){v.setAttribute("x1",cx);v.setAttribute("x2",cx);v.classList.add("visible");}
-            if(pr){pr.setAttribute("cx",cx);pr.setAttribute("cy",cy);pr.setAttribute("opacity","1");}
-
             activeIdx=i;
             showDetailCard(exams[i],m,subject,marks,i);
+            // scroll detail into view on mobile
+            if(window.innerWidth<768){
+                setTimeout(function(){document.getElementById("detailPanel").scrollIntoView({behavior:"smooth",block:"nearest"});},100);
+            }
         });
     });
 }
 
-/* ── load subject ── */
 async function loadSubject(subject){
-    if(!studentId){
-        document.getElementById("graphContent").innerHTML=
-            '<div class="empty-msg">Student not linked.</div>';
-        return;
-    }
-    document.getElementById("graphContent").innerHTML=
-        '<div class="loading-msg"><i class="fas fa-spinner"></i>Loading '+LABELS[subject]+' data...</div>';
-    document.getElementById("graphTitle").textContent=LABELS[subject]+" — Progress Chart";
-
-    /* reset detail panel */
+    if(!studentId){document.getElementById("graphContent").innerHTML='<div class="empty-msg">Student not linked.</div>';return;}
+    document.getElementById("graphContent").innerHTML='<div class="loading-msg"><i class="fas fa-spinner"></i>Loading...</div>';
+    document.getElementById("graphTitle").textContent=LABELS[subject]+" — Progress";
     document.getElementById("detailPlaceholder").style.display="flex";
     document.getElementById("detailContent").style.display="none";
     document.getElementById("detailPanel").classList.remove("has-data");
     activeIdx=null;
-
     try{
         var res=await fetch("/get_subject_progress/"+studentId+"/"+subject);
         var data=await res.json();
         drawGraph(data.exams,data.marks,subject);
     }catch(e){
-        document.getElementById("graphContent").innerHTML=
-            '<div class="empty-msg">Failed to load data.</div>';
+        document.getElementById("graphContent").innerHTML='<div class="empty-msg">Failed to load data.</div>';
     }
 }
 
-/* ── tabs ── */
 document.querySelectorAll(".tab-btn").forEach(function(btn){
     btn.addEventListener("click",function(){
         document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.remove("active");});
@@ -614,7 +466,6 @@ document.querySelectorAll(".tab-btn").forEach(function(btn){
     });
 });
 
-/* ── init ── */
 (async function(){
     studentId=await getStudentId();
     loadStudentProfile();
