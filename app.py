@@ -390,176 +390,210 @@ def check_existing():
     return jsonify({"exists": True, "name": found_name})
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    if request.method == "GET":
-        return render_template("register.html")
+if request.method == "GET":
+return render_template("register.html")
 
-    if not session.get('otp_verified'):
-        return jsonify({"status": "error", "message": "OTP verification required"})
-    session.pop('otp_verified')
+```
+if not session.get('otp_verified'):
+    return jsonify({"status": "error", "message": "OTP verification required"})
+session.pop('otp_verified')
 
-    data        = request.get_json(silent=True) or {}
-    name        = data.get("name",        "").strip()
-    phone       = data.get("phone",       "").strip()
-    email       = data.get("email",       "").strip()
-    role        = data.get("role")
-    password    = data.get("password",    "")
-    father_name = data.get("father_name", "")
-    mother_name = data.get("mother_name", "")
+data        = request.get_json(silent=True) or {}
+name        = data.get("name", "").strip()
+phone       = data.get("phone", "").strip()
+email       = data.get("email", "").strip().lower()
+role        = data.get("role")
+password    = data.get("password", "")
+father_name = data.get("father_name", "")
+mother_name = data.get("mother_name", "")
 
-    conn = get_db_connection()
-    cur  = conn.cursor()
+conn = get_db_connection()
+cur = conn.cursor()
 
-    # GUARD 1: check users table for duplicate
-    cur.execute(
-        """SELECT id, name FROM users
-           WHERE LOWER(name) = LOWER(%s)
-             AND phone        = %s
-             AND LOWER(email) = LOWER(%s)
-             AND role         = %s""",
-        (name, phone, email, role)
-    )
-    existing = cur.fetchone()
-    if existing:
-        existing_id, existing_name = existing
-        _set_session(session, cur, existing_id, existing_name, role)
-        cur.close()
-        conn.close()
-        return jsonify({"status": "exists", "name": existing_name, "role": role})
+# Check duplicate user
+cur.execute(
+    """SELECT id, name FROM users
+       WHERE LOWER(name) = LOWER(%s)
+         AND phone = %s
+         AND LOWER(email) = LOWER(%s)
+         AND role = %s""",
+    (name, phone, email, role)
+)
 
-    if role == "student":
-        standard    = data.get("standard")
-        section     = data.get("section")
-        roll_number = data.get("roll_number")
+existing = cur.fetchone()
 
-        # GUARD 2: duplicate phone check — DISABLED FOR DEVELOPMENT
-        # Uncomment below block before going to production
-        # cur.execute(
-        #     "SELECT student_id, user_id FROM students WHERE phone = %s",
-        #     (phone,)
-        # )
-        # existing_student = cur.fetchone()
-        # if existing_student:
-        #     existing_student_id, existing_user_id = existing_student
-        #     cur.execute("SELECT name FROM users WHERE id = %s", (existing_user_id,))
-        #     u = cur.fetchone()
-        #     existing_name = u[0] if u else name
-        #     _set_session(session, cur, existing_user_id, existing_name, role)
-        #     cur.close()
-        #     conn.close()
-        #     return jsonify({"status": "exists", "name": existing_name, "role": role})
-
-        # GUARD 3: block duplicate roll number in same class
-        cur.execute(
-            """SELECT student_id FROM students
-               WHERE roll_number = %s AND standard = %s AND section = %s""",
-            (roll_number, standard, section)
-        )
-        if cur.fetchone():
-            cur.close()
-            conn.close()
-            return jsonify({
-                "status":  "error",
-                "message": "A student with this roll number already exists in this class."
-            })
-
-    # SAFE TO INSERT
-    hashed_password = bcrypt.hashpw(
-        password.encode('utf-8'), bcrypt.gensalt()
-    ).decode('utf-8')
-
-    cur.execute(
-        """INSERT INTO users
-               (name, phone, email, role, password, father_name, mother_name)
-           VALUES (%s, %s, %s, %s, %s, %s, %s)
-           RETURNING id""",
-        (name, phone, email, role, hashed_password, father_name, mother_name)
-    )
-    user_id = cur.fetchone()[0]
-
-    student_id = teacher_id = linked_student_id = None
-
-    if role == "student":
-        cur.execute(
-            """INSERT INTO students
-                   (user_id, name, phone, email, password, standard, section, roll_number)
-               VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-               RETURNING student_id""",
-            (user_id, name, phone, email, hashed_password, standard, section, roll_number)
-        )
-        student_id = cur.fetchone()[0]
-
-    elif role == "teacher":
-        cur.execute(
-            """INSERT INTO teachers (user_id, name, phone, email, password)
-               VALUES (%s, %s, %s, %s, %s)
-               RETURNING teacher_id""",
-            (user_id, name, phone, email, hashed_password)
-        )
-        teacher_id = cur.fetchone()[0]
-
-    elif role == "parent":
-        child_name        = data.get("child_name", "")
-        child_roll_number = data.get("child_roll_number")
-        parent_standard   = data.get("parent_standard")
-        parent_section    = data.get("parent_section")
-
-        if child_roll_number:
-            cur.execute(
-                """SELECT student_id FROM students
-                   WHERE roll_number = %s
-                     AND (%s IS NULL OR standard = %s)
-                     AND (%s IS NULL OR section  = %s)""",
-                (child_roll_number,
-                 parent_standard, parent_standard,
-                 parent_section,  parent_section)
-            )
-            student_row = cur.fetchone()
-            if not student_row:
-                conn.rollback()
-                cur.close()
-                conn.close()
-                return jsonify({
-                    "status":  "error",
-                    "message": "Child's roll number not found. Please check and try again."
-                })
-            linked_student_id = student_row[0]
-            cur.execute(
-                "UPDATE users SET linked_student_id = %s WHERE id = %s",
-                (linked_student_id, user_id)
-            )
-
-        cur.execute(
-            """INSERT INTO parents
-                   (user_id, name, phone, email, password, child_name, linked_student_id)
-               VALUES (%s, %s, %s, %s, %s, %s, %s)
-               RETURNING parent_id""",
-            (user_id, name, phone, email, hashed_password, child_name, linked_student_id)
-        )
-
-    conn.commit()
+if existing:
+    existing_id, existing_name = existing
+    _set_session(session, cur, existing_id, existing_name, role)
     cur.close()
     conn.close()
 
-    session['user_id'] = user_id
-    session['role']    = role
-    session['name']    = name
-
-    if role == 'student':
-        session['student_id'] = student_id
-    elif role == 'parent':
-        session['student_id'] = linked_student_id
-    else:
-        session['student_id'] = None
-
     return jsonify({
-        "status":            "success",
-        "user_id":           user_id,
-        "student_id":        student_id,
-        "teacher_id":        teacher_id,
-        "linked_student_id": linked_student_id,
-        "name":              name,
-        "role":              role
+        "status": "exists",
+        "name": existing_name,
+        "role": role
     })
+
+if role == "student":
+    standard = data.get("standard")
+    section = data.get("section")
+    roll_number = data.get("roll_number")
+
+    cur.execute(
+        """SELECT student_id
+           FROM students
+           WHERE roll_number = %s
+             AND standard = %s
+             AND section = %s""",
+        (roll_number, standard, section)
+    )
+
+    if cur.fetchone():
+        cur.close()
+        conn.close()
+
+        return jsonify({
+            "status": "error",
+            "message": "A student with this roll number already exists in this class."
+        })
+
+hashed_password = bcrypt.hashpw(
+    password.encode("utf-8"),
+    bcrypt.gensalt()
+).decode("utf-8")
+
+cur.execute(
+    """INSERT INTO users
+       (name, phone, email, role, password,
+        father_name, mother_name, status)
+       VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+       RETURNING id""",
+    (
+        name,
+        phone,
+        email,
+        role,
+        hashed_password,
+        father_name,
+        mother_name,
+        "pending"
+    )
+)
+
+user_id = cur.fetchone()[0]
+
+student_id = None
+teacher_id = None
+linked_student_id = None
+
+if role == "student":
+
+    cur.execute(
+        """INSERT INTO students
+           (user_id, name, phone, email, password,
+            standard, section, roll_number)
+           VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+           RETURNING student_id""",
+        (
+            user_id,
+            name,
+            phone,
+            email,
+            hashed_password,
+            standard,
+            section,
+            roll_number
+        )
+    )
+
+    student_id = cur.fetchone()[0]
+
+elif role == "teacher":
+
+    cur.execute(
+        """INSERT INTO teachers
+           (user_id, name, phone, email, password)
+           VALUES (%s, %s, %s, %s, %s)
+           RETURNING teacher_id""",
+        (
+            user_id,
+            name,
+            phone,
+            email,
+            hashed_password
+        )
+    )
+
+    teacher_id = cur.fetchone()[0]
+
+elif role == "parent":
+
+    child_name = data.get("child_name", "")
+    child_roll_number = data.get("child_roll_number")
+    parent_standard = data.get("parent_standard")
+    parent_section = data.get("parent_section")
+
+    if child_roll_number:
+
+        cur.execute(
+            """SELECT student_id
+               FROM students
+               WHERE roll_number = %s
+                 AND (%s IS NULL OR standard = %s)
+                 AND (%s IS NULL OR section = %s)""",
+            (
+                child_roll_number,
+                parent_standard, parent_standard,
+                parent_section, parent_section
+            )
+        )
+
+        student_row = cur.fetchone()
+
+        if not student_row:
+            conn.rollback()
+            cur.close()
+            conn.close()
+
+            return jsonify({
+                "status": "error",
+                "message": "Child's roll number not found. Please check and try again."
+            })
+
+        linked_student_id = student_row[0]
+
+        cur.execute(
+            "UPDATE users SET linked_student_id = %s WHERE id = %s",
+            (linked_student_id, user_id)
+        )
+
+    cur.execute(
+        """INSERT INTO parents
+           (user_id, name, phone, email, password,
+            child_name, linked_student_id)
+           VALUES (%s, %s, %s, %s, %s, %s, %s)
+           RETURNING parent_id""",
+        (
+            user_id,
+            name,
+            phone,
+            email,
+            hashed_password,
+            child_name,
+            linked_student_id
+        )
+    )
+
+conn.commit()
+cur.close()
+conn.close()
+
+return jsonify({
+    "status": "pending",
+    "message": "Registration submitted. Waiting for admin approval."
+})
+
+
 @app.route("/get_students/<standard>/<section>")
 def get_students(standard, section):
     conn = get_db_connection()

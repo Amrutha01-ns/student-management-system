@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Register | AET School</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <style>
@@ -35,12 +35,17 @@ html {
 }
 
 body {
+  margin:0;
+  display:flex;
+  justify-content: center;
+  align-items: flex-start;
   font-family: 'DM Sans', sans-serif;
   background: var(--navy);
   min-height: 100vh;
   min-height: 100dvh;
   overflow-x: hidden;
   position: relative;
+  
 }
 
 /* Orbs */
@@ -64,25 +69,14 @@ body {
 /* Page wrapper */
 .page-wrapper {
   width: 100%;
-  max-width: 540px;
+  max-width: 100%;
   margin: 0 auto;
   position: relative;
   z-index: 1;
-  padding: 36px 16px 60px;
+  padding: 20px 12px;
 }
 
-@media (max-width: 540px) {
-  .page-wrapper {
-    max-width: 100%;
-    padding: 0;
-  }
-  .register-card {
-    border-radius: 0 !important;
-    min-height: 100vh;
-    min-height: 100dvh;
-    box-shadow: none;
-  }
-}
+
 
 @supports (padding: env(safe-area-inset-bottom)) {
   .page-wrapper { padding-bottom: calc(60px + env(safe-area-inset-bottom)); }
@@ -93,12 +87,14 @@ body {
   background: var(--white);
   border-radius: 20px;
   box-shadow: var(--card-shadow);
-  padding: 44px 40px 36px;
+  padding: 25px 24px ;
   border-top: 4px solid var(--accent);
   animation: cardReveal 0.7s cubic-bezier(0.22,1,0.36,1) both;
   position: relative;
   overflow: hidden;
   width: 100%;
+  max-width: 500px;
+  margin:0 auto;
 }
 .register-card::before {
   content: '';
@@ -108,6 +104,30 @@ body {
   background: linear-gradient(90deg,var(--accent),var(--accent-lt),var(--accent));
   background-size: 200% 100%;
   animation: shimmer 3s linear infinite;
+}
+@media (max-width: 768px) {
+
+  .page-wrapper {
+    padding: 12px;
+  }
+
+  .register-card {
+    width: 100%;
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .role-tabs {
+    flex-direction: column;
+  }
+
+  .role-tab {
+    width: 100%;
+  }
 }
 @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
 @keyframes cardReveal { from{opacity:0;transform:translateY(40px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
@@ -507,7 +527,7 @@ button[type="submit"]:disabled { opacity:0.7; cursor:not-allowed; transform:none
           <label>Child's Roll Number <span class="required">*</span></label>
           <div class="input-wrap">
             <span class="input-icon">🔢</span>
-            <input type="text" id="child_roll_number" placeholder="Must match existing roll number in DB" autocomplete="off" inputmode="numeric">
+<input type="text" id="child_roll_number" placeholder="Must match existing roll number in DB" autocomplete="off">
           </div>
         </div>
         <div class="field-row">
