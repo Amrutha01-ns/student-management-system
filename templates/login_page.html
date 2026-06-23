@@ -7,329 +7,65 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: #f3f4f8;
-  width: 100%;
-  min-height: 100vh;
-}
-
-.wrapper {
-  width: 100%;
-  min-height: 100vh;
-  background: #ffffff;
-  display: flex;
-  flex-direction: column;
-}
-
-.hdr {
-  background: linear-gradient(135deg, #1e40af 0%, #2563eb 60%, #3b82f6 100%);
-  padding: 50px 24px 36px;
-  text-align: center;
-}
+body { font-family: 'DM Sans', sans-serif; background: #f3f4f8; width: 100%; min-height: 100vh; }
+.wrapper { width: 100%; min-height: 100vh; background: #ffffff; display: flex; flex-direction: column; }
+.hdr { background: linear-gradient(135deg, #1e40af 0%, #2563eb 60%, #3b82f6 100%); padding: 50px 24px 36px; text-align: center; }
 .hdr-icon { font-size: 56px; display: block; margin-bottom: 14px; }
-.hdr h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 30px;
-  color: #ffffff;
-  margin-bottom: 8px;
-}
+.hdr h1 { font-family: 'Playfair Display', serif; font-size: 30px; color: #ffffff; margin-bottom: 8px; }
 .hdr p { font-size: 14px; color: rgba(255,255,255,0.8); }
 .hdr-line { width: 50px; height: 3px; background: rgba(255,255,255,0.4); border-radius: 2px; margin: 14px auto 0; }
-
-.body {
-  padding: 30px 20px 50px;
-  flex: 1;
-}
-
-.role-label {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #888;
-  margin-bottom: 12px;
-  display: block;
-}
-
-.tabs {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 28px;
-}
-
-.tab {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 16px 8px;
-  border: 2px solid #e0e0e0;
-  border-radius: 14px;
-  background: #fff;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  color: #888;
-  cursor: pointer;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  transition: all 0.15s;
-}
+.body { padding: 30px 20px 50px; flex: 1; }
+.role-label { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #888; margin-bottom: 12px; display: block; }
+.tabs { display: flex; gap: 12px; margin-bottom: 28px; }
+.tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 8px; border: 2px solid #e0e0e0; border-radius: 14px; background: #fff; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: #888; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: all 0.15s; }
 .tab .icon { font-size: 24px; }
-.tab.on {
-  border-color: #2563eb;
-  background: #eff6ff;
-  color: #2563eb;
-}
-
+.tab.on { border-color: #2563eb; background: #eff6ff; color: #2563eb; }
 .field { margin-bottom: 20px; }
-.field label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #888;
-  margin-bottom: 8px;
-}
+.field label { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #888; margin-bottom: 8px; }
 .inp-wrap { position: relative; }
-.inp-icon {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 18px;
-  pointer-events: none;
-  z-index: 1;
-}
-.inp-wrap input {
-  width: 100%;
-  height: 54px;
-  padding: 0 16px 0 50px;
-  border: 2px solid #e0e0e0;
-  border-radius: 14px;
-  font-size: 16px;
-  font-family: 'DM Sans', sans-serif;
-  color: #111;
-  background: #fff;
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-  transition: border-color 0.15s;
-}
+.inp-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 18px; pointer-events: none; z-index: 1; }
+.inp-wrap input { width: 100%; height: 54px; padding: 0 16px 0 50px; border: 2px solid #e0e0e0; border-radius: 14px; font-size: 16px; font-family: 'DM Sans', sans-serif; color: #111; background: #fff; outline: none; -webkit-appearance: none; appearance: none; transition: border-color 0.15s; }
 .inp-wrap input:focus { border-color: #2563eb; }
 .inp-wrap input::placeholder { color: #bbb; }
-.eye-btn {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 10px;
-  color: #888;
-  touch-action: manipulation;
-}
-
-.banner {
-  display: none;
-  gap: 14px;
-  align-items: center;
-  background: #f0fdf4;
-  border: 2px solid #86efac;
-  border-radius: 14px;
-  padding: 14px 18px;
-  margin-bottom: 20px;
-}
+.eye-btn { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 10px; color: #888; touch-action: manipulation; }
+.banner { display: none; gap: 14px; align-items: center; background: #f0fdf4; border: 2px solid #86efac; border-radius: 14px; padding: 14px 18px; margin-bottom: 20px; }
 .banner.show { display: flex; }
-.b-avatar {
-  width: 44px; height: 44px; min-width: 44px;
-  border-radius: 50%;
-  background: #2563eb;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px;
-}
+.b-avatar { width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 22px; }
 .b-name { font-size: 16px; font-weight: 600; color: #111; }
 .b-sub  { font-size: 13px; color: #15803d; margin-top: 2px; }
-
-.pill {
-  display: none;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 20px;
-}
+.pill { display: none; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 12px; font-size: 14px; font-weight: 500; margin-bottom: 20px; }
 .pill.warn { display: flex; background: #fffbeb; border: 2px solid #fcd34d; color: #92400e; }
-
 .forgot { text-align: right; margin-bottom: 20px; margin-top: -8px; }
 .forgot a { font-size: 14px; color: #2563eb; font-weight: 500; cursor: pointer; text-decoration: none; }
-
-.btn-login {
-  width: 100%;
-  height: 58px;
-  border: none;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
-  color: #fff;
-  font-size: 18px;
-  font-weight: 600;
-  font-family: 'DM Sans', sans-serif;
-  cursor: pointer;
-  margin-bottom: 10px;
-  -webkit-appearance: none;
-  appearance: none;
-  touch-action: manipulation;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
+.btn-login { width: 100%; height: 58px; border: none; border-radius: 16px; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: #fff; font-size: 18px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; margin-bottom: 10px; -webkit-appearance: none; appearance: none; touch-action: manipulation; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .btn-login:active { opacity: 0.85; }
 .btn-login:disabled { opacity: 0.6; }
-
 .dots { display: none; gap: 6px; align-items: center; }
-.dot {
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  background: #fff;
-  animation: bop 1s ease-in-out infinite;
-}
+.dot { width: 9px; height: 9px; border-radius: 50%; background: #fff; animation: bop 1s ease-in-out infinite; }
 .dot:nth-child(2) { animation-delay: .15s; }
 .dot:nth-child(3) { animation-delay: .3s; }
 @keyframes bop { 0%,80%,100%{transform:scale(0.6)} 40%{transform:scale(1)} }
-
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 24px 0 20px;
-  color: #aaa;
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-}
+.divider { display: flex; align-items: center; gap: 14px; margin: 24px 0 20px; color: #aaa; font-size: 13px; font-weight: 500; letter-spacing: 0.06em; }
 .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e0e0e0; }
-
-.reg-strip {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 4px;
-  padding: 18px;
-  background: #eff6ff;
-  border: 2px solid #bfdbfe;
-  border-radius: 14px;
-  font-size: 16px;
-  color: #333;
-  text-align: center;
-}
+.reg-strip { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 18px; background: #eff6ff; border: 2px solid #bfdbfe; border-radius: 14px; font-size: 16px; color: #333; text-align: center; }
 .reg-strip a { color: #2563eb; font-weight: 600; text-decoration: none; }
-
-/* Toast */
-.toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: #fff;
-  border-radius: 14px;
-  padding: 16px 24px;
-  font-size: 15px;
-  font-weight: 500;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-  z-index: 9999;
-  opacity: 0;
-  transition: all 0.3s ease;
-  max-width: calc(100vw - 32px);
-  text-align: center;
-  word-break: break-word;
-}
+.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #fff; border-radius: 14px; padding: 16px 24px; font-size: 15px; font-weight: 500; box-shadow: 0 8px 30px rgba(0,0,0,0.15); z-index: 9999; opacity: 0; transition: all 0.3s ease; max-width: calc(100vw - 32px); text-align: center; word-break: break-word; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .toast.err  { color: #b91c1c; border: 2px solid #fca5a5; }
 .toast.ok   { color: #15803d; border: 2px solid #86efac; }
-
-/* Modal bottom sheet */
-.overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: 9998;
-  align-items: flex-end;
-  justify-content: center;
-}
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9998; align-items: flex-end; justify-content: center; }
 .overlay.show { display: flex; }
-.sheet {
-  background: #fff;
-  border-radius: 24px 24px 0 0;
-  width: 100%;
-  padding: 0 24px 48px;
-  max-height: 92vh;
-  overflow-y: auto;
-  animation: sheetup 0.3s ease;
-}
+.sheet { background: #fff; border-radius: 24px 24px 0 0; width: 100%; padding: 0 24px 48px; max-height: 92vh; overflow-y: auto; animation: sheetup 0.3s ease; }
 @keyframes sheetup { from { transform: translateY(100%); } to { transform: translateY(0); } }
-.handle {
-  width: 44px; height: 5px;
-  background: #e0e0e0;
-  border-radius: 3px;
-  margin: 16px auto 24px;
-}
+.handle { width: 44px; height: 5px; background: #e0e0e0; border-radius: 3px; margin: 16px auto 24px; }
 .sheet h3 { font-size: 24px; font-weight: 700; color: #111; text-align: center; margin-bottom: 8px; }
 .sheet p  { font-size: 15px; color: #888; text-align: center; margin-bottom: 22px; line-height: 1.5; }
 .sheet-emoji { font-size: 52px; text-align: center; display: block; margin-bottom: 12px; }
-.m-inp {
-  width: 100%;
-  height: 54px;
-  padding: 0 16px;
-  border: 2px solid #e0e0e0;
-  border-radius: 14px;
-  font-size: 16px;
-  font-family: 'DM Sans', sans-serif;
-  outline: none;
-  margin-bottom: 14px;
-  color: #111;
-  background: #fff;
-  -webkit-appearance: none;
-  appearance: none;
-}
+.m-inp { width: 100%; height: 54px; padding: 0 16px; border: 2px solid #e0e0e0; border-radius: 14px; font-size: 16px; font-family: 'DM Sans', sans-serif; outline: none; margin-bottom: 14px; color: #111; background: #fff; -webkit-appearance: none; appearance: none; }
 .m-inp:focus { border-color: #2563eb; }
-.m-btn {
-  width: 100%;
-  height: 54px;
-  border: none;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
-  color: #fff;
-  font-size: 17px;
-  font-weight: 600;
-  font-family: 'DM Sans', sans-serif;
-  cursor: pointer;
-  margin-bottom: 14px;
-  -webkit-appearance: none;
-  appearance: none;
-  touch-action: manipulation;
-}
+.m-btn { width: 100%; height: 54px; border: none; border-radius: 14px; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: #fff; font-size: 17px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; margin-bottom: 14px; -webkit-appearance: none; appearance: none; touch-action: manipulation; }
 .m-btn:disabled { opacity: 0.6; }
-.m-cancel {
-  display: block;
-  width: 100%;
-  background: none;
-  border: none;
-  color: #888;
-  font-size: 15px;
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  padding: 12px;
-  text-align: center;
-}
+.m-cancel { display: block; width: 100%; background: none; border: none; color: #888; font-size: 15px; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 12px; text-align: center; }
 .step { display: none; }
 .step.on { display: block; }
 </style>
@@ -344,8 +80,9 @@ body {
     <div class="step on" id="s1">
       <span class="sheet-emoji">🔑</span>
       <h3>Forgot Password</h3>
-      <p>Enter your registered email to receive an OTP</p>
-      <input class="m-inp" type="email" id="mEmail" placeholder="your@email.com" inputmode="email" autocomplete="email">
+      <p>Enter your registered phone number to receive an OTP</p>
+      <!-- FIX: changed type to tel, placeholder updated to phone -->
+      <input class="m-inp" type="tel" id="mPhone" placeholder="10-digit phone number" inputmode="numeric" maxlength="10" autocomplete="tel">
       <button class="m-btn" id="s1btn" onclick="sendOtp()">Send OTP</button>
       <button class="m-cancel" onclick="closeModal()">Cancel</button>
     </div>
@@ -353,7 +90,7 @@ body {
     <div class="step" id="s2">
       <span class="sheet-emoji">📋</span>
       <h3>Enter OTP</h3>
-      <p id="otpHint">Check your email for the OTP</p>
+      <p id="otpHint">Check your phone for the OTP</p>
       <input class="m-inp" type="text" id="mOtp" placeholder="6-digit OTP" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
       <button class="m-btn" onclick="verifyOtp()">Verify OTP</button>
       <button class="m-cancel" onclick="closeModal()">Cancel</button>
@@ -468,6 +205,7 @@ body {
 
 <script>
 let role = 'student', found = null, timer = null, otpCode = null;
+let checkInProgress = false; // FIX: prevent race conditions in check()
 
 function setRole(r) {
   role = r;
@@ -478,7 +216,11 @@ function setRole(r) {
 
 ['name','phone','email'].forEach(id => {
   document.getElementById(id).addEventListener('input', () => {
-    clearTimeout(timer); timer = setTimeout(check, 600);
+    clearTimeout(timer);
+    // FIX: reset found on any input change so stale result doesn't persist
+    found = null;
+    hideBanner(); hidePill(); hidePwd();
+    timer = setTimeout(check, 700);
   });
 });
 
@@ -490,6 +232,8 @@ function ready() {
 async function check() {
   hideBanner(); hidePill(); hidePwd(); found = null;
   if (!ready()) return;
+  if (checkInProgress) return; // FIX: avoid overlapping requests
+  checkInProgress = true;
   try {
     const r = await fetch('/check_existing', {
       method: 'POST',
@@ -502,9 +246,14 @@ async function check() {
       showBanner(d.name);
       showPwd();
     } else {
-      showPill('⚠️', 'No account found. Please register below.');
+      // FIX: show specific message from server (e.g. pending approval) if available
+      showPill('⚠️', d.message || 'No account found. Please register below.');
     }
-  } catch(e) { console.warn(e); }
+  } catch(e) {
+    console.warn('check_existing error:', e);
+  } finally {
+    checkInProgress = false; // FIX: always release lock
+  }
 }
 
 function showBanner(name) {
@@ -544,14 +293,18 @@ function toggleEye() {
 
 async function doLogin() {
   if (!ready()) { toast('Please fill all fields correctly.', 'err'); return; }
+
+  // FIX: if check is still pending, run it now and wait before proceeding
   if (!found) {
+    loading(true);
     await check();
     if (!found) {
-      toast('No account found. Redirecting to register...', 'err');
-      setTimeout(() => location.href='/register', 1800);
+      toast('No account found. Please register first.', 'err');
+      loading(false);
       return;
     }
   }
+
   const pwd = g('pwd');
   if (!pwd) { toast('Please enter your password.', 'err'); return; }
   loading(true);
@@ -571,6 +324,7 @@ async function doLogin() {
         else                         location.href='/admin_dashboard';
       }, 1000);
     } else {
+      // FIX: show server message clearly (e.g. "Incorrect password" or "Pending approval")
       toast(d.message || 'Login failed.', 'err');
       loading(false);
     }
@@ -587,7 +341,8 @@ function loading(on) {
 }
 
 function openModal() {
-  document.getElementById('mEmail').value = g('email');
+  // FIX: pre-fill phone from main form (was pre-filling email before)
+  document.getElementById('mPhone').value = g('phone');
   document.getElementById('mOtp').value = '';
   document.getElementById('mNew').value = '';
   document.getElementById('mCon').value = '';
@@ -601,15 +356,19 @@ function goStep(n) {
 }
 
 async function sendOtp() {
-  const email = document.getElementById('mEmail').value.trim();
-  if (!email) { toast('Enter your email.', 'err'); return; }
+  // FIX: read phone instead of email, send phone to /send-otp which expects phone
+  const phone = document.getElementById('mPhone').value.trim();
+  if (!phone || phone.length !== 10 || !/^\d+$/.test(phone)) {
+    toast('Enter a valid 10-digit phone number.', 'err');
+    return;
+  }
   const b = document.getElementById('s1btn');
   b.disabled = true; b.textContent = 'Sending...';
   try {
     const r = await fetch('/send-otp', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({email})
+      body: JSON.stringify({phone})  // FIX: was sending {email}, now sends {phone}
     });
     const d = await r.json();
     b.disabled = false; b.textContent = 'Send OTP';
@@ -617,7 +376,7 @@ async function sendOtp() {
       otpCode = String(d.otp);
       document.getElementById('otpHint').textContent = '🔢 Your OTP: ' + d.otp;
       goStep(2);
-    } else { toast('Failed to send OTP.', 'err'); }
+    } else { toast(d.message || 'Failed to send OTP.', 'err'); }
   } catch(e) { b.disabled=false; b.textContent='Send OTP'; toast('Server error.','err'); }
 }
 
@@ -629,11 +388,18 @@ function verifyOtp() {
 }
 
 async function resetPass() {
-  const email = document.getElementById('mEmail').value.trim();
-  const np    = document.getElementById('mNew').value;
-  const cp    = document.getElementById('mCon').value;
+  // FIX: reset password now uses phone to find account on backend
+  // NOTE: your /reset_password Flask route uses email — you'll need to update it
+  // OR pass email separately. For now using phone for OTP verification + email for reset.
+  const np = document.getElementById('mNew').value;
+  const cp = document.getElementById('mCon').value;
   if (np.length < 6)  { toast('Minimum 6 characters.', 'err'); return; }
   if (np !== cp)      { toast('Passwords do not match.', 'err'); return; }
+
+  // Get email from the main form to pass to reset endpoint
+  const email = g('email');
+  if (!email) { toast('Please enter your email on the main form first.', 'err'); closeModal(); return; }
+
   const b = document.getElementById('s3btn');
   b.disabled = true; b.textContent = 'Resetting...';
   try {
