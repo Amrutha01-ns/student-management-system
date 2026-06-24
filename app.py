@@ -44,7 +44,7 @@ def login():
     cur  = conn.cursor()
 
     cur.execute("""
-        SELECT id, name, role, section
+        SELECT id, name, role
         FROM users
         WHERE email = %s AND password = %s
     """, (email, password))
