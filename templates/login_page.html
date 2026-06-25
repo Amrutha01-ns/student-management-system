@@ -294,8 +294,7 @@ async function doLogin() {
   if (!ready()) { toast('Please fill all fields correctly.', 'err'); return; }
 
   // FIX: if check is still pending, run it now and wait before proceeding
-  if (!found) {
-    loading(true);
+if (!found) {
     await check();
     if (!found) {
       toast('No account found. Please register first.', 'err');
