@@ -279,17 +279,17 @@ def check_existing():
     role              = data.get("role",              "").strip()
     child_roll_number = data.get("child_roll_number", "").strip()
 
-    if not name or not phone or not email or not role:
+    if not name or not email or not role:
         return jsonify({"exists": False, "message": "All fields required"})
 
     conn = get_db_connection()
     cur  = conn.cursor()
 
-    # FIX: select role column too so we can verify it matches exactly
     cur.execute("""
         SELECT id, name, role FROM users
         WHERE LOWER(name) = LOWER(%s)
-          AND LOWER(email) = LOWER(%s)`r`n          AND role         = %s
+          AND LOWER(email) = LOWER(%s)
+          AND role = %s
     """, (name, email, role))
     row = cur.fetchone()
 
@@ -300,11 +300,10 @@ def check_existing():
 
     user_id, found_name, found_role = row
 
-    # FIX: if role doesn't match, treat as new user — don't hijack session
     if found_role != role:
         cur.close()
         conn.close()
-        return jsonify({"exists": False, "message": "No account found for this role. Please register."})
+        return jsonify({"exists": False, "message": "No account found for this role."})
 
     if role == "parent":
         if not child_roll_number:
@@ -326,7 +325,6 @@ def check_existing():
     cur.close()
     conn.close()
     return jsonify({"exists": True, "name": found_name})
-
 # ==================== FIXED register ====================
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -352,10 +350,7 @@ def register():
     # FIX: include role in SELECT so we fetch it for comparison
     cur.execute("""
         SELECT id, name, role FROM users
-        WHERE LOWER(name) = LOWER(%s)
-          AND phone = %s
-          AND LOWER(email) = LOWER(%s)
-          AND role = %s
+        WHERE LOWER(name) = LOWER(%s) AND LOWER(email) = LOWER(%s) AND role = %s
     """, (name, email, role))
     existing = cur.fetchone()
 
@@ -983,5 +978,6 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
