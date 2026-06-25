@@ -200,10 +200,9 @@ def login():
     cur.execute("""
         SELECT id, name, role, password FROM users
         WHERE LOWER(name) = LOWER(%s)
-          AND phone        = %s
           AND LOWER(email) = LOWER(%s)
           AND role         = %s
-    """, (name, phone, email, role))
+    """, (name, email, role))
     user = cur.fetchone()
     if not user:
         cur.close()
@@ -234,7 +233,6 @@ def login():
         "name": found_name, "role": found_role,
         "student_id": session.get('student_id')
     })
-
 @app.route("/reset_password", methods=["POST"])
 def reset_password():
     data     = request.get_json()
