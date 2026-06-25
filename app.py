@@ -289,10 +289,8 @@ def check_existing():
     cur.execute("""
         SELECT id, name, role FROM users
         WHERE LOWER(name) = LOWER(%s)
-          AND phone        = %s
-          AND LOWER(email) = LOWER(%s)
-          AND role         = %s
-    """, (name, phone, email, role))
+          AND LOWER(email) = LOWER(%s)`r`n          AND role         = %s
+    """, (name, email, role))
     row = cur.fetchone()
 
     if not row:
@@ -358,7 +356,7 @@ def register():
           AND phone = %s
           AND LOWER(email) = LOWER(%s)
           AND role = %s
-    """, (name, phone, email, role))
+    """, (name, email, role))
     existing = cur.fetchone()
 
     # FIX: only redirect as "exists" if role matches — otherwise fall through to create new account
@@ -985,3 +983,5 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
