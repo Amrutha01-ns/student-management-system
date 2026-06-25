@@ -214,10 +214,9 @@ function setRole(r) {
   check();
 }
 
-['name','phone','email'].forEach(id => {
+['name','email'].forEach(id => {
   document.getElementById(id).addEventListener('input', () => {
     clearTimeout(timer);
-    // FIX: reset found on any input change so stale result doesn't persist
     found = null;
     hideBanner(); hidePill(); hidePwd();
     timer = setTimeout(check, 700);
