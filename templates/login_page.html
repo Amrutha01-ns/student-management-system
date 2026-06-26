@@ -63,6 +63,9 @@ body { font-family: 'DM Sans', sans-serif; background: #f3f4f8; width: 100%; min
 .sheet-emoji { font-size: 52px; text-align: center; display: block; margin-bottom: 12px; }
 .m-inp { width: 100%; height: 54px; padding: 0 16px; border: 2px solid #e0e0e0; border-radius: 14px; font-size: 16px; font-family: 'DM Sans', sans-serif; outline: none; margin-bottom: 14px; color: #111; background: #fff; -webkit-appearance: none; appearance: none; }
 .m-inp:focus { border-color: #2563eb; }
+.m-inp-wrap { position: relative; margin-bottom: 14px; }
+.m-inp-wrap .m-inp { margin-bottom: 0; padding-right: 50px; }
+.m-eye { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 8px; color: #888; }
 .m-btn { width: 100%; height: 54px; border: none; border-radius: 14px; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: #fff; font-size: 17px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; margin-bottom: 14px; -webkit-appearance: none; appearance: none; touch-action: manipulation; }
 .m-btn:disabled { opacity: 0.6; }
 .m-cancel { display: block; width: 100%; background: none; border: none; color: #888; font-size: 15px; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 12px; text-align: center; }
@@ -81,7 +84,6 @@ body { font-family: 'DM Sans', sans-serif; background: #f3f4f8; width: 100%; min
       <span class="sheet-emoji">🔑</span>
       <h3>Forgot Password</h3>
       <p>Enter your registered phone number to receive an OTP</p>
-      <!-- FIX: changed type to tel, placeholder updated to phone -->
       <input class="m-inp" type="tel" id="mPhone" placeholder="10-digit phone number" inputmode="numeric" maxlength="10" autocomplete="tel">
       <button class="m-btn" id="s1btn" onclick="sendOtp()">Send OTP</button>
       <button class="m-cancel" onclick="closeModal()">Cancel</button>
@@ -100,17 +102,39 @@ body { font-family: 'DM Sans', sans-serif; background: #f3f4f8; width: 100%; min
       <span class="sheet-emoji">🔒</span>
       <h3>New Password</h3>
       <p>Enter your new password below</p>
-      <input class="m-inp" type="password" id="mNew" placeholder="New password (min 6 chars)" autocomplete="new-password">
-      <input class="m-inp" type="password" id="mCon" placeholder="Confirm new password" autocomplete="new-password">
+      <!-- FIX: eye icon added to new password fields -->
+      <div class="m-inp-wrap">
+        <input class="m-inp" type="password" id="mNew" placeholder="New password (min 6 chars)" autocomplete="new-password">
+        <button class="m-eye" type="button" onclick="toggleMEye('mNew','eyeNew')">
+          <svg id="eyeNew" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+      <div class="m-inp-wrap">
+        <input class="m-inp" type="password" id="mCon" placeholder="Confirm new password" autocomplete="new-password">
+        <button class="m-eye" type="button" onclick="toggleMEye('mCon','eyeCon')">
+          <svg id="eyeCon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
       <button class="m-btn" id="s3btn" onclick="resetPass()">Reset Password</button>
       <button class="m-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+
+    <!-- FIX: step 4 — after reset, ask to login with new password -->
+    <div class="step" id="s4">
+      <span class="sheet-emoji">✅</span>
+      <h3>Password Reset!</h3>
+      <p>Your password has been updated. Enter your new password to login.</p>
+      <button class="m-btn" onclick="closeModal()">Go to Login →</button>
     </div>
   </div>
 </div>
 
 <!-- MAIN PAGE -->
 <div class="wrapper">
-
   <div class="hdr">
     <span class="hdr-icon">🎓</span>
     <h1>Welcome Back</h1>
@@ -119,7 +143,6 @@ body { font-family: 'DM Sans', sans-serif; background: #f3f4f8; width: 100%; min
   </div>
 
   <div class="body">
-
     <span class="role-label">I am a</span>
     <div class="tabs">
       <button class="tab on" data-r="student" onclick="setRole('student')">
@@ -154,6 +177,15 @@ body { font-family: 'DM Sans', sans-serif; background: #f3f4f8; width: 100%; min
       <div class="inp-wrap">
         <span class="inp-icon">✉️</span>
         <input type="email" id="email" placeholder="Enter your email" inputmode="email" autocomplete="email">
+      </div>
+    </div>
+
+    <!-- FIX: child roll number field — only shows when parent tab is selected -->
+    <div class="field" id="rollField" style="display:none">
+      <label>Child's Roll Number</label>
+      <div class="inp-wrap">
+        <span class="inp-icon">🎒</span>
+        <input type="text" id="childRoll" placeholder="Enter child's roll number">
       </div>
     </div>
 
@@ -199,22 +231,23 @@ body { font-family: 'DM Sans', sans-serif; background: #f3f4f8; width: 100%; min
     <div class="reg-strip">
       Don't have an account?&nbsp;<a href="/register">Register here →</a>
     </div>
-
   </div>
 </div>
 
 <script>
 let role = 'student', found = null, timer = null, otpCode = null;
-let checkInProgress = false; // FIX: prevent race conditions in check()
+let checkInProgress = false;
 
 function setRole(r) {
   role = r;
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.dataset.r === r));
   found = null; hideBanner(); hidePill(); hidePwd();
+  // FIX: show roll number field only for parent
+  document.getElementById('rollField').style.display = r === 'parent' ? 'block' : 'none';
   check();
 }
 
-['name','email'].forEach(id => {
+['name','email','childRoll'].forEach(id => {
   document.getElementById(id).addEventListener('input', () => {
     clearTimeout(timer);
     found = null;
@@ -231,13 +264,22 @@ function ready() {
 async function check() {
   hideBanner(); hidePill(); hidePwd(); found = null;
   if (!ready()) return;
-  if (checkInProgress) return; // FIX: avoid overlapping requests
+  // For parent, require roll number before checking
+  if (role === 'parent' && !g('childRoll')) {
+    showPill('🎒', 'Please enter your child\'s roll number.');
+    return;
+  }
+  if (checkInProgress) return;
   checkInProgress = true;
   try {
     const r = await fetch('/check_existing', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({name:g('name'), phone:g('phone'), email:g('email'), role, child_roll_number:''})
+      // FIX: send child_roll_number for parent matching
+      body: JSON.stringify({
+        name: g('name'), phone: g('phone'), email: g('email'), role,
+        child_roll_number: role === 'parent' ? g('childRoll') : ''
+      })
     });
     const d = await r.json();
     if (d.exists) {
@@ -245,13 +287,12 @@ async function check() {
       showBanner(d.name);
       showPwd();
     } else {
-      // FIX: show specific message from server (e.g. pending approval) if available
       showPill('⚠️', d.message || 'No account found. Please register below.');
     }
   } catch(e) {
     console.warn('check_existing error:', e);
   } finally {
-    checkInProgress = false; // FIX: always release lock
+    checkInProgress = false;
   }
 }
 
@@ -262,14 +303,12 @@ function showBanner(name) {
   document.getElementById('banner').classList.add('show');
 }
 function hideBanner() { document.getElementById('banner').classList.remove('show'); }
-
 function showPill(icon, msg) {
   document.getElementById('pillIcon').textContent = icon;
   document.getElementById('pillText').textContent = msg;
   document.getElementById('pill').className = 'pill warn';
 }
 function hidePill() { document.getElementById('pill').className = 'pill'; }
-
 function showPwd() {
   document.getElementById('pwdField').style.display = 'block';
   document.getElementById('forgotDiv').style.display = 'block';
@@ -290,11 +329,21 @@ function toggleEye() {
     : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
 }
 
+// FIX: eye toggle for modal password fields
+function toggleMEye(inputId, svgId) {
+  const inp = document.getElementById(inputId);
+  const svg = document.getElementById(svgId);
+  const isText = inp.type === 'text';
+  inp.type = isText ? 'password' : 'text';
+  svg.innerHTML = isText
+    ? `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`
+    : `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+}
+
 async function doLogin() {
   if (!ready()) { toast('Please fill all fields correctly.', 'err'); return; }
-
-  // FIX: if check is still pending, run it now and wait before proceeding
-if (!found) {
+  if (role === 'parent' && !g('childRoll')) { toast('Please enter your child\'s roll number.', 'err'); return; }
+  if (!found) {
     await check();
     if (!found) {
       toast('No account found. Please register first.', 'err');
@@ -302,7 +351,6 @@ if (!found) {
       return;
     }
   }
-
   const pwd = g('pwd');
   if (!pwd) { toast('Please enter your password.', 'err'); return; }
   loading(true);
@@ -322,7 +370,6 @@ if (!found) {
         else                         location.href='/admin_dashboard';
       }, 1000);
     } else {
-      // FIX: show server message clearly (e.g. "Incorrect password" or "Pending approval")
       toast(d.message || 'Login failed.', 'err');
       loading(false);
     }
@@ -339,7 +386,6 @@ function loading(on) {
 }
 
 function openModal() {
-  // FIX: pre-fill phone from main form (was pre-filling email before)
   document.getElementById('mPhone').value = g('phone');
   document.getElementById('mOtp').value = '';
   document.getElementById('mNew').value = '';
@@ -348,25 +394,30 @@ function openModal() {
   goStep(1);
   document.getElementById('modal').classList.add('show');
 }
-function closeModal() { document.getElementById('modal').classList.remove('show'); }
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+  // FIX: focus password field after reset so user can login immediately
+  setTimeout(() => {
+    if (document.getElementById('pwdField').style.display !== 'none') {
+      document.getElementById('pwd').focus();
+    }
+  }, 300);
+}
 function goStep(n) {
   document.querySelectorAll('.step').forEach((s,i) => s.classList.toggle('on', i+1===n));
 }
 
 async function sendOtp() {
-  // FIX: read phone instead of email, send phone to /send-otp which expects phone
   const phone = document.getElementById('mPhone').value.trim();
   if (!phone || phone.length !== 10 || !/^\d+$/.test(phone)) {
-    toast('Enter a valid 10-digit phone number.', 'err');
-    return;
+    toast('Enter a valid 10-digit phone number.', 'err'); return;
   }
   const b = document.getElementById('s1btn');
   b.disabled = true; b.textContent = 'Sending...';
   try {
     const r = await fetch('/send-otp', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({phone})  // FIX: was sending {email}, now sends {phone}
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({phone})
     });
     const d = await r.json();
     b.disabled = false; b.textContent = 'Send OTP';
@@ -386,30 +437,25 @@ function verifyOtp() {
 }
 
 async function resetPass() {
-  // FIX: reset password now uses phone to find account on backend
-  // NOTE: your /reset_password Flask route uses email — you'll need to update it
-  // OR pass email separately. For now using phone for OTP verification + email for reset.
   const np = document.getElementById('mNew').value;
   const cp = document.getElementById('mCon').value;
   if (np.length < 6)  { toast('Minimum 6 characters.', 'err'); return; }
   if (np !== cp)      { toast('Passwords do not match.', 'err'); return; }
-
-  // Get email from the main form to pass to reset endpoint
   const email = g('email');
   if (!email) { toast('Please enter your email on the main form first.', 'err'); closeModal(); return; }
-
   const b = document.getElementById('s3btn');
   b.disabled = true; b.textContent = 'Resetting...';
   try {
     const r = await fetch('/reset_password', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({email, new_password: np})
     });
     const d = await r.json();
     b.disabled = false; b.textContent = 'Reset Password';
-    if (d.status === 'success') { toast('✅ Password reset! Login now.', 'ok'); closeModal(); }
-    else { toast(d.message || 'Reset failed.', 'err'); }
+    if (d.status === 'success') {
+      // FIX: go to step 4 confirmation instead of closing immediately
+      goStep(4);
+    } else { toast(d.message || 'Reset failed.', 'err'); }
   } catch(e) { b.disabled=false; b.textContent='Reset Password'; toast('Server error.','err'); }
 }
 
