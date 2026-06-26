@@ -25,6 +25,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+
+/* ── TOPBAR ── */
 .topbar{position:fixed;top:0;left:0;right:0;height:var(--topbar-h);background:rgba(22,27,34,0.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:300;}
 .t-left{display:flex;align-items:center;gap:12px;}
 .t-logo{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),#818cf8);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 0 16px rgba(var(--accent-rgb),0.35);}
@@ -34,10 +36,11 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .t-name-chip{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border2);border-radius:999px;padding:5px 14px;font-size:13px;color:var(--text2);}
 .t-name-chip .live{width:6px;height:6px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green);}
 .t-name-chip strong{color:var(--accent2);font-weight:600;}
-/* FIX: logout button — border transparent by default, visible on hover */
 .t-btn{height:32px;padding:0 14px;background:transparent;border:1px solid transparent;border-radius:8px;font-size:12.5px;font-weight:500;color:var(--text3);cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.18s;display:flex;align-items:center;gap:5px;}
 .t-btn:hover{background:var(--surface2);color:var(--text);border-color:var(--border2);}
 .t-btn.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-bg);}
+
+/* ── LAYOUT ── */
 .shell{display:flex;margin-top:var(--topbar-h);height:calc(100vh - var(--topbar-h));}
 .sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);max-width:var(--sidebar-w);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:18px 10px 16px;overflow-y:auto;overflow-x:hidden;}
 .s-section-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.6px;color:var(--text3);padding:0 10px;margin:16px 0 7px;display:block;}
@@ -58,6 +61,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .s-info-tag::before{content:'';width:5px;height:5px;background:var(--accent);border-radius:50%;box-shadow:0 0 5px var(--accent);}
 .s-info-name{font-family:'Syne',sans-serif;font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:3px;}
 .s-info-detail{font-size:11px;color:var(--text3);}
+
+/* ── CONTENT ── */
 .content{flex:1;overflow-y:auto;padding:30px 32px;background:var(--bg);}
 .pg-header{margin-bottom:26px;}
 .pg-title{font-family:'Syne',sans-serif;font-size:25px;font-weight:700;color:var(--text);letter-spacing:-0.3px;line-height:1.2;}
@@ -75,10 +80,14 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .q-ico{font-size:22px;margin-bottom:8px;display:block;}
 .q-lbl{font-size:12px;font-weight:500;color:var(--text2);}
 .q-card:hover .q-lbl{color:var(--accent2);}
+
+/* ── PANELS ── */
 .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px;}
 .panel-head{padding:15px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .panel-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;}
 .panel-body{padding:20px;}
+
+/* ── FORM ELEMENTS ── */
 .form-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
 .f-select,.f-input{height:38px;padding:0 13px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;font-size:13px;font-weight:400;color:var(--text);font-family:'Outfit',sans-serif;outline:none;transition:border-color 0.15s;appearance:none;}
 .f-select:focus,.f-input:focus{border-color:rgba(var(--accent-rgb),0.5);}
@@ -92,33 +101,68 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .f-btn.primary:hover{opacity:0.88;transform:translateY(-1px);}
 .f-btn.success{background:var(--green);color:#fff;}
 .f-btn.success:hover{opacity:0.88;}
+.f-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none !important;}
+
+/* ── TABLE ── */
 .data-table{width:100%;border-collapse:collapse;font-size:13px;}
 .data-table th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);background:var(--surface2);border-bottom:1px solid var(--border);}
 .data-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text2);}
 .data-table td:first-child{color:var(--text);font-weight:500;}
 .data-table tr:last-child td{border-bottom:none;}
 .data-table tr:hover td{background:var(--surface2);}
+
+/* ── TOGGLE ── */
 .toggle-wrap{position:relative;display:inline-block;width:40px;height:20px;}
 .toggle-wrap input{opacity:0;width:0;height:0;}
 .toggle-slider{position:absolute;cursor:pointer;inset:0;background:var(--red);border-radius:34px;transition:0.25s;}
 .toggle-wrap input:checked+.toggle-slider{background:var(--green);}
 .toggle-slider::before{content:'';position:absolute;width:14px;height:14px;left:3px;bottom:3px;background:white;border-radius:50%;transition:0.25s;}
 .toggle-wrap input:checked+.toggle-slider::before{transform:translateX(20px);}
+
+/* ── BADGES ── */
 .s-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:5px;font-size:11px;font-weight:600;}
 .s-badge.present{background:var(--green-bg);color:var(--green);}
 .s-badge.absent{background:var(--red-bg);color:var(--red);}
-.marks-input{width:58px;height:32px;padding:0 8px;background:var(--surface2);border:1px solid var(--border2);border-radius:7px;color:var(--text);text-align:center;font-size:13px;font-family:'Outfit',sans-serif;outline:none;transition:border-color 0.15s;}
+
+/* ── MARKS INPUT — FIX: strict 0-100 styling ── */
+.marks-input{
+  width:62px;height:32px;padding:0 8px;
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:7px;color:var(--text);text-align:center;
+  font-size:13px;font-family:'Outfit',sans-serif;outline:none;
+  transition:border-color 0.15s;
+}
 .marks-input:focus{border-color:rgba(var(--accent-rgb),0.5);}
-/* announcement cards */
+/* Red border when value exceeds 100 */
+.marks-input.over-limit{border-color:var(--red);background:var(--red-bg);color:var(--red);}
+
+/* ── TOAST NOTIFICATION (replaces alert for marks/announcements) ── */
+#toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+  padding:12px 22px;border-radius:10px;font-size:13px;font-weight:600;
+  opacity:0;pointer-events:none;z-index:9999;transition:all 0.3s ease;
+  display:flex;align-items:center;gap:9px;white-space:nowrap;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#toast.success{background:rgba(63,185,80,0.15);border:1px solid var(--green);color:var(--green);}
+#toast.error{background:rgba(248,81,73,0.15);border:1px solid var(--red);color:var(--red);}
+#toast.info{background:rgba(167,139,250,0.15);border:1px solid var(--accent);color:var(--accent2);}
+
+/* ── ANNOUNCEMENT CARDS ── */
 .ann-card{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px;}
 .ann-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;}
 .ann-meta{font-size:11px;color:var(--text3);margin-bottom:8px;}
 .ann-body{font-size:13px;color:var(--text2);line-height:1.6;}
-.ann-target{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:2px 8px;border-radius:4px;background:rgba(var(--accent-rgb),0.12);color:var(--accent2);margin-left:8px;}
+
+/* ── FOOTER ── */
 footer{background:var(--surface);border-top:1px solid var(--border);color:var(--text3);font-size:11px;padding:10px 24px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;z-index:5;}
 </style>
 </head>
 <body>
+
+<!-- TOAST -->
+<div id="toast"></div>
 
 <header class="topbar">
   <div class="t-left">
@@ -150,7 +194,6 @@ footer{background:var(--surface);border-top:1px solid var(--border);color:var(--
       <span class="nav-icon">🖋️</span>
       <div class="nav-texts"><span class="nav-main">Enter Marks</span><span class="nav-sub">Exam scores sheet</span></div>
     </div>
-    <!-- FIX: announcement now calls showSection instead of redirecting -->
     <div class="nav-item" id="nav-announce" onclick="showSection('announce')">
       <span class="nav-icon">📢</span>
       <div class="nav-texts"><span class="nav-main">Announcements</span><span class="nav-sub">Post school notices</span></div>
@@ -165,7 +208,8 @@ footer{background:var(--surface);border-top:1px solid var(--border);color:var(--
   </nav>
 
   <main class="content">
-    <!-- HOME -->
+
+    <!-- ══ HOME ══ -->
     <div id="sec-home">
       <div class="pg-header">
         <h1 class="pg-title">Teacher <em>Dashboard</em></h1>
@@ -189,7 +233,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);color:var(--
       </div>
     </div>
 
-    <!-- ATTENDANCE -->
+    <!-- ══ ATTENDANCE ══ -->
     <div id="sec-attendance" style="display:none;">
       <div class="pg-header">
         <h1 class="pg-title">Mark <em>Attendance</em></h1>
@@ -225,12 +269,12 @@ footer{background:var(--surface);border-top:1px solid var(--border);color:var(--
           </table>
         </div>
         <div style="padding:16px 20px;border-top:1px solid var(--border);">
-          <button class="f-btn success" onclick="submitAttendance()">✅ Submit & Broadcast Attendance</button>
+          <button class="f-btn success" id="submitAttBtn" onclick="submitAttendance()">✅ Submit & Broadcast Attendance</button>
         </div>
       </div>
     </div>
 
-    <!-- MARKS -->
+    <!-- ══ MARKS ══ -->
     <div id="sec-marks" style="display:none;">
       <div class="pg-header">
         <h1 class="pg-title">Enter <em>Marks</em></h1>
@@ -260,18 +304,16 @@ footer{background:var(--surface);border-top:1px solid var(--border);color:var(--
       </div>
       <div id="marksSheetContainer"></div>
       <div id="submitMarksBtnWrap" style="display:none;margin-top:6px;">
-        <button class="f-btn success" onclick="submitMarksSheet()">✅ Submit All Marks</button>
+        <button class="f-btn success" id="submitMarksBtn" onclick="submitMarksSheet()">✅ Submit All Marks</button>
       </div>
     </div>
 
-    <!-- FIX: ANNOUNCEMENTS — now inside dashboard -->
+    <!-- ══ ANNOUNCEMENTS ══ -->
     <div id="sec-announce" style="display:none;">
       <div class="pg-header">
         <h1 class="pg-title">Post <em>Announcement</em></h1>
         <p class="pg-date" id="ann-date"></p>
       </div>
-
-      <!-- Post form -->
       <div class="panel">
         <div class="panel-head"><span class="panel-title">📢 New Announcement</span></div>
         <div class="panel-body">
@@ -285,12 +327,10 @@ footer{background:var(--surface);border-top:1px solid var(--border);color:var(--
           </div>
           <textarea id="annContent" class="f-textarea" placeholder="Write your announcement here..."></textarea>
           <div style="margin-top:12px;">
-            <button class="f-btn primary" onclick="postAnnouncement()">📢 Post Announcement</button>
+            <button class="f-btn primary" id="postAnnBtn" onclick="postAnnouncement()">📢 Post Announcement</button>
           </div>
         </div>
       </div>
-
-      <!-- Recent announcements -->
       <div class="panel">
         <div class="panel-head"><span class="panel-title">📋 Recent Announcements</span></div>
         <div class="panel-body" id="annList">
@@ -304,19 +344,37 @@ footer{background:var(--surface);border-top:1px solid var(--border);color:var(--
 
 <footer>
   <span>AET School of Excellence — Teacher Portal</span>
-  <span>v3.1</span>
+  <span>v3.2</span>
 </footer>
 
 <script>
-let teacherId = null;
+// ══════════════════════════════════════════
+//  TOAST — replaces browser alert() calls
+// ══════════════════════════════════════════
+let toastTimer = null;
+function showToast(msg, type = "success", duration = 3500) {
+  const t = document.getElementById("toast");
+  t.textContent = "";
+  // icon
+  const ico = { success: "✅", error: "❌", info: "ℹ️" }[type] || "ℹ️";
+  t.innerHTML = `<span>${ico}</span><span>${msg}</span>`;
+  t.className = `show ${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = ""; }, duration);
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+let teacherId     = null;
 let teacherUserId = null;
 
 fetch('/me')
   .then(r => r.json())
   .then(d => {
     const name = d.name || "Teacher";
-    teacherId      = d.user_id;
-    teacherUserId  = d.user_id;
+    teacherId     = d.user_id;
+    teacherUserId = d.user_id;
     document.getElementById("teacherNameDisplay").textContent = name;
     document.getElementById("sidebarTeacherName").textContent = name;
     document.getElementById("welcomeName").textContent        = name;
@@ -325,41 +383,50 @@ fetch('/me')
     document.getElementById("teacherNameDisplay").textContent = "Teacher";
   });
 
-document.getElementById("date-display").textContent = new Date().toDateString();
-document.getElementById("att-date").textContent      = new Date().toDateString();
-document.getElementById("marks-date").textContent    = new Date().toDateString();
-document.getElementById("ann-date").textContent      = new Date().toDateString();
+const today = new Date().toDateString();
+["date-display","att-date","marks-date","ann-date"].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.textContent = today;
+});
 
-// FIX: added 'announce' to sections list
+// ══════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════
 const SECTIONS = ["home","attendance","marks","announce"];
 
 function showSection(name) {
   SECTIONS.forEach(s => {
-    const el = document.getElementById("sec-"+s);
-    if (el) el.style.display = s === name ? "block" : "none";
+    const el = document.getElementById("sec-" + s);
+    if (el) el.style.display = (s === name) ? "block" : "none";
   });
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
-  const nav = document.getElementById("nav-"+name);
+  const nav = document.getElementById("nav-" + name);
   if (nav) nav.classList.add("active");
-  // load announcements when section opens
-  if (name === 'announce') loadAnnouncements();
+  if (name === "announce") loadAnnouncements();
 }
 
-// ── ATTENDANCE ──
+// ══════════════════════════════════════════
+//  ATTENDANCE
+// ══════════════════════════════════════════
 async function loadStudents() {
   const std = document.getElementById("classSelect").value;
   const sec = document.getElementById("sectionSelect").value;
-  if (!std || !sec) { alert("Please select both Standard and Section."); return; }
-  const res = await fetch(`/get_students/${std}/${sec}`);
+  if (!std || !sec) { showToast("Please select both Standard and Section.", "error"); return; }
+
+  const res      = await fetch(`/get_students/${std}/${sec}`);
   const students = await res.json();
+
   document.getElementById("attendanceClassLabel").textContent = `${std} — Section ${sec}`;
   document.getElementById("attendanceTableWrapper").style.display = "block";
+
   const tbody = document.getElementById("attendanceTableBody");
   tbody.innerHTML = "";
+
   if (!students.length) {
     tbody.innerHTML = `<tr><td colspan="4" style="padding:20px;text-align:center;color:var(--text3);">No students found.</td></tr>`;
     return;
   }
+
   students.forEach((student, i) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -378,40 +445,93 @@ async function loadStudents() {
 
 function toggleStatus(i, cb) {
   const badge = document.getElementById(`att-badge-${i}`);
-  if (cb.checked) { badge.textContent="Present"; badge.className="s-badge present"; }
-  else            { badge.textContent="Absent";  badge.className="s-badge absent";  }
+  if (cb.checked) { badge.textContent = "Present"; badge.className = "s-badge present"; }
+  else            { badge.textContent = "Absent";  badge.className = "s-badge absent";  }
 }
 
 async function submitAttendance() {
-  const today = new Date().toISOString().split("T")[0];
-  const cbs   = document.querySelectorAll("#attendanceTableBody input[type=checkbox]");
-  if (!cbs.length) { alert("No students loaded!"); return; }
-  let ok = 0;
+  const cbs = document.querySelectorAll("#attendanceTableBody input[type=checkbox]");
+  if (!cbs.length) { showToast("No students loaded!", "error"); return; }
+
+  const btn = document.getElementById("submitAttBtn");
+  btn.disabled = true;
+  btn.textContent = "Submitting…";
+
+  const dateStr = new Date().toISOString().split("T")[0];
+  let ok = 0, fail = 0;
+
   for (const cb of cbs) {
-    const r = await fetch("/mark_attendance", {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ student_id: cb.dataset.studentId, date: today, status: cb.checked ? "Present" : "Absent" })
-    });
-    const d = await r.json(); if (d.message || d.status==="success") ok++;
+    try {
+      const r = await fetch("/mark_attendance", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ student_id: cb.dataset.studentId, date: dateStr, status: cb.checked ? "Present" : "Absent" })
+      });
+      const d = await r.json();
+      (d.message || d.status === "success") ? ok++ : fail++;
+    } catch { fail++; }
   }
-  alert(`✅ Attendance submitted! ${ok} records saved.`);
+
+  btn.disabled = false;
+  btn.textContent = "✅ Submit & Broadcast Attendance";
+
+  if (fail === 0) {
+    showToast(`Attendance submitted! ${ok} records saved successfully.`, "success");
+  } else {
+    showToast(`Partial: ${ok} saved, ${fail} failed. Please retry.`, "error", 5000);
+  }
 }
 
-// ── MARKS ──
+// ══════════════════════════════════════════
+//  MARKS
+//  FIX 1 — clampMarks() enforces 0–100
+//  FIX 2 — submitMarksSheet() always shows result
+// ══════════════════════════════════════════
+
+/**
+ * Called on every keystroke inside a marks input.
+ * Clamps value to 0–100 and shows a red border if out of range.
+ */
+function clampMarks(inp) {
+  // Strip non-numeric chars first
+  let raw = inp.value.replace(/[^0-9]/g, "");
+  if (raw === "") { inp.value = ""; inp.classList.remove("over-limit"); return; }
+
+  let num = parseInt(raw, 10);
+  if (num > 100) {
+    // Clamp to 100 immediately
+    inp.value = 100;
+    inp.classList.add("over-limit");
+    // Remove red border after short delay so user sees the correction
+    setTimeout(() => inp.classList.remove("over-limit"), 800);
+  } else if (num < 0) {
+    inp.value = 0;
+  } else {
+    inp.value = num;
+    inp.classList.remove("over-limit");
+  }
+}
+
 async function loadStudentsForMarks() {
   const std  = document.getElementById("marksClass").value;
   const sec  = document.getElementById("marksSectionSelect").value;
   const exam = document.getElementById("examName").value.trim();
-  if (!std || !sec || !exam) { alert("Please fill Standard, Section and Exam Name."); return; }
+  if (!std || !sec || !exam) {
+    showToast("Please fill Standard, Section and Exam Name.", "error");
+    return;
+  }
+
   const res      = await fetch(`/get_students/${std}/${sec}`);
   const students = await res.json();
   const container = document.getElementById("marksSheetContainer");
   container.innerHTML = "";
+
   if (!students.length) {
     container.innerHTML = `<p style="color:var(--text3);padding:16px 0;">No students found.</p>`;
     return;
   }
+
   const subjects = ["kannada","english","physics","chemistry","maths","biology"];
+
   container.innerHTML = `
     <div class="panel">
       <div class="panel-head"><span class="panel-title">📝 Marks Sheet — ${std} ${sec} · ${exam}</span></div>
@@ -419,73 +539,157 @@ async function loadStudentsForMarks() {
         <table class="data-table">
           <thead><tr>
             <th>Name</th>
-            ${subjects.map(s=>`<th style="text-align:center;">${s.charAt(0).toUpperCase()+s.slice(1)}</th>`).join("")}
+            ${subjects.map(s => `<th style="text-align:center;">${s.charAt(0).toUpperCase() + s.slice(1)}<br><span style="font-size:9px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3);">max 100</span></th>`).join("")}
           </tr></thead>
           <tbody>
-            ${students.map(st=>`
+            ${students.map(st => `
               <tr>
                 <td style="font-weight:600;">${st.name}<input type="hidden" class="sid-input" value="${st.student_id}"></td>
-                ${subjects.map(s=>`
+                ${subjects.map(s => `
                   <td style="text-align:center;">
-                    <input type="number" min="0" max="100" placeholder="0"
-                      class="marks-input" data-subject="${s}" data-student-id="${st.student_id}">
+                    <input
+                      type="number"
+                      min="0" max="100"
+                      placeholder="0"
+                      class="marks-input"
+                      data-subject="${s}"
+                      data-student-id="${st.student_id}"
+                      oninput="clampMarks(this)"
+                      onkeydown="return blockInvalidMarksKey(event)"
+                    >
                   </td>`).join("")}
               </tr>`).join("")}
           </tbody>
         </table>
       </div>
     </div>`;
+
   document.getElementById("submitMarksBtnWrap").style.display = "block";
+}
+
+/**
+ * Blocks keys that would produce values outside 0–100 range
+ * (e.g. minus sign, e key for scientific notation).
+ */
+function blockInvalidMarksKey(e) {
+  if (["-", "+", "e", "E", "."].includes(e.key)) return false;
 }
 
 async function submitMarksSheet() {
   const exam  = document.getElementById("examName").value.trim();
   const today = new Date().toISOString().split("T")[0];
   const rows  = document.querySelectorAll("#marksSheetContainer tbody tr");
-  let ok = 0;
+
+  if (!rows.length) { showToast("No students loaded!", "error"); return; }
+
+  // Validate: block if any field is > 100 (defensive double-check)
+  let hasOverLimit = false;
+  document.querySelectorAll(".marks-input").forEach(inp => {
+    const v = parseInt(inp.value);
+    if (v > 100 || v < 0) { hasOverLimit = true; inp.classList.add("over-limit"); }
+  });
+  if (hasOverLimit) {
+    showToast("Some marks exceed 100 or are negative. Please correct them first.", "error", 4000);
+    return;
+  }
+
+  const btn = document.getElementById("submitMarksBtn");
+  btn.disabled = true;
+  btn.textContent = "Submitting…";
+
+  let ok = 0, fail = 0;
+
   for (const row of rows) {
     const studentId = row.querySelector(".sid-input").value;
     const marks = {};
-    row.querySelectorAll(".marks-input").forEach(inp => { marks[inp.dataset.subject] = parseInt(inp.value)||0; });
-    const r = await fetch("/add_marks", {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({
-        student_id: studentId, teacher_id: teacherId,
-        exam_type: exam, exam_date: today,
-        kannada: marks.kannada, english: marks.english,
-        physics: marks.physics, chemistry: marks.chemistry,
-        maths: marks.maths, biology: marks.biology
-      })
+    row.querySelectorAll(".marks-input").forEach(inp => {
+      marks[inp.dataset.subject] = parseInt(inp.value) || 0;
     });
-    const d = await r.json(); if (d.status) ok++;
+
+    try {
+      const r = await fetch("/add_marks", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          student_id:  studentId,
+          teacher_id:  teacherId,
+          exam_type:   exam,
+          exam_date:   today,
+          kannada:     marks.kannada,
+          english:     marks.english,
+          physics:     marks.physics,
+          chemistry:   marks.chemistry,
+          maths:       marks.maths,
+          biology:     marks.biology
+        })
+      });
+      const d = await r.json();
+      d.status ? ok++ : fail++;
+    } catch { fail++; }
   }
-  alert(`✅ Marks submitted for ${ok} students!`);
+
+  btn.disabled = false;
+  btn.textContent = "✅ Submit All Marks";
+
+  // FIX 2 — always show a clear result message
+  if (ok > 0 && fail === 0) {
+    showToast(`Marks saved for all ${ok} students!`, "success");
+  } else if (ok > 0 && fail > 0) {
+    showToast(`Partial: ${ok} saved, ${fail} failed. Retry for failed rows.`, "error", 5000);
+  } else {
+    showToast("Submission failed. Check your connection and try again.", "error", 5000);
+  }
 }
 
-// ── ANNOUNCEMENTS ──
+// ══════════════════════════════════════════
+//  ANNOUNCEMENTS
+// ══════════════════════════════════════════
 async function postAnnouncement() {
   const title   = document.getElementById("annTitle").value.trim();
   const content = document.getElementById("annContent").value.trim();
   const target  = document.getElementById("annTarget").value;
-  if (!title || !content) { alert("Please fill title and content."); return; }
-  const r = await fetch("/add_announcement", {
-    method: "POST", headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({ title, content, posted_by: teacherUserId, target_role: target, target_section: "all" })
-  });
-  const d = await r.json();
-  if (d.status) {
-    document.getElementById("annTitle").value   = "";
-    document.getElementById("annContent").value = "";
-    alert("✅ Announcement posted!");
-    loadAnnouncements();
+
+  if (!title || !content) {
+    showToast("Please fill in both the title and content.", "error");
+    return;
+  }
+
+  const btn = document.getElementById("postAnnBtn");
+  btn.disabled = true;
+  btn.textContent = "Posting…";
+
+  try {
+    const r = await fetch("/add_announcement", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title,
+        content,
+        posted_by:      teacherUserId,
+        target_role:    target,
+        target_section: "all"
+      })
+    });
+    const d = await r.json();
+    if (d.status) {
+      document.getElementById("annTitle").value   = "";
+      document.getElementById("annContent").value = "";
+      showToast("Announcement posted successfully!", "success");
+      loadAnnouncements();
+    } else {
+      showToast("Failed to post. Server returned an error.", "error");
+    }
+  } catch {
+    showToast("Network error. Please try again.", "error");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "📢 Post Announcement";
   }
 }
 
 async function loadAnnouncements() {
   const list = document.getElementById("annList");
-  list.innerHTML = `<p style="color:var(--text3);font-size:13px;">Loading...</p>`;
+  list.innerHTML = `<p style="color:var(--text3);font-size:13px;">Loading…</p>`;
   try {
-    const r = await fetch("/get_announcements/teacher/all");
+    const r    = await fetch("/get_announcements/teacher/all");
     const data = await r.json();
     if (!data.length) {
       list.innerHTML = `<p style="color:var(--text3);font-size:13px;">No announcements yet.</p>`;
@@ -494,10 +698,10 @@ async function loadAnnouncements() {
     list.innerHTML = data.map(a => `
       <div class="ann-card">
         <div class="ann-title">${a.title}</div>
-        <div class="ann-meta">${new Date(a.date).toDateString()} · by ${a.posted_by || 'Teacher'}</div>
+        <div class="ann-meta">${new Date(a.date).toDateString()} · by ${a.posted_by || "Teacher"}</div>
         <div class="ann-body">${a.content}</div>
       </div>`).join("");
-  } catch(e) {
+  } catch {
     list.innerHTML = `<p style="color:var(--red);font-size:13px;">Failed to load announcements.</p>`;
   }
 }
