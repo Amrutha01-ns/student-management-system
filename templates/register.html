@@ -822,14 +822,24 @@ if (verifyData.status !== "success") {
         }
       }, 1500);
     } else if (data.status === "exists") {
-      setLoading(false);
-      detectedRole = data.role;
-      showAlert("⚠️ Account already exists! Redirecting...");
-      setTimeout(() => goToDashboard(), 1500);
-    } else {
-      showAlert("Registration failed: " + (data.message || "Unknown error"));
-      setLoading(false);
-    }
+  setLoading(false);
+  detectedRole = data.role;
+  showAlert("⚠️ Account already exists! Redirecting...");
+  setTimeout(() => goToDashboard(), 1500);
+
+} else if (data.status === "pending") {
+  setLoading(false);
+  // Show a persistent clear message — don't let them submit again
+  showAlert("⏳ Your registration is pending admin approval. Please wait.");
+  // Disable the button permanently so they can't resubmit
+  const btn = document.getElementById("registerBtn");
+  btn.disabled = true;
+  btn.innerHTML = "<span>⏳ Awaiting Admin Approval</span>";
+
+} else {
+  showAlert("Registration failed: " + (data.message || "Unknown error"));
+  setLoading(false);
+}
   } catch(err) {
     console.error(err);
     showAlert("Server error. Please try again.");
