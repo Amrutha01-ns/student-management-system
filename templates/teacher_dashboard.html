@@ -611,7 +611,6 @@ async function submitMarksSheet() {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           student_id:  studentId,
-          teacher_id:  teacherId,
           exam_type:   exam,
           exam_date:   today,
           kannada:     marks.kannada,

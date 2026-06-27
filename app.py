@@ -568,32 +568,47 @@ def teacher_marks():
 def add_marks():
     if session.get("role") != "teacher":
         return jsonify({"status": "error", "message": "Unauthorized"}), 403
-    data        = request.json
-    student_id  = data.get("student_id")
-    teacher_id  = data.get("teacher_id")
-    exam_type   = data.get("exam_type")
-    exam_date   = data.get("exam_date")
-    kannada     = data.get("kannada",   0)
-    english     = data.get("english",   0)
-    physics     = data.get("physics",   0)
-    chemistry   = data.get("chemistry", 0)
-    maths       = data.get("maths",     0)
-    biology     = data.get("biology",   0)
+
+    data       = request.json
+    student_id = data.get("student_id")
+    exam_type  = data.get("exam_type")
+    exam_date  = data.get("exam_date")
+    kannada    = data.get("kannada",   0)
+    english    = data.get("english",   0)
+    physics    = data.get("physics",   0)
+    chemistry  = data.get("chemistry", 0)
+    maths      = data.get("maths",     0)
+    biology    = data.get("biology",   0)
     total_marks = kannada + english + physics + chemistry + maths + biology
+
     conn = get_db_connection()
     cur  = conn.cursor()
+
+    # FIX: look up actual teacher_id from teachers table using session user_id
+    # (the frontend sends users.id, but marks.teacher_id references teachers.teacher_id)
+    user_id = session.get("user_id")
+    cur.execute("SELECT teacher_id FROM teachers WHERE user_id = %s", (user_id,))
+    teacher_row = cur.fetchone()
+
+    if not teacher_row:
+        cur.close()
+        conn.close()
+        return jsonify({"status": "error", "message": "Teacher record not found. Contact admin."}), 404
+
+    actual_teacher_id = teacher_row[0]
+
     cur.execute("""
         INSERT INTO marks (student_id, teacher_id, exam_type, exam_date,
              kannada, english, physics, chemistry, maths, biology, total_marks, is_published)
         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, FALSE) RETURNING marks_id
-    """, (student_id, teacher_id, exam_type, exam_date,
+    """, (student_id, actual_teacher_id, exam_type, exam_date,
           kannada, english, physics, chemistry, maths, biology, total_marks))
+
     new_mark_id = cur.fetchone()[0]
     conn.commit()
     cur.close()
     conn.close()
     return jsonify({"status": "success", "message": "Marks saved", "mark_id": new_mark_id})
-
 @app.route("/broadcast_marks", methods=["POST"])
 def broadcast_marks():
     if session.get("role") != "teacher":
