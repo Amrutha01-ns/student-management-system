@@ -286,7 +286,7 @@ def check_existing():
     cur  = conn.cursor()
 
     cur.execute("""
-        SELECT id, name, role FROM users
+        SELECT id, name, role, status FROM users
         WHERE LOWER(name) = LOWER(%s)
           AND LOWER(email) = LOWER(%s)
           AND role = %s
@@ -298,12 +298,23 @@ def check_existing():
         conn.close()
         return jsonify({"exists": False, "message": "No account found. Please register."})
 
-    user_id, found_name, found_role = row
+    user_id, found_name, found_role, account_status = row
 
     if found_role != role:
         cur.close()
         conn.close()
         return jsonify({"exists": False, "message": "No account found for this role."})
+
+    # Block pending users — don't let them auto-login via popup
+    if account_status == "pending":
+        cur.close()
+        conn.close()
+        return jsonify({"exists": False, "message": "Account pending admin approval."})
+
+    if account_status not in ("approved", "active"):
+        cur.close()
+        conn.close()
+        return jsonify({"exists": False, "message": "Account rejected or suspended. Contact admin."})
 
     if role == "parent":
         if not child_roll_number:
@@ -325,7 +336,8 @@ def check_existing():
     cur.close()
     conn.close()
     return jsonify({"exists": True, "name": found_name})
-# ==================== FIXED register ====================
+
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
@@ -336,34 +348,56 @@ def register():
     session.pop('otp_verified')
 
     data        = request.get_json(silent=True) or {}
-    name        = data.get("name", "").strip()
-    phone       = data.get("phone", "").strip()
-    email       = data.get("email", "").strip().lower()
+    name        = data.get("name",        "").strip()
+    phone       = data.get("phone",       "").strip()
+    email       = data.get("email",       "").strip().lower()
     role        = data.get("role")
-    password    = data.get("password", "")
+    password    = data.get("password",    "")
     father_name = data.get("father_name", "")
     mother_name = data.get("mother_name", "")
 
     conn = get_db_connection()
-    cur = conn.cursor()
+    cur  = conn.cursor()
 
-    # FIX: include role in SELECT so we fetch it for comparison
+    # Check if account already exists for this name + email + role
     cur.execute("""
-        SELECT id, name, role FROM users
-        WHERE LOWER(name) = LOWER(%s) AND LOWER(email) = LOWER(%s) AND role = %s
+        SELECT id, name, role, status FROM users
+        WHERE LOWER(name) = LOWER(%s)
+          AND LOWER(email) = LOWER(%s)
+          AND role = %s
     """, (name, email, role))
     existing = cur.fetchone()
 
-    # FIX: only redirect as "exists" if role matches — otherwise fall through to create new account
     if existing:
-        existing_id, existing_name, existing_role = existing
-        if existing_role == role:
-            _set_session(session, cur, existing_id, existing_name, role)
-            cur.close()
-            conn.close()
-            return jsonify({"status": "exists", "name": existing_name, "role": role})
-        # Different role — don't block, let registration proceed below
+        existing_id, existing_name, existing_role, account_status = existing
 
+        if existing_role == role:
+            # Still waiting for admin
+            if account_status == "pending":
+                cur.close()
+                conn.close()
+                return jsonify({
+                    "status": "pending",
+                    "message": "Your registration is awaiting admin approval. Please wait."
+                })
+
+            # Approved — treat as existing login
+            elif account_status in ("approved", "active"):
+                _set_session(session, cur, existing_id, existing_name, role)
+                cur.close()
+                conn.close()
+                return jsonify({"status": "exists", "name": existing_name, "role": role})
+
+            # Rejected or suspended
+            else:
+                cur.close()
+                conn.close()
+                return jsonify({
+                    "status": "error",
+                    "message": "Your account has been rejected or suspended. Contact admin."
+                })
+
+    # ── New registration ──
     if role == "student":
         standard    = data.get("standard")
         section     = data.get("section")
@@ -390,14 +424,12 @@ def register():
         cur.execute("""
             INSERT INTO students (user_id, name, phone, email, password, standard, section, roll_number)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            RETURNING student_id
         """, (user_id, name, phone, email, hashed_password, standard, section, roll_number))
 
     elif role == "teacher":
         cur.execute("""
             INSERT INTO teachers (user_id, name, phone, email, password)
             VALUES (%s, %s, %s, %s, %s)
-            RETURNING teacher_id
         """, (user_id, name, phone, email, hashed_password))
 
     elif role == "parent":
@@ -406,12 +438,13 @@ def register():
         parent_standard   = data.get("parent_standard")
         parent_section    = data.get("parent_section")
         linked_student_id = None
+
         if child_roll_number:
             cur.execute("""
                 SELECT student_id FROM students
                 WHERE roll_number = %s
                   AND (%s IS NULL OR standard = %s)
-                  AND (%s IS NULL OR section = %s)
+                  AND (%s IS NULL OR section  = %s)
             """, (child_roll_number, parent_standard, parent_standard, parent_section, parent_section))
             student_row = cur.fetchone()
             if not student_row:
@@ -421,17 +454,16 @@ def register():
                 return jsonify({"status": "error", "message": "Child's roll number not found. Please check and try again."})
             linked_student_id = student_row[0]
             cur.execute("UPDATE users SET linked_student_id = %s WHERE id = %s", (linked_student_id, user_id))
+
         cur.execute("""
             INSERT INTO parents (user_id, name, phone, email, password, child_name, linked_student_id)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
-            RETURNING parent_id
         """, (user_id, name, phone, email, hashed_password, child_name, linked_student_id))
 
     conn.commit()
     cur.close()
     conn.close()
     return jsonify({"status": "pending", "message": "Registration submitted. Waiting for admin approval."})
-
 @app.route("/get_students/<standard>/<section>")
 def get_students(standard, section):
     conn = get_db_connection()
