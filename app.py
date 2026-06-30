@@ -87,10 +87,7 @@ def build_student_context(student_id):
         return None
     cur.execute("""
         SELECT exam_type, exam_date, kannada, english, physics, chemistry, maths, biology, total_marks
-        FROM marks
-        WHERE student_id = %s
-        ORDER BY exam_date DESC
-        LIMIT 1
+        FROM marks WHERE student_id = %s ORDER BY exam_date DESC LIMIT 1
     """, (student_id,))
     latest_marks = cur.fetchone()
     cur.execute("""
@@ -98,8 +95,7 @@ def build_student_context(student_id):
             COUNT(*) FILTER (WHERE status = 'Present') AS present,
             COUNT(*) FILTER (WHERE status = 'Absent')  AS absent,
             COUNT(*)                                    AS total
-        FROM attendance
-        WHERE student_id = %s
+        FROM attendance WHERE student_id = %s
     """, (student_id,))
     present_count, absent_count, total_days = cur.fetchone()
     cur.execute("""
@@ -233,6 +229,7 @@ def login():
         "name": found_name, "role": found_role,
         "student_id": session.get('student_id')
     })
+
 @app.route("/reset_password", methods=["POST"])
 def reset_password():
     data     = request.get_json()
@@ -269,7 +266,8 @@ def _set_session(session, cur, user_id, name, role):
     else:
         session['student_id'] = None
 
-# ==================== FIXED check_existing ====================
+# ── CHECK EXISTING ──
+# No status check — just find if account exists and log them in
 @app.route("/check_existing", methods=["POST"])
 def check_existing():
     data              = request.get_json()
@@ -286,7 +284,7 @@ def check_existing():
     cur  = conn.cursor()
 
     cur.execute("""
-        SELECT id, name, role, status FROM users
+        SELECT id, name, role FROM users
         WHERE LOWER(name) = LOWER(%s)
           AND LOWER(email) = LOWER(%s)
           AND role = %s
@@ -298,23 +296,12 @@ def check_existing():
         conn.close()
         return jsonify({"exists": False, "message": "No account found. Please register."})
 
-    user_id, found_name, found_role, account_status = row
+    user_id, found_name, found_role = row
 
     if found_role != role:
         cur.close()
         conn.close()
         return jsonify({"exists": False, "message": "No account found for this role."})
-
-    # Block pending users — don't let them auto-login via popup
-    if account_status == "pending":
-        cur.close()
-        conn.close()
-        return jsonify({"exists": False, "message": "Account pending admin approval."})
-
-    if account_status not in ("approved", "active"):
-        cur.close()
-        conn.close()
-        return jsonify({"exists": False, "message": "Account rejected or suspended. Contact admin."})
 
     if role == "parent":
         if not child_roll_number:
@@ -337,7 +324,7 @@ def check_existing():
     conn.close()
     return jsonify({"exists": True, "name": found_name})
 
-
+# ── REGISTER ──
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
@@ -359,9 +346,9 @@ def register():
     conn = get_db_connection()
     cur  = conn.cursor()
 
-    # Check if account already exists for this name + email + role
+    # Check if account already exists — if so, just log them in
     cur.execute("""
-        SELECT id, name, role, status FROM users
+        SELECT id, name, role FROM users
         WHERE LOWER(name) = LOWER(%s)
           AND LOWER(email) = LOWER(%s)
           AND role = %s
@@ -369,35 +356,21 @@ def register():
     existing = cur.fetchone()
 
     if existing:
-        existing_id, existing_name, existing_role, account_status = existing
+        existing_id, existing_name, existing_role = existing
+        _set_session(session, cur, existing_id, existing_name, role)
+        student_id = session.get('student_id')
+        cur.close()
+        conn.close()
+        return jsonify({
+            "status":            "success",
+            "name":              existing_name,
+            "role":              role,
+            "user_id":           existing_id,
+            "student_id":        student_id,
+            "linked_student_id": student_id
+        })
 
-        if existing_role == role:
-            # Still waiting for admin
-            if account_status == "pending":
-                cur.close()
-                conn.close()
-                return jsonify({
-                    "status": "pending",
-                    "message": "Your registration is awaiting admin approval. Please wait."
-                })
-
-            # Approved — treat as existing login
-            elif account_status in ("approved", "active"):
-                _set_session(session, cur, existing_id, existing_name, role)
-                cur.close()
-                conn.close()
-                return jsonify({"status": "exists", "name": existing_name, "role": role})
-
-            # Rejected or suspended
-            else:
-                cur.close()
-                conn.close()
-                return jsonify({
-                    "status": "error",
-                    "message": "Your account has been rejected or suspended. Contact admin."
-                })
-
-    # ── New registration ──
+    # ── Brand new user ──
     if role == "student":
         standard    = data.get("standard")
         section     = data.get("section")
@@ -413,18 +386,23 @@ def register():
 
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
+    # status = "approved" so they can log in right away
     cur.execute("""
         INSERT INTO users (name, phone, email, role, password, father_name, mother_name, status)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         RETURNING id
-    """, (name, phone, email, role, hashed_password, father_name, mother_name, "pending"))
+    """, (name, phone, email, role, hashed_password, father_name, mother_name, "approved"))
     user_id = cur.fetchone()[0]
+
+    student_id = None
 
     if role == "student":
         cur.execute("""
             INSERT INTO students (user_id, name, phone, email, password, standard, section, roll_number)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING student_id
         """, (user_id, name, phone, email, hashed_password, standard, section, roll_number))
+        student_id = cur.fetchone()[0]
 
     elif role == "teacher":
         cur.execute("""
@@ -453,6 +431,7 @@ def register():
                 conn.close()
                 return jsonify({"status": "error", "message": "Child's roll number not found. Please check and try again."})
             linked_student_id = student_row[0]
+            student_id = linked_student_id
             cur.execute("UPDATE users SET linked_student_id = %s WHERE id = %s", (linked_student_id, user_id))
 
         cur.execute("""
@@ -461,9 +440,25 @@ def register():
         """, (user_id, name, phone, email, hashed_password, child_name, linked_student_id))
 
     conn.commit()
+
+    # Log them in immediately after registration
+    session['user_id']    = user_id
+    session['role']       = role
+    session['name']       = name
+    session['student_id'] = student_id
+
     cur.close()
     conn.close()
-    return jsonify({"status": "pending", "message": "Registration submitted. Waiting for admin approval."})
+
+    return jsonify({
+        "status":            "success",
+        "user_id":           user_id,
+        "name":              name,
+        "role":              role,
+        "student_id":        student_id,
+        "linked_student_id": student_id
+    })
+
 @app.route("/get_students/<standard>/<section>")
 def get_students(standard, section):
     conn = get_db_connection()
@@ -601,23 +596,22 @@ def add_marks():
     if session.get("role") != "teacher":
         return jsonify({"status": "error", "message": "Unauthorized"}), 403
 
-    data       = request.json
-    student_id = data.get("student_id")
-    exam_type  = data.get("exam_type")
-    exam_date  = data.get("exam_date")
-    kannada    = data.get("kannada",   0)
-    english    = data.get("english",   0)
-    physics    = data.get("physics",   0)
-    chemistry  = data.get("chemistry", 0)
-    maths      = data.get("maths",     0)
-    biology    = data.get("biology",   0)
+    data        = request.json
+    student_id  = data.get("student_id")
+    exam_type   = data.get("exam_type")
+    exam_date   = data.get("exam_date")
+    kannada     = data.get("kannada",   0)
+    english     = data.get("english",   0)
+    physics     = data.get("physics",   0)
+    chemistry   = data.get("chemistry", 0)
+    maths       = data.get("maths",     0)
+    biology     = data.get("biology",   0)
     total_marks = kannada + english + physics + chemistry + maths + biology
 
     conn = get_db_connection()
     cur  = conn.cursor()
 
-    # FIX: look up actual teacher_id from teachers table using session user_id
-    # (the frontend sends users.id, but marks.teacher_id references teachers.teacher_id)
+    # Look up actual teacher_id from teachers table using session user_id
     user_id = session.get("user_id")
     cur.execute("SELECT teacher_id FROM teachers WHERE user_id = %s", (user_id,))
     teacher_row = cur.fetchone()
@@ -641,6 +635,7 @@ def add_marks():
     cur.close()
     conn.close()
     return jsonify({"status": "success", "message": "Marks saved", "mark_id": new_mark_id})
+
 @app.route("/broadcast_marks", methods=["POST"])
 def broadcast_marks():
     if session.get("role") != "teacher":
@@ -1025,6 +1020,3 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-
