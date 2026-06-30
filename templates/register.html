@@ -63,7 +63,7 @@ select { cursor:pointer; }
 .strength-bar { height:4px; background:var(--border); border-radius:4px; margin-top:8px; overflow:hidden; }
 .strength-fill { height:100%; width:0%; border-radius:4px; transition:width 0.4s,background 0.4s; }
 .strength-text { font-size:11px; font-weight:600; margin-top:4px; text-align:right; min-height:16px; }
-button[type="submit"] { width:100%; padding:14px; background:linear-gradient(135deg,var(--navy),var(--blue)); color:var(--white); border:none; border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:transform 0.2s,box-shadow 0.2s; margin-top:8px; position:relative; overflow:hidden; -webkit-appearance:none; }
+button[type="submit"] { width:100%; padding:14px; background:linear-gradient(135deg,var(--navy),var(--blue)); color:var(--white); border:none; border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:transform 0.2s,box-shadow 0.2s; margin-top:8px; position:relative; overflow:hidden; -webkit-appearance:none; appearance:none; }
 button[type="submit"]::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,var(--accent),var(--accent-lt)); opacity:0; transition:opacity 0.3s; }
 button[type="submit"]:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(15,31,61,0.35); }
 button[type="submit"]:hover::after { opacity:1; }
